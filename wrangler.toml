@@ -10,7 +10,7 @@ binding = "ASSETS"
 [[d1_databases]]
 binding = "DB"
 database_name = "ug-cotizador-db"
-database_id = "TU_DATABASE_ID_AQUI"
+database_id = "0668487b-b5ba-45a8-b52d-37bd93283763"
 migrations_dir = "./"
 
 [vars]
