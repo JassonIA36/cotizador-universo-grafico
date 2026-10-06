@@ -1717,9 +1717,9 @@
           </button>
 
           <!-- Indicador de base de datos / Nube -->
-          <div class="db-status-pill" onclick="switchView('view-cloud')" title="Almacenamiento Local Activo">
-            <span class="db-status-dot"></span>
-            <span id="db-status-text">Local</span>
+          <div class="db-status-pill" id="db-status-pill" onclick="handleDbPillClick()" style="cursor: pointer;" title="Conexión Cloudflare D1">
+            <span class="db-status-dot" id="db-status-dot"></span>
+            <span id="db-status-text">🔐 Iniciar Sesión</span>
           </div>
 
           <!-- Selector de Modo Oscuro / Claro -->
@@ -2511,6 +2511,43 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeCatalogModal()">Cancelar</button>
         <button class="btn btn-primary" onclick="saveCatalogItemFromModal()">Guardar en Catálogo</button>
+      </div>
+    </div>
+  <!-- ==========================================================================
+       MODAL DE INICIO DE SESIÓN / REGISTRO PARA SINCRONIZACIÓN AUTOMÁTICA
+       ========================================================================== -->
+  <div id="login-modal-overlay" class="modal-overlay">
+    <div class="modal-dialog" style="max-width: 460px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.3rem;">🔐</span>
+          <h3 id="login-modal-title" style="font-size: 1.15rem;">Sincronización Cloudflare D1</h3>
+        </div>
+        <button class="icon-btn" onclick="closeLoginModal()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+          Inicia sesión para activar la <strong>sincronización automática continua</strong> con tu base de datos de Cloudflare. Si es tu primera vez, tu cuenta se registrará automáticamente.
+        </p>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="modal-auth-email">Correo Electrónico</label>
+          <input type="email" id="modal-auth-email" class="form-control" placeholder="tu-correo@ejemplo.com">
+        </div>
+        <div class="form-group" style="margin-bottom: 1.25rem;">
+          <label for="modal-auth-password">Contraseña</label>
+          <input type="password" id="modal-auth-password" class="form-control" placeholder="••••••••">
+        </div>
+        <div id="modal-auth-error-msg" style="color: var(--color-danger); font-size: 0.85rem; margin-bottom: 12px; display: none;"></div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button class="btn btn-primary" id="modal-btn-login" onclick="loginFromModal()">Iniciar Sesión y Sincronizar</button>
+          <button class="btn btn-outline btn-sm" onclick="registerFromModal()">Crear Cuenta Nueva</button>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: space-between;">
+        <span style="font-size: 0.78rem; color: var(--text-dim);">Datos encriptados en Cloudflare Edge</span>
+        <button class="btn btn-secondary btn-sm" onclick="closeLoginModal()">Continuar en local</button>
       </div>
     </div>
   </div>
@@ -4375,6 +4412,25 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       }
     }
 
+    function openLoginModal() {
+      const overlay = document.getElementById('login-modal-overlay');
+      if (overlay) overlay.classList.add('active');
+    }
+
+    function closeLoginModal() {
+      const overlay = document.getElementById('login-modal-overlay');
+      if (overlay) overlay.classList.remove('active');
+    }
+
+    function handleDbPillClick() {
+      const token = getAuthToken();
+      if (!token) {
+        openLoginModal();
+      } else {
+        switchView('view-cloud');
+      }
+    }
+
     function updateAuthStatusUI() {
       const token = getAuthToken();
       const user = getAuthUser();
@@ -4382,16 +4438,114 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       const loggedInPanel = document.getElementById('cloud-logged-in-panel');
       const statusPillText = document.getElementById('db-status-text');
       const userDisplay = document.getElementById('cloud-user-email-display');
+      const pillDot = document.getElementById('db-status-dot');
 
       if (token && user) {
         if (loggedOutPanel) loggedOutPanel.style.display = 'none';
         if (loggedInPanel) loggedInPanel.style.display = 'block';
         if (userDisplay) userDisplay.textContent = user.email || 'Usuario conectado';
-        if (statusPillText) statusPillText.textContent = 'D1 Cloud';
+        if (statusPillText) statusPillText.textContent = '☁️ Sincronizado';
+        if (pillDot) {
+          pillDot.style.backgroundColor = 'var(--color-success)';
+          pillDot.style.boxShadow = '0 0 8px var(--color-success)';
+        }
       } else {
         if (loggedOutPanel) loggedOutPanel.style.display = 'block';
         if (loggedInPanel) loggedInPanel.style.display = 'none';
-        if (statusPillText) statusPillText.textContent = 'Local';
+        if (statusPillText) statusPillText.textContent = '🔐 Iniciar Sesión';
+        if (pillDot) {
+          pillDot.style.backgroundColor = 'var(--brand-purple)';
+          pillDot.style.boxShadow = '0 0 8px var(--brand-purple)';
+        }
+      }
+    }
+
+    async function loginFromModal() {
+      const email = document.getElementById('modal-auth-email').value.trim();
+      const password = document.getElementById('modal-auth-password').value;
+      const errorEl = document.getElementById('modal-auth-error-msg');
+      const btn = document.getElementById('modal-btn-login');
+
+      if (!email || !password) {
+        if (errorEl) {
+          errorEl.textContent = 'Por favor ingresa correo y contraseña.';
+          errorEl.style.display = 'block';
+        }
+        return;
+      }
+
+      if (errorEl) errorEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Conectando con Cloudflare...';
+
+      try {
+        const resp = await fetch('./api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await resp.json();
+        if (!resp.ok || !data.token) {
+          throw new Error(data.error || 'Credenciales inválidas');
+        }
+
+        localStorage.setItem(STORAGE_KEY_AUTH_TOKEN, data.token);
+        localStorage.setItem(STORAGE_KEY_AUTH_USER, JSON.stringify(data.user));
+        updateAuthStatusUI();
+        closeLoginModal();
+        showToast('✓ Sincronización automática activada');
+
+        await syncDataWithCloud(true);
+      } catch (err) {
+        if (errorEl) {
+          errorEl.textContent = err.message;
+          errorEl.style.display = 'block';
+        }
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Iniciar Sesión y Sincronizar';
+      }
+    }
+
+    async function registerFromModal() {
+      const email = document.getElementById('modal-auth-email').value.trim();
+      const password = document.getElementById('modal-auth-password').value;
+      const errorEl = document.getElementById('modal-auth-error-msg');
+
+      if (!email || !password) {
+        if (errorEl) {
+          errorEl.textContent = 'Ingresa correo y contraseña para crear tu cuenta.';
+          errorEl.style.display = 'block';
+        }
+        return;
+      }
+
+      try {
+        const resp = await fetch('./api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, nombre: 'Universo Gráfico' })
+        });
+
+        const data = await resp.json();
+        if (!resp.ok || !data.token) {
+          throw new Error(data.error || 'No se pudo crear la cuenta');
+        }
+
+        localStorage.setItem(STORAGE_KEY_AUTH_TOKEN, data.token);
+        localStorage.setItem(STORAGE_KEY_AUTH_USER, JSON.stringify(data.user));
+        updateAuthStatusUI();
+        closeLoginModal();
+        showToast('✓ Cuenta creada y sincronización activada');
+        await syncDataWithCloud(true);
+      } catch (err) {
+        if (errorEl) {
+          errorEl.textContent = err.message;
+          errorEl.style.display = 'block';
+        }
+        showToast(err.message, 'error');
       }
     }
 
@@ -4653,9 +4807,11 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       registerPwa();
       updateAuthStatusUI();
 
-      // Sincronización automática si hay sesión activa
+      // Sincronización automática si hay sesión activa, o mostrar login inicial
       if (getAuthToken()) {
         syncDataWithCloud(false);
+      } else {
+        setTimeout(openLoginModal, 350);
       }
 
       // Sincronizar periódicamente cada 60s si hay conexión
