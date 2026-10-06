@@ -1,0 +1,13 @@
+name = "cotizador-universo-grafico"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "."
+
+# Configuración de base de datos Cloudflare D1
+[[d1_databases]]
+binding = "DB"
+database_name = "ug-cotizador-db"
+database_id = "TU_DATABASE_ID_AQUI" # Reemplazar con el ID que te da Cloudflare tras crear la BD
+migrations_dir = "./"
+
+[vars]
+JWT_SECRET = "ug_secret_jwt_key_universo_grafico_2026"

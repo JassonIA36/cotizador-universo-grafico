@@ -1,0 +1,4674 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Universo Gráfico – Cotizador & Cuentas de Cobro</title>
+  <meta name="description" content="Cotizador profesional y Cuentas de Cobro para diseño gráfico y desarrollo web - Universo Gráfico">
+  <meta name="theme-color" content="#070A12">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       VARIABLES DE DISEÑO Y TEMAS (UNIVERSO GRÁFICO)
+       ========================================================================== */
+    :root {
+      --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-heading: 'Outfit', sans-serif;
+
+      /* Paleta Oscura (Predeterminada Universo Gráfico) */
+      --bg-body: #070A12;
+      --bg-surface: #0E121E;
+      --bg-card: #141829;
+      --bg-card-hover: #1A1F35;
+      --bg-input: #090C16;
+      --border-color: #212842;
+      --border-focus: #8B5CF6;
+
+      --text-main: #F4F4F8;
+      --text-muted: #9DA3BA;
+      --text-dim: #646C8A;
+
+      --brand-pink: #EC4899;
+      --brand-purple: #8B5CF6;
+      --brand-gradient: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%);
+      --brand-gradient-hover: linear-gradient(135deg, #F43F5E 0%, #7C3AED 100%);
+      --brand-glow: 0 0 25px rgba(139, 92, 246, 0.25);
+
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-danger: #EF4444;
+      --color-info: #3B82F6;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
+      --shadow-lg: 0 16px 40px rgba(0,0,0,0.5);
+
+      --sidebar-width: 270px;
+      --header-height: 64px;
+      --bottom-bar-height: 68px;
+    }
+
+    [data-theme="light"] {
+      --bg-body: #F4F6FB;
+      --bg-surface: #FFFFFF;
+      --bg-card: #FFFFFF;
+      --bg-card-hover: #F8FAFC;
+      --bg-input: #F1F4F9;
+      --border-color: #E2E8F0;
+      --border-focus: #7C3AED;
+
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --text-dim: #94A3B8;
+
+      --brand-pink: #DB2777;
+      --brand-purple: #7C3AED;
+      --brand-gradient: linear-gradient(135deg, #DB2777 0%, #7C3AED 100%);
+      --brand-gradient-hover: linear-gradient(135deg, #BE185D 0%, #6D28D9 100%);
+      --brand-glow: 0 0 20px rgba(124, 58, 237, 0.15);
+
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+      --shadow-lg: 0 16px 40px rgba(0,0,0,0.12);
+    }
+
+    /* ==========================================================================
+       RESET Y BASE
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.5;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-heading);
+      color: var(--text-main);
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    a {
+      color: var(--brand-purple);
+      text-decoration: none;
+    }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: 15px;
+      color: inherit;
+    }
+
+    /* Inputs deben ser 16px en móvil para evitar zoom automático de iOS */
+    @media (max-width: 768px) {
+      input, select, textarea {
+        font-size: 16px !important;
+      }
+    }
+
+    /* Scrollbar estilizada */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-surface);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: var(--radius-full);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--brand-purple);
+    }
+
+    /* ==========================================================================
+       LAYOUT PRINCIPAL
+       ========================================================================== */
+    #app-container {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Sidebar de navegación */
+    .app-sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--bg-surface);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      flex-shrink: 0;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .sidebar-brand {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      object-fit: contain;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 3px;
+    }
+
+    .sidebar-brand-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: var(--brand-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-brand-sub {
+      font-size: 0.72rem;
+      font-family: var(--font-main);
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      -webkit-text-fill-color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .nav-group-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      padding: 0 0.75rem 0.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-items-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.92rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .nav-link:hover {
+      background-color: var(--bg-card);
+      color: var(--text-main);
+    }
+
+    .nav-link.active {
+      background: var(--brand-gradient);
+      color: #FFFFFF;
+      font-weight: 600;
+      box-shadow: var(--brand-glow);
+    }
+
+    .nav-link svg {
+      width: 19px;
+      height: 19px;
+      flex-shrink: 0;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.15);
+      color: inherit;
+    }
+
+    .sidebar-footer {
+      padding: 1rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .sidebar-system-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    /* Área Principal de Contenido */
+    .app-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 100vh;
+      background-color: var(--bg-body);
+    }
+
+    /* Top Bar */
+    .app-topbar {
+      height: var(--header-height);
+      background-color: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .menu-toggle-btn {
+      display: none;
+      background: none;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 8px;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+
+    .topbar-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .topbar-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-left: 8px;
+      display: inline-block;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Botones y Badges en Topbar */
+    .icon-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .icon-btn:hover {
+      color: var(--text-main);
+      border-color: var(--border-focus);
+      background: var(--bg-card-hover);
+    }
+
+    .install-pwa-btn {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      padding: 0.45rem 0.9rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-full);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .install-pwa-btn:hover {
+      border-color: var(--brand-purple);
+      color: var(--brand-purple);
+    }
+
+    .db-status-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 11px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--color-success);
+      cursor: pointer;
+    }
+
+    .db-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: var(--color-success);
+      box-shadow: 0 0 8px var(--color-success);
+    }
+
+    /* Contenedor de Vistas */
+    .views-wrapper {
+      flex: 1;
+      padding: 1.75rem 2rem 5rem;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .view-section {
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==========================================================================
+       ESTILOS GENERALES DE UI (CARDS, BOTONES, INPUTS)
+       ========================================================================== */
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-top: -0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0.65rem 1.25rem;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 0.92rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      min-height: 44px;
+      text-align: center;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--brand-gradient);
+      color: #FFFFFF;
+      box-shadow: var(--brand-glow);
+    }
+
+    .btn-primary:hover {
+      background: var(--brand-gradient-hover);
+      box-shadow: 0 0 25px rgba(236, 72, 153, 0.35);
+    }
+
+    .btn-secondary {
+      background: var(--bg-surface);
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--brand-purple);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--brand-purple);
+      color: var(--brand-purple);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #F87171;
+    }
+
+    .btn-danger:hover {
+      background: var(--color-danger);
+      color: #FFFFFF;
+    }
+
+    .btn-success {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: var(--color-success);
+    }
+
+    .btn-success:hover {
+      background: var(--color-success);
+      color: #FFFFFF;
+    }
+
+    .btn-sm {
+      padding: 0.4rem 0.85rem;
+      font-size: 0.82rem;
+      min-height: 36px;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-whatsapp {
+      background: #25D366;
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+
+    .btn-whatsapp:hover {
+      background: #1EBE5D;
+    }
+
+    /* Formularios */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .form-control {
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.7rem 0.95rem;
+      color: var(--text-main);
+      width: 100%;
+      transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+    }
+
+    textarea.form-control {
+      min-height: 85px;
+      resize: vertical;
+    }
+
+    .input-addon-group {
+      display: flex;
+      align-items: center;
+    }
+
+    .input-addon-group .form-control {
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    }
+
+    .input-addon {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-right: none;
+      padding: 0.7rem 0.9rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-radius: var(--radius-md) 0 0 var(--radius-md);
+    }
+
+    .checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      user-select: none;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--brand-purple);
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       TABLA DE ITEMS Y CALCULOS
+       ========================================================================== */
+    .items-table-wrapper {
+      overflow-x: auto;
+      margin: 1.25rem 0;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background: var(--bg-input);
+    }
+
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 650px;
+    }
+
+    .items-table th {
+      background: var(--bg-surface);
+      padding: 0.8rem 1rem;
+      text-align: left;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .items-table td {
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+
+    .items-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .items-table td input {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 0.75rem;
+      color: var(--text-main);
+      width: 100%;
+    }
+
+    .items-table td input:focus {
+      outline: none;
+      border-color: var(--brand-purple);
+    }
+
+    .totals-summary-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      max-width: 420px;
+      margin-left: auto;
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+    }
+
+    .total-row.highlight {
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 1.25rem;
+      padding-top: 0.75rem;
+      border-top: 2px dashed var(--border-color);
+      margin-top: 0.25rem;
+    }
+
+    .total-row.highlight .amount {
+      background: var(--brand-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* ==========================================================================
+       DASHBOARDS Y ESTADISTICAS
+       ========================================================================== */
+    .dashboard-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--brand-gradient);
+    }
+
+    .metric-title {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .metric-value {
+      font-size: 1.9rem;
+      font-family: var(--font-heading);
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .metric-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    /* Listas de Historial y Dashboard */
+    .history-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .history-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      transition: all 0.2s ease;
+      min-width: 0;
+    }
+
+    .history-card:hover {
+      border-color: var(--brand-purple);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .history-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .doc-badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--brand-purple);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .status-badge.paid {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--color-success);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-badge.pending {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--color-warning);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .history-client-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      word-break: break-word;
+      min-width: 0;
+    }
+
+    .history-concept-text {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .history-card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0.5rem 0;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .history-date {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .history-amount {
+      font-size: 1.15rem;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .history-actions-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .history-actions-bar .btn {
+      flex: 1 1 auto;
+      font-size: 0.8rem;
+      padding: 0.45rem 0.65rem;
+      min-height: 38px;
+    }
+
+    /* Lista compacta de cobros pendientes (Dashboard) */
+    .pending-row-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 0.85rem 1rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 0;
+    }
+
+    .pending-row-item:hover {
+      border-color: var(--brand-purple);
+      background: var(--bg-card-hover);
+    }
+
+    .pending-row-info {
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .pending-row-client {
+      font-weight: 600;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      word-break: break-word;
+    }
+
+    .pending-row-amount {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--color-warning);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* ==========================================================================
+       HOJA DE DOCUMENTO REAL (PREVIEW Y VER PDF)
+       ESTRUCTURA EXACTA CON FONDO BLANCO PARA IMPRIMIR
+       ========================================================================== */
+    .doc-sheet-container {
+      background: #FFFFFF !important;
+      color: #111827 !important;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2.5rem 3rem;
+      border-radius: var(--radius-md);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      box-sizing: border-box;
+    }
+
+    .doc-sheet-container * {
+      box-sizing: border-box;
+    }
+
+    .doc-header-block {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.25rem;
+      border-bottom: 3px solid #8B5CF6;
+      padding-bottom: 1.25rem;
+      gap: 15px;
+    }
+
+    .doc-logo-box {
+      max-width: 200px;
+    }
+
+    .doc-logo-img {
+      max-height: 65px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .doc-brand-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #0F172A;
+      line-height: 1.1;
+    }
+
+    .doc-brand-info {
+      font-size: 11px;
+      color: #475569;
+      line-height: 1.4;
+      margin-top: 4px;
+    }
+
+    .doc-meta-box {
+      text-align: right;
+    }
+
+    .doc-title-main {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #8B5CF6;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
+
+    .doc-number-badge {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #0F172A;
+      margin-top: 2px;
+    }
+
+    .doc-meta-item {
+      font-size: 11px;
+      color: #64748B;
+      margin-top: 3px;
+    }
+
+    /* Caja de Cliente en Documento */
+    .doc-client-card {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .doc-client-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #64748B;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+
+    .doc-client-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0F172A;
+      word-break: break-word;
+    }
+
+    .doc-client-details {
+      font-size: 11px;
+      color: #475569;
+      margin-top: 3px;
+    }
+
+    /* Tablas en Documento */
+    .doc-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5rem;
+      page-break-inside: avoid;
+    }
+
+    .doc-table th {
+      background-color: #8B5CF6 !important;
+      color: #FFFFFF !important;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    .doc-table th:last-child, .doc-table td:last-child {
+      text-align: right;
+    }
+
+    .doc-table td {
+      padding: 9px 10px;
+      border-bottom: 1px solid #E2E8F0;
+      color: #1E293B;
+      font-size: 12px;
+    }
+
+    .doc-table tr:nth-child(even) td {
+      background-color: #F8FAFC;
+    }
+
+    /* Totales en Documento */
+    .doc-totals-box {
+      width: 280px;
+      margin-left: auto;
+      margin-bottom: 1.5rem;
+      border-collapse: collapse;
+      page-break-inside: avoid;
+    }
+
+    .doc-totals-box td {
+      padding: 4px 8px;
+      font-size: 12px;
+      color: #475569;
+    }
+
+    .doc-totals-box tr.grand-total td {
+      border-top: 2px solid #8B5CF6;
+      font-size: 14px;
+      font-weight: 800;
+      color: #0F172A;
+      padding-top: 8px;
+    }
+
+    /* Caja de Notas y Condiciones */
+    .doc-notes-card {
+      background: #F1F5F9;
+      border-left: 4px solid #8B5CF6;
+      padding: 0.8rem 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+      page-break-inside: avoid;
+    }
+
+    .doc-notes-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #475569;
+      margin-bottom: 4px;
+    }
+
+    .doc-notes-text {
+      font-size: 11px;
+      color: #334155;
+      white-space: pre-wrap;
+    }
+
+    /* Estilo Modelo Cuenta de Cobro */
+    .doc-cobro-date-line {
+      font-weight: 700;
+      font-size: 12px;
+      color: #1E293B;
+      margin-bottom: 1.25rem;
+    }
+
+    .doc-cobro-center-title {
+      text-align: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #0F172A;
+      margin: 1.25rem 0;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .doc-cobro-statement {
+      font-size: 13px;
+      color: #1E293B;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .doc-cobro-amount-in-words {
+      background: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      padding: 0.8rem 1rem;
+      font-weight: 700;
+      font-size: 13px;
+      color: #0F172A;
+      margin: 1rem 0;
+      text-align: center;
+    }
+
+    .doc-cobro-concepts-list {
+      margin: 0.75rem 0 1.25rem 1.5rem;
+      color: #1E293B;
+    }
+
+    .doc-cobro-concepts-list li {
+      margin-bottom: 5px;
+    }
+
+    .doc-cobro-legal-box {
+      font-size: 9.5px;
+      color: #64748B;
+      line-height: 1.4;
+      border-top: 1px solid #E2E8F0;
+      padding-top: 0.8rem;
+      margin-top: 1.5rem;
+      page-break-inside: avoid;
+    }
+
+    .doc-cobro-legal-box p {
+      margin-bottom: 4px;
+    }
+
+    /* Bloque de Firma */
+    .doc-signature-block {
+      margin-top: 2rem;
+      display: inline-block;
+      min-width: 250px;
+      page-break-inside: avoid;
+    }
+
+    .doc-signature-img {
+      max-height: 55px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .doc-signature-line {
+      border-top: 1px solid #0F172A;
+      padding-top: 5px;
+      font-weight: 700;
+      font-size: 12px;
+      color: #0F172A;
+    }
+
+    .doc-signature-sub {
+      font-size: 11px;
+      color: #475569;
+    }
+
+    /* ==========================================================================
+       MODAL DE VISTA PREVIA Y ACCIONES RAPIDAS
+       ========================================================================== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 200;
+      backdrop-filter: blur(6px);
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-dialog {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      max-width: 900px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Modal PDF específico */
+    .pdf-modal-sheet-wrap {
+      background: #334155;
+      padding: 1.5rem;
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    /* ==========================================================================
+       BARRA FIJA INFERIOR PARA MÓVILES (STICKY BAR)
+       ========================================================================== */
+    .mobile-sticky-bar {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-bar-height);
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-color);
+      padding: 0.5rem 1rem;
+      z-index: 85;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .mobile-sticky-bar .btn {
+      flex: 1;
+      padding: 0.5rem 0.6rem;
+      font-size: 0.85rem;
+      min-height: 42px;
+    }
+
+    /* Bottom Sheet de "Más Acciones" */
+    .action-sheet-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 150;
+    }
+
+    .action-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-color);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      padding: 1.5rem 1.25rem calc(var(--bottom-bar-height) + 1rem);
+      z-index: 160;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .action-sheet.active {
+      transform: translateY(0);
+    }
+
+    .action-sheet-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      bottom: 85px;
+      right: 20px;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .toast-msg {
+      background: var(--bg-card);
+      border: 1px solid var(--border-focus);
+      color: var(--text-main);
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      font-size: 0.9rem;
+      font-weight: 500;
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: toastIn 0.3s ease-out;
+    }
+
+    @keyframes toastIn {
+      from { transform: translateX(50px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* ==========================================================================
+       MEDIA QUERIES (RESPONSIVE)
+       ========================================================================== */
+    @media (max-width: 900px) {
+      .app-sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        transform: translateX(-100%);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .app-sidebar.open {
+        transform: translateX(0);
+      }
+
+      .sidebar-backdrop {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.6);
+        z-index: 95;
+      }
+
+      .sidebar-backdrop.active {
+        display: block;
+      }
+
+      .menu-toggle-btn {
+        display: flex;
+      }
+
+      .views-wrapper {
+        padding: 1rem 1rem calc(var(--bottom-bar-height) + 1.5rem);
+      }
+
+      .mobile-sticky-bar {
+        display: flex;
+      }
+
+      .doc-sheet-container {
+        padding: 1.5rem 1.25rem;
+      }
+
+      .doc-header-block {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .doc-meta-box {
+        text-align: left;
+      }
+    }
+
+    @media (min-width: 901px) {
+      .sidebar-backdrop {
+        display: none !important;
+      }
+    }
+
+    /* ==========================================================================
+       REGLAS ESTRICTAS DE IMPRESIÓN (@media print)
+       ========================================================================== */
+    @media print {
+      body, html {
+        background: #FFFFFF !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+
+      .app-sidebar,
+      .app-topbar,
+      .mobile-sticky-bar,
+      .action-sheet-overlay,
+      .action-sheet,
+      .toast-container,
+      .views-wrapper,
+      .modal-header,
+      .modal-footer,
+      .no-print {
+        display: none !important;
+      }
+
+      .modal-overlay {
+        position: static !important;
+        display: block !important;
+        background: transparent !important;
+        padding: 0 !important;
+      }
+
+      .modal-dialog {
+        box-shadow: none !important;
+        border: none !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+      }
+
+      .modal-body {
+        padding: 0 !important;
+        overflow: visible !important;
+      }
+
+      .pdf-modal-sheet-wrap {
+        background: transparent !important;
+        padding: 0 !important;
+      }
+
+      #print-staging-area {
+        display: block !important;
+        position: static !important;
+      }
+
+      .doc-sheet-container {
+        box-shadow: none !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+        border-radius: 0 !important;
+      }
+
+      @page {
+        size: letter;
+        margin: 1.2cm;
+      }
+    }
+
+    /* Área oculta de staging para impresión */
+    #print-staging-area {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Contenedor Principal de la Aplicación -->
+  <div id="app-container">
+
+    <!-- Fondo oscuro cuando se abre el sidebar en móvil -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop" onclick="closeSidebar()"></div>
+
+    <!-- Menú Lateral Fijo (Sidebar) -->
+    <aside class="app-sidebar" id="app-sidebar">
+      <div class="sidebar-brand">
+        <img src="./assets/logo.png" alt="Logo" class="sidebar-logo">
+        <div class="sidebar-brand-title">
+          Universo Gráfico
+          <span class="sidebar-brand-sub">Cotizador & Cobros</span>
+        </div>
+      </div>
+
+      <div class="sidebar-content">
+        <!-- Grupo 1: Cotizaciones -->
+        <div class="nav-group">
+          <div class="nav-group-title">
+            <span>Cotizaciones</span>
+            <span id="badge-count-cot" class="nav-badge">0</span>
+          </div>
+          <ul class="nav-items-list">
+            <li>
+              <div class="nav-link active" onclick="switchView('view-cot-dashboard')">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span>Inicio Cotizaciones</span>
+              </div>
+            </li>
+            <li>
+              <div class="nav-link" onclick="switchView('view-cot-form')">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span>Cotización actual</span>
+              </div>
+            </li>
+            <li>
+              <div class="nav-link" onclick="newCotizacionAction()">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                <span>Nueva cotización</span>
+              </div>
+            </li>
+            <li>
+              <div class="nav-link" onclick="switchView('view-cot-history')">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                <span>Historial de cotizaciones</span>
+              </div>
+            </li>
+            <li>
+              <div class="nav-link" onclick="switchView('view-catalog')">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                <span>Catálogo de servicios</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Grupo 2: Cuentas de Cobro -->
+        <div class="nav-group">
+          <div class="nav-group-title">
+            <span>Cuentas de Cobro</span>
+            <span id="badge-count-cc" class="nav-badge">0</span>
+          </div>
+          <ul class="nav-items-list">
+            <li>
+              <div class="nav-link" onclick="switchView('view-cc-dashboard')">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                <span>Inicio Cuentas de cobro</span>
+              </div>
+            </li>
+            <li>
+              <div class="nav-link" onclick="switchView('view-cc-form')">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span>Cuenta de cobro actual</span>
+              </div>
+            </li>
+            <li>
+              <div class="nav-link" onclick="newCobroAction()">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>Nueva cuenta de cobro</span>
+              </div>
+            </li>
+            <li>
+              <div class="nav-link" onclick="switchView('view-cc-history')">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>Historial de cobros</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Grupo 3: Preferencias y Datos -->
+        <div class="nav-group">
+          <div class="nav-group-title">
+            <span>Configuración</span>
+          </div>
+          <ul class="nav-items-list">
+            <li>
+              <div class="nav-link" onclick="switchView('view-settings')">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span>Mis datos & Empresa</span>
+              </div>
+            </li>
+            <li>
+              <div class="nav-link" onclick="switchView('view-backup')">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                <span>Respaldo (Exportar/Importar)</span>
+              </div>
+            </li>
+            <li>
+              <div class="nav-link" onclick="switchView('view-cloud')">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+                <span>Base de Datos / Nube</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-system-info">
+          <span>PWA v1.1.0</span>
+          <span>Offline Ready</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Área Principal de la Aplicación -->
+    <main class="app-main">
+      <!-- Barra Superior (Topbar) -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="menu-toggle-btn" onclick="toggleSidebar()" aria-label="Abrir menú">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <div style="min-width: 0;">
+            <h1 class="topbar-title" id="page-title">Universo Gráfico</h1>
+            <span class="topbar-subtitle" id="page-subtitle">Panel de cotizaciones</span>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <!-- Botón de instalar PWA (solo cuando beforeinstallprompt se activa) -->
+          <button id="pwa-install-btn" class="install-pwa-btn" onclick="installPwaAction()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span>Instalar App</span>
+          </button>
+
+          <!-- Indicador de base de datos / Nube -->
+          <div class="db-status-pill" onclick="switchView('view-cloud')" title="Almacenamiento Local Activo">
+            <span class="db-status-dot"></span>
+            <span id="db-status-text">Local</span>
+          </div>
+
+          <!-- Selector de Modo Oscuro / Claro -->
+          <button class="icon-btn" onclick="toggleTheme()" aria-label="Cambiar tema de color" id="theme-btn">
+            <svg id="theme-icon-sun" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            <svg id="theme-icon-moon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Contenedor Dinámico de Vistas -->
+      <div class="views-wrapper">
+
+        <!-- ====================================================================
+             1. DASHBOARD DE COTIZACIONES
+             ==================================================================== -->
+        <section id="view-cot-dashboard" class="view-section active">
+          <div class="dashboard-metrics-grid">
+            <div class="metric-card">
+              <div class="metric-title">Cotizaciones Guardadas</div>
+              <div class="metric-value" id="dash-cot-count">0</div>
+              <div class="metric-subtitle">Propuestas comerciales creadas</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-title">Valor Total Cotizado</div>
+              <div class="metric-value" id="dash-cot-total">$0</div>
+              <div class="metric-subtitle">Monto acumulado en propuestas</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg width="22" height="22" fill="none" stroke="var(--brand-purple)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>Últimas 5 Cotizaciones</span>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="switchView('view-cot-form')">+ Crear Cotización</button>
+            </div>
+
+            <div id="dash-cot-recent-list" class="history-grid">
+              <!-- Renderizado dinámico -->
+            </div>
+
+            <div style="text-align: center; margin-top: 1.5rem;">
+              <button class="btn btn-secondary btn-sm" onclick="switchView('view-cot-history')">Ver historial completo de cotizaciones →</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             2. FORMULARIO DE COTIZACIÓN ACTUAL
+             ==================================================================== -->
+        <section id="view-cot-form" class="view-section">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <span class="doc-badge" id="cot-form-badge">Nueva cotización</span>
+                <h2 class="card-title" style="margin-top: 5px;">Detalles de la Cotización</h2>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn btn-secondary btn-sm" onclick="previewDocModal('cotizacion')">
+                  <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  <span>Ver PDF</span>
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="saveCotizacionAction()">
+                  <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                  <span>Guardar Cotización</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Campos del Cliente y Cotización -->
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="cot-number">Número Consecutivo</label>
+                <input type="text" id="cot-number" class="form-control" placeholder="COT-0001">
+              </div>
+
+              <div class="form-group">
+                <label for="cot-date">Fecha de Emisión</label>
+                <input type="date" id="cot-date" class="form-control">
+              </div>
+
+              <div class="form-group">
+                <label for="cot-validity">Vigencia (Días)</label>
+                <input type="number" id="cot-validity" class="form-control" value="15" min="1" max="180">
+              </div>
+
+              <div class="form-group full-width">
+                <label for="cot-client-name">Nombre del Cliente / Empresa</label>
+                <input type="text" id="cot-client-name" class="form-control" placeholder="Ej: Empresa de Tecnología SAS o Nombre del Cliente">
+              </div>
+
+              <div class="form-group">
+                <label for="cot-client-phone">WhatsApp / Teléfono del Cliente</label>
+                <input type="text" id="cot-client-phone" class="form-control" placeholder="Ej: 3001234567">
+              </div>
+
+              <div class="form-group">
+                <label for="cot-client-desc">Descripción o Asunto del Proyecto</label>
+                <input type="text" id="cot-client-desc" class="form-control" placeholder="Ej: Rediseño de marca y desarrollo web e-commerce">
+              </div>
+            </div>
+
+            <!-- Selector de Catálogo Rápido -->
+            <div style="margin: 1.5rem 0 0.75rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+              <h3 style="font-size: 1.05rem;">Servicios / Productos Cotizados</h3>
+              <div style="display: flex; gap: 8px;">
+                <select id="cot-catalog-select" class="form-control" style="max-width: 280px; padding: 0.45rem 0.75rem; font-size: 0.85rem;" onchange="addCatalogItemToCot(this.value)">
+                  <option value="">+ Agregar desde Catálogo...</option>
+                </select>
+                <button class="btn btn-secondary btn-sm" onclick="addBlankCotItem()">+ Fila libre</button>
+              </div>
+            </div>
+
+            <!-- Tabla de Ítems -->
+            <div class="items-table-wrapper">
+              <table class="items-table">
+                <thead>
+                  <tr>
+                    <th style="width: 50%;">Descripción del Servicio</th>
+                    <th style="width: 15%; text-align: center;">Cantidad</th>
+                    <th style="width: 20%; text-align: right;">Precio Unitario ($)</th>
+                    <th style="width: 15%; text-align: right;">Total ($)</th>
+                    <th style="width: 45px; text-align: center;"></th>
+                  </tr>
+                </thead>
+                <tbody id="cot-items-tbody">
+                  <!-- Filas dinámicas -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Bloque de Totales y Ajustes -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+              <div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="cot-include-notes" checked onchange="calculateCotTotals()">
+                    <span>Incluir Garantías, notas y condiciones</span>
+                  </label>
+                </div>
+                <div class="form-group">
+                  <textarea id="cot-notes" class="form-control" rows="3" placeholder="Condiciones de pago, tiempo de entrega, rondas de cambios..."></textarea>
+                </div>
+                <div class="form-group" style="margin-top: 10px;">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="cot-include-logo" checked>
+                    <span>Incluir logotipo de Universo Gráfico en documento</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="totals-summary-card">
+                <div class="total-row">
+                  <span>Subtotal:</span>
+                  <span id="cot-summary-subtotal" class="amount">$0</span>
+                </div>
+                <div class="total-row">
+                  <span>Descuento (%):</span>
+                  <input type="number" id="cot-discount-pct" class="form-control" value="0" min="0" max="100" style="width: 80px; text-align: right; padding: 3px 6px;" oninput="calculateCotTotals()">
+                </div>
+                <div class="total-row">
+                  <span>Otros Cargos / Ajustes ($):</span>
+                  <input type="number" id="cot-extra-charges" class="form-control" value="0" style="width: 110px; text-align: right; padding: 3px 6px;" oninput="calculateCotTotals()">
+                </div>
+                <div class="total-row">
+                  <span>Impuesto (IVA):</span>
+                  <select id="cot-tax-rate" class="form-control" style="width: 110px; padding: 3px 6px;" onchange="calculateCotTotals()">
+                    <option value="0">Sin IVA</option>
+                    <option value="19">IVA 19%</option>
+                  </select>
+                </div>
+                <div class="total-row highlight">
+                  <span>TOTAL COTIZACIÓN:</span>
+                  <span id="cot-summary-total" class="amount">$0</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botones de Acción en el Formulario -->
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem; flex-wrap: wrap;">
+              <button class="btn btn-outline" onclick="newCotizacionAction()">Limpiar / Nueva</button>
+              <button class="btn btn-whatsapp" onclick="shareWhatsAppAction('cotizacion')">
+                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.149.929 3.182 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.768-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.299.144.35.49 1.198.533 1.285.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.353.101.173.45 0.743.965 1.202.664.591 1.224.774 1.397.86.173.086.274.072.376-.043.101-.116.433-.506.549-.679.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.043.073.043.419-.101.824z"/></svg>
+                <span>WhatsApp</span>
+              </button>
+              <button class="btn btn-secondary" onclick="previewDocModal('cotizacion')">Ver PDF / Imprimir</button>
+              <button class="btn btn-primary" onclick="saveCotizacionAction()">Guardar Cotización</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             3. HISTORIAL DE COTIZACIONES
+             ==================================================================== -->
+        <section id="view-cot-history" class="view-section">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Historial de Cotizaciones</h2>
+                <p class="card-desc">Gestiona, descarga en PDF y duplica tus cotizaciones.</p>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <input type="text" id="cot-search-input" class="form-control" placeholder="Buscar por cliente o N°..." style="max-width: 220px; padding: 0.5rem 0.85rem;" oninput="renderCotHistory()">
+                <select id="cot-filter-month" class="form-control" style="max-width: 160px; padding: 0.5rem 0.85rem;" onchange="renderCotHistory()">
+                  <option value="">Todos los meses</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="cot-history-list" class="history-grid">
+              <!-- Renderizado de tarjetas de cotización -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             4. CATÁLOGO DE SERVICIOS
+             ==================================================================== -->
+        <section id="view-catalog" class="view-section">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Catálogo de Servicios y Productos</h2>
+                <p class="card-desc">Configura los servicios de Universo Gráfico para insertarlos en tus cotizaciones en un clic.</p>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn btn-outline btn-sm" onclick="resetDefaultCatalog()">Restaurar Catálogo Inicial</button>
+                <button class="btn btn-primary btn-sm" onclick="openNewCatalogModal()">+ Nuevo Servicio</button>
+              </div>
+            </div>
+
+            <div id="catalog-categories-container">
+              <!-- Renderizado categorizado de productos -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             5. DASHBOARD DE CUENTAS DE COBRO
+             ==================================================================== -->
+        <section id="view-cc-dashboard" class="view-section">
+          <div class="dashboard-metrics-grid">
+            <div class="metric-card">
+              <div class="metric-title" style="color: var(--color-warning);">Por Cobrar (Pendiente)</div>
+              <div class="metric-value" id="dash-cc-pending-total" style="color: var(--color-warning);">$0</div>
+              <div class="metric-subtitle" id="dash-cc-pending-count">0 cuentas pendientes</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-title" style="color: var(--color-success);">Total Cobrado (Pagadas)</div>
+              <div class="metric-value" id="dash-cc-paid-total" style="color: var(--color-success);">$0</div>
+              <div class="metric-subtitle" id="dash-cc-paid-count">0 cuentas pagadas</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg width="22" height="22" fill="none" stroke="var(--color-warning)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>Últimas Cuentas de Cobro Pendientes</span>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="switchView('view-cc-form')">+ Crear Cuenta de Cobro</button>
+            </div>
+
+            <div id="dash-cc-pending-list">
+              <!-- Renderizado compacto de cuentas pendientes -->
+            </div>
+
+            <div style="text-align: center; margin-top: 1.5rem;">
+              <button class="btn btn-secondary btn-sm" onclick="switchView('view-cc-history')">Ver historial completo de cuentas de cobro →</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             6. FORMULARIO DE CUENTA DE COBRO ACTUAL
+             ==================================================================== -->
+        <section id="view-cc-form" class="view-section">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <span class="doc-badge" id="cc-form-badge">Nueva cuenta de cobro</span>
+                <h2 class="card-title" style="margin-top: 5px;">Detalles de la Cuenta de Cobro</h2>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn btn-secondary btn-sm" onclick="previewDocModal('cuenta_cobro')">
+                  <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  <span>Ver PDF</span>
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="saveCobroAction()">
+                  <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                  <span>Guardar Cuenta</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Campos Básicos de Cuenta de Cobro -->
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="cc-city">Ciudad de Expedición</label>
+                <input type="text" id="cc-city" class="form-control" value="Bogotá D.C.">
+              </div>
+
+              <div class="form-group">
+                <label for="cc-date">Fecha de Expedición</label>
+                <input type="date" id="cc-date" class="form-control">
+              </div>
+
+              <div class="form-group">
+                <label for="cc-number">Número de Cuenta</label>
+                <input type="text" id="cc-number" class="form-control" placeholder="001">
+              </div>
+
+              <div class="form-group full-width">
+                <label for="cc-client-name">A Nombre de (Deudor / Cliente)</label>
+                <input type="text" id="cc-client-name" class="form-control" placeholder="Empresa o Persona que debe pagar" oninput="onCobroClientNameChange()">
+                <div id="cc-client-suggestions" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;"></div>
+              </div>
+
+              <div class="form-group">
+                <label for="cc-client-nit">NIT o C.C. del Cliente</label>
+                <input type="text" id="cc-client-nit" class="form-control" placeholder="Ej: 901.234.567-8">
+              </div>
+
+              <div class="form-group">
+                <label for="cc-status">Estado del Documento</label>
+                <select id="cc-status" class="form-control">
+                  <option value="pending">Pendiente por Cobrar</option>
+                  <option value="paid">Pagada / Cobrada</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Conceptos Cobrados (Vía Viñetas) -->
+            <div style="margin: 1.5rem 0 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+              <h3 style="font-size: 1.05rem;">Por Concepto De:</h3>
+              <button class="btn btn-secondary btn-sm" onclick="addBlankConceptoRow()">+ Agregar Concepto</button>
+            </div>
+
+            <div class="items-table-wrapper">
+              <table class="items-table">
+                <thead>
+                  <tr>
+                    <th style="width: 70%;">Descripción del Concepto / Servicio Realizado</th>
+                    <th style="width: 25%; text-align: right;">Valor ($)</th>
+                    <th style="width: 45px; text-align: center;"></th>
+                  </tr>
+                </thead>
+                <tbody id="cc-conceptos-tbody">
+                  <!-- Filas dinámicas de conceptos -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Adelantos o Abonos -->
+            <div style="margin: 1.5rem 0 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <h3 style="font-size: 1.05rem;">Adelantos o Abonos (Opcional)</h3>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Se descuentan del saldo a cobrar, pero el valor total legal no se altera.</span>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="addBlankAdelantoRow()">+ Agregar Adelanto</button>
+            </div>
+
+            <div class="items-table-wrapper">
+              <table class="items-table">
+                <thead>
+                  <tr>
+                    <th style="width: 70%;">Descripción del Adelanto / Abono</th>
+                    <th style="width: 25%; text-align: right;">Monto Abonado ($)</th>
+                    <th style="width: 45px; text-align: center;"></th>
+                  </tr>
+                </thead>
+                <tbody id="cc-adelantos-tbody">
+                  <!-- Filas dinámicas de adelantos -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Resumen y Letras -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+              <div>
+                <div class="form-group" style="margin-bottom: 10px;">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="cc-include-notes" checked onchange="calculateCobroTotals()">
+                    <span>Incluir Garantías, notas y observaciones</span>
+                  </label>
+                </div>
+                <div class="form-group">
+                  <textarea id="cc-notes" class="form-control" rows="3" placeholder="Observaciones bancarias o de entrega..."></textarea>
+                </div>
+                <div class="form-group" style="margin-top: 10px;">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="cc-include-legal" onchange="calculateCobroTotals()">
+                    <span>Incluir texto legal tributario (no supera 120 UVT, Art 383 E.T.)</span>
+                  </label>
+                </div>
+                <div class="form-group" style="margin-top: 8px;">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="cc-include-logo" checked>
+                    <span>Incluir logotipo en el encabezado</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="totals-summary-card">
+                <div class="total-row">
+                  <span>Total Conceptos ("LA SUMA DE"):</span>
+                  <span id="cc-summary-total-conceptos" class="amount" style="font-weight:700;">$0</span>
+                </div>
+                <div class="total-row" id="cc-row-adelantos-disp" style="display: none; color: #F87171;">
+                  <span>Menos Adelantos / Abonos:</span>
+                  <span id="cc-summary-total-adelantos" class="amount">-$0</span>
+                </div>
+                <div class="total-row highlight">
+                  <span>SALDO A COBRAR:</span>
+                  <span id="cc-summary-saldo" class="amount">$0</span>
+                </div>
+                <div style="font-size: 0.78rem; color: var(--text-dim); margin-top: 6px; font-style: italic; line-height: 1.3;">
+                  <strong style="color: var(--text-muted);">En letras:</strong>
+                  <span id="cc-summary-in-words">Cero pesos m/cte. ($0.oo)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botones de Acción en Cuenta de Cobro -->
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem; flex-wrap: wrap;">
+              <button class="btn btn-outline" onclick="newCobroAction()">Limpiar / Nueva</button>
+              <button class="btn btn-whatsapp" onclick="shareWhatsAppAction('cuenta_cobro')">
+                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.149.929 3.182 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.768-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.299.144.35.49 1.198.533 1.285.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.353.101.173.45 0.743.965 1.202.664.591 1.224.774 1.397.86.173.086.274.072.376-.043.101-.116.433-.506.549-.679.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.043.073.043.419-.101.824z"/></svg>
+                <span>WhatsApp</span>
+              </button>
+              <button class="btn btn-secondary" onclick="previewDocModal('cuenta_cobro')">Ver PDF / Imprimir</button>
+              <button class="btn btn-primary" onclick="saveCobroAction()">Guardar Cuenta</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             7. HISTORIAL DE CUENTAS DE COBRO
+             ==================================================================== -->
+        <section id="view-cc-history" class="view-section">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Historial de Cuentas de Cobro</h2>
+                <p class="card-desc">Monitorea estados de pago, comparte por WhatsApp o descarga en PDF.</p>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <input type="text" id="cc-search-input" class="form-control" placeholder="Buscar por cliente o N°..." style="max-width: 220px; padding: 0.5rem 0.85rem;" oninput="renderCobroHistory()">
+                <select id="cc-filter-status" class="form-control" style="max-width: 140px; padding: 0.5rem 0.85rem;" onchange="renderCobroHistory()">
+                  <option value="">Todos los estados</option>
+                  <option value="pending">Pendientes</option>
+                  <option value="paid">Pagadas</option>
+                </select>
+                <select id="cc-filter-month" class="form-control" style="max-width: 150px; padding: 0.5rem 0.85rem;" onchange="renderCobroHistory()">
+                  <option value="">Todos los meses</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="cc-history-list" class="history-grid">
+              <!-- Renderizado de tarjetas de cuentas de cobro -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             8. MIS DATOS & CONFIGURACIÓN DE EMPRESA
+             ==================================================================== -->
+        <section id="view-settings" class="view-section">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Mis Datos & Emisor de Documentos</h2>
+                <p class="card-desc">Información predeterminada para el encabezado y firma de cotizaciones y cuentas de cobro.</p>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="saveSettingsAction()">Guardar Cambios</button>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="cfg-business-name">Nombre Comercial del Negocio</label>
+                <input type="text" id="cfg-business-name" class="form-control" value="Universo Gráfico">
+              </div>
+
+              <div class="form-group">
+                <label for="cfg-business-phone">WhatsApp / Teléfono de Contacto</label>
+                <input type="text" id="cfg-business-phone" class="form-control" value="3239421252">
+              </div>
+
+              <div class="form-group">
+                <label for="cfg-business-email">Correo Electrónico</label>
+                <input type="email" id="cfg-business-email" class="form-control" placeholder="contacto@universografico.com">
+              </div>
+
+              <div class="form-group">
+                <label for="cfg-business-address">Dirección Física / Ciudad</label>
+                <input type="text" id="cfg-business-address" class="form-control" placeholder="Bogotá, Colombia">
+              </div>
+
+              <div class="form-group">
+                <label for="cfg-emisor-name">Nombre de Quien Cobra (Persona Natural / Titular)</label>
+                <input type="text" id="cfg-emisor-name" class="form-control" placeholder="Tu Nombre Completo">
+              </div>
+
+              <div class="form-group">
+                <label for="cfg-emisor-cc">C.C. de Quien Cobra</label>
+                <input type="text" id="cfg-emisor-cc" class="form-control" placeholder="Ej: 1.015.409.172">
+              </div>
+
+              <div class="form-group">
+                <label for="cfg-emisor-city">Ciudad de Expedición de la Cédula</label>
+                <input type="text" id="cfg-emisor-city" class="form-control" value="Bogotá D.C.">
+              </div>
+
+              <div class="form-group">
+                <label for="cfg-numbering-mode">Modalidad de Consecutivo en Cuentas de Cobro</label>
+                <select id="cfg-numbering-mode" class="form-control">
+                  <option value="per-client">Consecutivo Independiente por Cliente (001 por cliente)</option>
+                  <option value="global">Consecutivo Global Único</option>
+                </select>
+              </div>
+
+              <!-- Firma Digital -->
+              <div class="form-group full-width">
+                <label>Firma Digital para Cuentas de Cobro</label>
+                <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                  <div id="cfg-signature-preview-wrap" style="width: 180px; height: 75px; border: 1px dashed var(--border-color); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; background: var(--bg-surface);">
+                    <img id="cfg-signature-preview-img" src="" alt="Firma" style="max-height: 65px; max-width: 170px; display: none;">
+                    <span id="cfg-signature-empty-text" style="font-size: 0.78rem; color: var(--text-dim);">Sin firma cargada</span>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <input type="file" id="cfg-signature-file" accept="image/*" style="display: none;" onchange="handleSignatureFileUpload(event)">
+                    <button class="btn btn-secondary btn-sm" onclick="document.getElementById('cfg-signature-file').click()">Subir imagen de firma</button>
+                    <button class="btn btn-outline btn-sm" onclick="clearSignature()">Quitar firma</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Textos Predeterminados -->
+              <div class="form-group full-width">
+                <label for="cfg-default-cot-notes">Notas y Garantías Predeterminadas (Cotizaciones)</label>
+                <textarea id="cfg-default-cot-notes" class="form-control" rows="3">Para iniciar el trabajo se requiere un anticipo del 50%. El saldo se paga contra entrega. Incluye hasta 2 rondas de ajustes.</textarea>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="cfg-default-cc-notes">Notas Predeterminadas (Cuentas de Cobro)</label>
+                <textarea id="cfg-default-cc-notes" class="form-control" rows="2">Servicio prestado a entera satisfacción. Favor consignar a la cuenta bancaria acordada.</textarea>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="cfg-default-legal-text">Texto Legal Tributario (3 párrafos según norma colombiana)</label>
+                <textarea id="cfg-default-legal-text" class="form-control" rows="4">Que los ingresos brutos totales obtenidos en el presente periodo gravable corresponden a honorarios, comisiones o servicios y no superan las 120 UVT mensuales.
+Que me acojo al artículo 135 del acuerdo 1753 de 2015.
+Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios estoy clasificado en cada cedula mencionada para la exención de la aplicación de la retención en la fuente según Art 383 E.T.</textarea>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             9. RESPALDO (EXPORTAR / IMPORTAR DATOS)
+             ==================================================================== -->
+        <section id="view-backup" class="view-section">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Copia de Seguridad y Restauración</h2>
+                <p class="card-desc">Guarda todo tu historial, catálogo y configuración en un archivo seguro en tu equipo.</p>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+              <div class="card" style="margin-bottom: 0; background: var(--bg-surface);">
+                <h3 style="font-size: 1.05rem; margin-bottom: 8px;">Exportar Datos (Backup)</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                  Descarga un archivo JSON con todas las cotizaciones, cuentas de cobro, clientes y catálogo.
+                </p>
+                <button class="btn btn-primary" onclick="exportDataBackup()" style="width: 100%;">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                  <span>Descargar Copia de Seguridad</span>
+                </button>
+              </div>
+
+              <div class="card" style="margin-bottom: 0; background: var(--bg-surface);">
+                <h3 style="font-size: 1.05rem; margin-bottom: 8px;">Restaurar Datos</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                  Carga un archivo de respaldo previo para restaurar toda la información en este dispositivo.
+                </p>
+                <input type="file" id="import-backup-file" accept=".json" style="display: none;" onchange="importDataBackup(event)">
+                <button class="btn btn-secondary" onclick="document.getElementById('import-backup-file').click()" style="width: 100%;">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                  <span>Seleccionar Archivo JSON</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             10. PANEL DE NUBE / CLOUDFLARE D1 & SINCRONIZACIÓN
+             ==================================================================== -->
+        <section id="view-cloud" class="view-section">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Sincronización en la Nube (Cloudflare D1)</h2>
+                <p class="card-desc">Sincroniza tus cotizaciones, cuentas de cobro y catálogo entre tu celular y tu computador.</p>
+              </div>
+            </div>
+
+            <!-- Panel de Estado de Conexión -->
+            <div id="cloud-logged-out-panel" style="display: block;">
+              <div style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span class="db-status-dot" style="background-color: var(--brand-purple); box-shadow: 0 0 8px var(--brand-purple);"></span>
+                  <strong style="color: var(--brand-purple); font-size: 1rem;">Iniciar Sesión para Sincronizar</strong>
+                </div>
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 6px;">
+                  Ingresa con tu correo y contraseña. Si es la primera vez que te conectas a tu base de datos de Cloudflare D1, tu cuenta se creará automáticamente como administradora.
+                </p>
+              </div>
+
+              <!-- Formulario de Login -->
+              <div class="card" style="background: var(--bg-surface); max-width: 480px; margin: 0 auto 1.5rem;">
+                <h3 style="font-size: 1.05rem; margin-bottom: 1rem; text-align: center;">Acceso a tu Cuenta</h3>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="auth-email">Correo Electrónico</label>
+                  <input type="email" id="auth-email" class="form-control" placeholder="tu-correo@ejemplo.com">
+                </div>
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                  <label for="auth-password">Contraseña</label>
+                  <input type="password" id="auth-password" class="form-control" placeholder="••••••••">
+                </div>
+                <div style="display: flex; gap: 10px; flex-direction: column;">
+                  <button class="btn btn-primary" onclick="loginCloudUser()" id="btn-login-cloud">Iniciar Sesión / Conectar</button>
+                  <button class="btn btn-outline btn-sm" onclick="registerCloudUser()">Crear Cuenta Nueva</button>
+                </div>
+                <div id="auth-error-msg" style="color: var(--color-danger); font-size: 0.85rem; margin-top: 10px; text-align: center; display: none;"></div>
+              </div>
+            </div>
+
+            <!-- Panel cuando el Usuario está Autenticado -->
+            <div id="cloud-logged-in-panel" style="display: none;">
+              <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="db-status-dot"></span>
+                    <div>
+                      <strong style="color: var(--color-success); font-size: 1rem;">Conectado a Cloudflare D1</strong>
+                      <div id="cloud-user-email-display" style="font-size: 0.82rem; color: var(--text-muted);">usuario@ejemplo.com</div>
+                    </div>
+                  </div>
+                  <button class="btn btn-danger btn-sm" onclick="logoutCloudUser()">Cerrar Sesión</button>
+                </div>
+                <div style="font-size: 0.85rem; color: var(--text-dim); margin-top: 10px;">
+                  Última sincronización: <strong id="cloud-last-sync-time" style="color: var(--text-muted);">Pendiente</strong>
+                </div>
+              </div>
+
+              <div class="card" style="background: var(--bg-surface); margin-bottom: 0;">
+                <h3 style="font-size: 1rem; margin-bottom: 8px;">Acciones de Sincronización</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                  La app sincroniza automáticamente tus cambios tras cada guardado y cada 60 segundos si tienes conexión. También puedes forzar la sincronización manual ahora:
+                </p>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                  <button class="btn btn-primary" onclick="syncDataWithCloud(true)" id="btn-manual-sync">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    <span>Sincronizar Ahora</span>
+                  </button>
+                  <button class="btn btn-secondary" onclick="testCloudConnection()">Comprobar Conexión</button>
+                </div>
+                <div id="cloud-sync-status-text" style="margin-top: 10px; font-size: 0.85rem; color: var(--text-dim);"></div>
+              </div>
+            </div>
+
+            <!-- Guía Rápida de Despliegue -->
+            <div style="margin-top: 1.5rem; padding: 1rem 1.25rem; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+              <h4 style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 4px;">📌 ¿Cómo activar la base de datos en Cloudflare?</h4>
+              <p style="font-size: 0.82rem; color: var(--text-dim); line-height: 1.5;">
+                1. En tu panel de Cloudflare ve a <strong>Storage & Databases > D1</strong> y crea la base de datos <code>ug-cotizador-db</code>.<br>
+                2. En la pestaña <strong>Console</strong> ejecuta el archivo <code>schema.sql</code>.<br>
+                3. En tu proyecto de <strong>Cloudflare Pages > Settings > Functions</strong> vincula el D1 con el nombre <code>DB</code>.
+              </p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- Barra Inferior Fija para Móviles (Sticky Mobile Bar) -->
+    <nav class="mobile-sticky-bar">
+      <button class="btn btn-primary" id="mobile-primary-action-btn" onclick="triggerCurrentViewSave()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+        <span>Guardar</span>
+      </button>
+      <button class="btn btn-secondary" onclick="triggerCurrentViewPreview()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+        <span>Ver PDF</span>
+      </button>
+      <button class="btn btn-whatsapp" onclick="triggerCurrentViewWhatsApp()">
+        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.149.929 3.182 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.768-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.299.144.35.49 1.198.533 1.285.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.353.101.173.45 0.743.965 1.202.664.591 1.224.774 1.397.86.173.086.274.072.376-.043.101-.116.433-.506.549-.679.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.043.073.043.419-.101.824z"/></svg>
+      </button>
+      <button class="btn btn-outline" onclick="openActionSheet()" aria-label="Más acciones">
+        <span>Más...</span>
+      </button>
+    </nav>
+
+    <!-- Bottom Sheet de Más Acciones -->
+    <div id="action-sheet-overlay" class="action-sheet-overlay" onclick="closeActionSheet()"></div>
+    <div id="action-sheet" class="action-sheet">
+      <div style="font-weight:700; color:var(--text-muted); font-size:0.8rem; margin-bottom:4px; text-transform:uppercase;">Acciones del Documento</div>
+      <div class="action-sheet-item" onclick="triggerCurrentViewPrint(); closeActionSheet();">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+        <span>Imprimir / Descargar PDF</span>
+      </div>
+      <div class="action-sheet-item" onclick="copyPlainTextAction(); closeActionSheet();">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        <span>Copiar resumen en texto</span>
+      </div>
+      <div class="action-sheet-item" onclick="newDocumentFromCurrentView(); closeActionSheet();">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        <span>Crear documento nuevo</span>
+      </div>
+      <button class="btn btn-secondary" onclick="closeActionSheet()" style="margin-top: 8px;">Cerrar</button>
+    </div>
+
+  </div>
+
+  <!-- ==========================================================================
+       MODAL UNIFICADO DE VISUALIZACIÓN DE DOCUMENTO (VER PDF / IMPRIMIR)
+       ========================================================================== -->
+  <div id="doc-modal-overlay" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="doc-modal-title" style="font-size: 1.1rem;">Vista Previa de Documento</h3>
+        <button class="icon-btn" onclick="closeDocModal()" aria-label="Cerrar">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="pdf-modal-sheet-wrap">
+          <!-- El HTML generado idéntico para pantalla e impresión se inyecta aquí -->
+          <div id="doc-modal-content-stage"></div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="copyPlainTextAction()">Copiar Texto</button>
+        <button class="btn btn-whatsapp" id="doc-modal-wa-btn" onclick="shareWhatsAppFromModal()">WhatsApp</button>
+        <button class="btn btn-primary" onclick="printCurrentDocFromModal()">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          <span>Imprimir / Guardar PDF</span>
+        </button>
+        <button class="btn btn-secondary" onclick="closeDocModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL DE AGREGAR / EDITAR SERVICIO DEL CATÁLOGO
+       ========================================================================== */ -->
+  <div id="catalog-modal-overlay" class="modal-overlay">
+    <div class="modal-dialog" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 id="catalog-modal-title">Agregar Servicio</h3>
+        <button class="icon-btn" onclick="closeCatalogModal()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="cat-modal-id">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="cat-modal-category">Categoría</label>
+          <input type="text" id="cat-modal-category" class="form-control" placeholder="Páginas web, Diseño gráfico, etc.">
+        </div>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="cat-modal-name">Nombre / Descripción del Servicio</label>
+          <input type="text" id="cat-modal-name" class="form-control" placeholder="Ej: Logo Profesional con Manual">
+        </div>
+        <div class="form-group">
+          <label for="cat-modal-price">Precio Sugerido ($ COP)</label>
+          <input type="number" id="cat-modal-price" class="form-control" placeholder="500000" min="0">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeCatalogModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveCatalogItemFromModal()">Guardar en Catálogo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Área de Impresión Dedicada -->
+  <div id="print-staging-area"></div>
+
+  <!-- Contenedor de Notificaciones Toast -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- ==========================================================================
+       LÓGICA JAVASCRIPT NATIVA Y AUTÓNOMA
+       ========================================================================== -->
+  <script>
+    /* ==========================================================================
+       1. ESTADO GLOBAL Y CONFIGURACIÓN INICIAL
+       ========================================================================== */
+    const STORAGE_KEY_COTIZACIONES = 'ug_cotizaciones_v1';
+    const STORAGE_KEY_COBROS = 'ug_cobros_v1';
+    const STORAGE_KEY_CATALOG = 'ug_catalogo_v1';
+    const STORAGE_KEY_SETTINGS = 'ug_settings_v1';
+    const STORAGE_KEY_THEME = 'ug_theme_v1';
+
+    // Catálogo inicial predeterminado para Universo Gráfico
+    const DEFAULT_CATALOG = [
+      { id: 'cat-1', category: 'Páginas web', name: 'Página web Básica (dominio incluido, WhatsApp y Google Search Console)', price: 500000 },
+      { id: 'cat-2', category: 'Páginas web', name: 'Página web Profesional (dominio incluido, WhatsApp y Google Search Console)', price: 700000 },
+      { id: 'cat-3', category: 'Aplicaciones web', name: 'Aplicación web a la medida', price: 1500000 },
+      { id: 'cat-4', category: 'Diseño gráfico', name: 'Logo', price: 150000 },
+      { id: 'cat-5', category: 'Diseño gráfico', name: 'Papelería (tarjetas y hojas)', price: 120000 },
+      { id: 'cat-6', category: 'Diseño gráfico', name: 'Diseño de flyer', price: 50000 },
+      { id: 'cat-7', category: 'Diseño gráfico', name: 'Pack de 10 diseños para redes sociales', price: 200000 },
+      { id: 'cat-8', category: 'Diseño gráfico', name: 'Manual de marca', price: 350000 },
+      { id: 'cat-9', category: 'Mantenimiento', name: 'Mantenimiento mensual de página web', price: 80000 },
+      { id: 'cat-10', category: 'Mantenimiento', name: 'Cambios adicionales (por hora)', price: 30000 }
+    ];
+
+    const DEFAULT_SETTINGS = {
+      businessName: 'Universo Gráfico',
+      phone: '3239421252',
+      email: 'contacto@universografico.com',
+      address: 'Bogotá, Colombia',
+      emisorName: 'Jason',
+      emisorCC: '',
+      emisorCity: 'Bogotá D.C.',
+      numberingMode: 'per-client', // 'per-client' o 'global'
+      signatureData: '',
+      defaultCotNotes: 'Para iniciar el trabajo se requiere un anticipo del 50%. El saldo se paga contra entrega. Incluye hasta 2 rondas de ajustes.',
+      defaultCcNotes: 'Servicio prestado a entera satisfacción. Favor consignar a la cuenta bancaria acordada.',
+      legalText: `Que los ingresos brutos totales obtenidos en el presente periodo gravable corresponden a honorarios, comisiones o servicios y no superan las 120 UVT mensuales.\nQue me acojo al artículo 135 del acuerdo 1753 de 2015.\nQue me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios estoy clasificado en cada cedula mencionada para la exención de la aplicación de la retención en la fuente según Art 383 E.T.`
+    };
+
+    // Estado reactivo en memoria
+    let state = {
+      cotizaciones: [],
+      cobros: [],
+      catalog: [],
+      settings: { ...DEFAULT_SETTINGS },
+      currentCotId: null,      // null = documento nuevo
+      currentCobroId: null,    // null = documento nuevo
+      activeView: 'view-cot-dashboard',
+      modalActiveDocType: null,
+      modalActiveDocData: null,
+      pwaPromptEvent: null
+    };
+
+    /* ==========================================================================
+       2. PERSISTENCIA SEGURA EN LOCALSTORAGE
+       ========================================================================== */
+    function loadAllLocalData() {
+      try {
+        const storedCot = localStorage.getItem(STORAGE_KEY_COTIZACIONES);
+        state.cotizaciones = storedCot ? JSON.parse(storedCot) : [];
+
+        const storedCobros = localStorage.getItem(STORAGE_KEY_COBROS);
+        state.cobros = storedCobros ? JSON.parse(storedCobros) : [];
+
+        const storedCatalog = localStorage.getItem(STORAGE_KEY_CATALOG);
+        state.catalog = storedCatalog ? JSON.parse(storedCatalog) : [ ...DEFAULT_CATALOG ];
+
+        const storedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+        if (storedSettings) {
+          state.settings = { ...DEFAULT_SETTINGS, ...JSON.parse(storedSettings) };
+        } else {
+          state.settings = { ...DEFAULT_SETTINGS };
+        }
+      } catch (err) {
+        console.error('Error cargando datos de localStorage:', err);
+        showToast('Error cargando datos locales', 'error');
+      }
+    }
+
+    function saveState(key) {
+      try {
+        if (!key || key === 'cotizaciones') localStorage.setItem(STORAGE_KEY_COTIZACIONES, JSON.stringify(state.cotizaciones));
+        if (!key || key === 'cobros') localStorage.setItem(STORAGE_KEY_COBROS, JSON.stringify(state.cobros));
+        if (!key || key === 'catalog') localStorage.setItem(STORAGE_KEY_CATALOG, JSON.stringify(state.catalog));
+        if (!key || key === 'settings') localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(state.settings));
+      } catch (err) {
+        console.error('Error guardando en localStorage:', err);
+        showToast('Atención: Almacenamiento local lleno o restringido', 'error');
+      }
+    }
+
+    /* ==========================================================================
+       3. CONVERSIÓN DE NÚMEROS A LETRAS EN ESPAÑOL Y FORMATEADORES
+       ========================================================================== */
+    function formatMoney(amount) {
+      const num = Math.round(Number(amount) || 0);
+      return '$' + num.toLocaleString('es-CO');
+    }
+
+    function formatDateSpanish(dateStr) {
+      if (!dateStr) return '';
+      const parts = dateStr.split('-');
+      if (parts.length !== 3) return dateStr;
+      const y = parts[0];
+      const m = parseInt(parts[1], 10);
+      const d = parseInt(parts[2], 10);
+      const months = [
+        'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+        'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+      ];
+      const monthName = months[m - 1] || '';
+      return `${d} de ${monthName} de ${y}`;
+    }
+
+    function numeroALetras(num) {
+      num = Math.round(Number(num) || 0);
+      const formattedNumber = num.toLocaleString('es-CO');
+      if (num === 0) return 'Cero pesos m/cte. ($0.oo)';
+      if (num < 0) return 'Menos ' + numeroALetras(-num);
+
+      const UNIDADES = ['', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve'];
+      const DECENAS_10 = ['diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve'];
+      const VEINTES = ['veinte', 'veintiún', 'veintidós', 'veintitrés', 'veinticuatro', 'veinticinco', 'veintiséis', 'veintisiete', 'veintiocho', 'veintinueve'];
+      const DECENAS = ['', '', '', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
+      const CENTENAS = ['', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos'];
+
+      function seccionMenorMil(n) {
+        if (n === 0) return '';
+        if (n === 100) return 'cien';
+        const c = Math.floor(n / 100);
+        const d = Math.floor((n % 100) / 10);
+        const u = n % 10;
+        let res = '';
+        if (c > 0) res += CENTENAS[c] + ' ';
+        if (d === 1) {
+          res += DECENAS_10[u];
+        } else if (d === 2) {
+          res += VEINTES[u];
+        } else if (d > 2) {
+          res += DECENAS[d];
+          if (u > 0) res += ' y ' + UNIDADES[u];
+        } else if (u > 0) {
+          res += UNIDADES[u];
+        }
+        return res.trim();
+      }
+
+      function resolver(n) {
+        const millones = Math.floor(n / 1000000);
+        const restoMillones = n % 1000000;
+        const miles = Math.floor(restoMillones / 1000);
+        const unidades = restoMillones % 1000;
+
+        const partes = [];
+        if (millones > 0) {
+          if (millones === 1) partes.push('un millón');
+          else partes.push(seccionMenorMil(millones) + ' millones');
+        }
+        if (miles > 0) {
+          if (miles === 1) partes.push('mil');
+          else partes.push(seccionMenorMil(miles) + ' mil');
+        }
+        if (unidades > 0) {
+          partes.push(seccionMenorMil(unidades));
+        }
+        return partes.join(' ');
+      }
+
+      const letras = resolver(num);
+      const esDePesos = (num >= 1000000 && (num % 1000000 === 0));
+      const sufijo = num === 1 ? 'peso m/cte.' : (esDePesos ? 'de pesos m/cte.' : 'pesos m/cte.');
+
+      const resultado = `${letras} ${sufijo} ($${formattedNumber}.oo)`;
+      return resultado.charAt(0).toUpperCase() + resultado.slice(1);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    /* ==========================================================================
+       4. CONSECUTIVOS INTELIGENTES
+       ========================================================================== */
+    function getNextCotizacionNumber() {
+      let maxNum = 0;
+      state.cotizaciones.forEach(c => {
+        const match = String(c.number || '').match(/\d+/);
+        if (match) {
+          const val = parseInt(match[0], 10);
+          if (val > maxNum) maxNum = val;
+        }
+      });
+      const next = maxNum + 1;
+      return 'COT-' + String(next).padStart(4, '0');
+    }
+
+    function normalizeClientKey(name, nit) {
+      if (nit && nit.trim()) {
+        return nit.replace(/\D/g, '') || nit.trim().toLowerCase();
+      }
+      return (name || '').trim().toLowerCase();
+    }
+
+    function getNextCobroNumberForClient(clientName, clientNit) {
+      if (state.settings.numberingMode === 'global') {
+        let maxGlobal = 0;
+        state.cobros.forEach(cb => {
+          const m = String(cb.number || '').match(/\d+/);
+          if (m) {
+            const v = parseInt(m[0], 10);
+            if (v > maxGlobal) maxGlobal = v;
+          }
+        });
+        return String(maxGlobal + 1).padStart(3, '0');
+      }
+
+      // Consecutivo por cliente
+      const clientKey = normalizeClientKey(clientName, clientNit);
+      if (!clientKey) return '001';
+
+      let maxForClient = 0;
+      state.cobros.forEach(cb => {
+        const k = normalizeClientKey(cb.clientName, cb.clientNit);
+        if (k === clientKey) {
+          const m = String(cb.number || '').match(/\d+/);
+          if (m) {
+            const v = parseInt(m[0], 10);
+            if (v > maxForClient) maxForClient = v;
+          }
+        }
+      });
+      return String(maxForClient + 1).padStart(3, '0');
+    }
+
+    /* ==========================================================================
+       5. NAVEGACIÓN Y GESTIÓN DE VISTAS
+       ========================================================================== */
+    const VIEW_META = {
+      'view-cot-dashboard': { title: 'Cotizaciones', subtitle: 'Inicio y métricas' },
+      'view-cot-form':      { title: 'Cotización Actual', subtitle: 'Formulario de edición' },
+      'view-cot-history':   { title: 'Historial', subtitle: 'Cotizaciones emitidas' },
+      'view-catalog':       { title: 'Catálogo', subtitle: 'Servicios de Universo Gráfico' },
+      'view-cc-dashboard':  { title: 'Cuentas de Cobro', subtitle: 'Inicio y cobros pendientes' },
+      'view-cc-form':       { title: 'Cuenta de Cobro Actual', subtitle: 'Formulario de edición' },
+      'view-cc-history':    { title: 'Historial', subtitle: 'Cuentas de cobro registradas' },
+      'view-settings':      { title: 'Mis Datos', subtitle: 'Configuración y firma' },
+      'view-backup':        { title: 'Copia de Seguridad', subtitle: 'Exportar e Importar' },
+      'view-cloud':         { title: 'Base de Datos', subtitle: 'Cloudflare D1' }
+    };
+
+    function switchView(viewId) {
+      state.activeView = viewId;
+
+      // Ocultar todas las secciones
+      document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+      const targetSec = document.getElementById(viewId);
+      if (targetSec) targetSec.classList.add('active');
+
+      // Actualizar enlaces activos en sidebar
+      document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.nav-link')).find(l => {
+        const oc = l.getAttribute('onclick') || '';
+        return oc.includes(`'${viewId}'`);
+      });
+      if (activeBtn) activeBtn.classList.add('active');
+
+      // Actualizar Título en Topbar
+      const meta = VIEW_META[viewId] || { title: 'Universo Gráfico', subtitle: '' };
+      document.getElementById('page-title').textContent = meta.title;
+      document.getElementById('page-subtitle').textContent = meta.subtitle;
+
+      // Acciones específicas al entrar a una vista
+      if (viewId === 'view-cot-dashboard') updateCotDashboard();
+      if (viewId === 'view-cc-dashboard') updateCobroDashboard();
+      if (viewId === 'view-cot-history') renderCotHistory();
+      if (viewId === 'view-cc-history') renderCobroHistory();
+      if (viewId === 'view-catalog') renderCatalogView();
+
+      // Cerrar sidebar en celular si estaba abierto
+      closeSidebar();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleSidebar() {
+      const sb = document.getElementById('app-sidebar');
+      const bd = document.getElementById('sidebar-backdrop');
+      sb.classList.toggle('open');
+      bd.classList.toggle('active');
+    }
+
+    function closeSidebar() {
+      const sb = document.getElementById('app-sidebar');
+      const bd = document.getElementById('sidebar-backdrop');
+      if (sb) sb.classList.remove('open');
+      if (bd) bd.classList.remove('active');
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem(STORAGE_KEY_THEME, next);
+
+      document.getElementById('theme-icon-sun').style.display = next === 'light' ? 'block' : 'none';
+      document.getElementById('theme-icon-moon').style.display = next === 'dark' ? 'block' : 'none';
+    }
+
+    function initTheme() {
+      const saved = localStorage.getItem(STORAGE_KEY_THEME) || 'dark';
+      document.documentElement.setAttribute('data-theme', saved);
+      document.getElementById('theme-icon-sun').style.display = saved === 'light' ? 'block' : 'none';
+      document.getElementById('theme-icon-moon').style.display = saved === 'dark' ? 'block' : 'none';
+    }
+
+    /* ==========================================================================
+       6. COTIZACIONES: FORMULARIO Y CÁLCULOS
+       ========================================================================== */
+    function newCotizacionAction() {
+      state.currentCotId = null;
+      document.getElementById('cot-form-badge').textContent = 'Nueva cotización';
+      document.getElementById('cot-form-badge').style.background = 'rgba(139, 92, 246, 0.15)';
+
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('cot-number').value = getNextCotizacionNumber();
+      document.getElementById('cot-date').value = today;
+      document.getElementById('cot-validity').value = 15;
+      document.getElementById('cot-client-name').value = '';
+      document.getElementById('cot-client-phone').value = '';
+      document.getElementById('cot-client-desc').value = '';
+      document.getElementById('cot-discount-pct').value = 0;
+      document.getElementById('cot-extra-charges').value = 0;
+      document.getElementById('cot-tax-rate').value = '0';
+      document.getElementById('cot-include-notes').checked = true;
+      document.getElementById('cot-include-logo').checked = true;
+      document.getElementById('cot-notes').value = state.settings.defaultCotNotes || '';
+
+      const tbody = document.getElementById('cot-items-tbody');
+      tbody.innerHTML = '';
+      addBlankCotItem();
+
+      calculateCotTotals();
+      switchView('view-cot-form');
+    }
+
+    function addBlankCotItem(desc = '', qty = 1, price = 0) {
+      const tbody = document.getElementById('cot-items-tbody');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <input type="text" class="cot-item-desc" value="${escapeHtml(desc)}" placeholder="Descripción del servicio..." oninput="calculateCotTotals()">
+        </td>
+        <td style="text-align: center;">
+          <input type="number" class="cot-item-qty" value="${qty}" min="1" style="text-align: center;" oninput="calculateCotTotals()">
+        </td>
+        <td style="text-align: right;">
+          <input type="number" class="cot-item-price" value="${price}" min="0" style="text-align: right;" oninput="calculateCotTotals()">
+        </td>
+        <td style="text-align: right; font-weight: 700; color: var(--text-main);" class="cot-item-row-total">
+          ${formatMoney(qty * price)}
+        </td>
+        <td style="text-align: center;">
+          <button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove(); calculateCotTotals();" style="padding: 2px 7px; min-height: 28px;" title="Eliminar fila">✕</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+      calculateCotTotals();
+    }
+
+    function addCatalogItemToCot(catalogId) {
+      if (!catalogId) return;
+      const item = state.catalog.find(c => c.id === catalogId);
+      if (item) {
+        // Si hay una fila vacía única, reemplazarla
+        const rows = document.querySelectorAll('#cot-items-tbody tr');
+        if (rows.length === 1) {
+          const firstDesc = rows[0].querySelector('.cot-item-desc').value.trim();
+          const firstPrice = Number(rows[0].querySelector('.cot-item-price').value) || 0;
+          if (!firstDesc && firstPrice === 0) {
+            rows[0].remove();
+          }
+        }
+        addBlankCotItem(item.name, 1, item.price);
+      }
+      document.getElementById('cot-catalog-select').value = '';
+    }
+
+    function getCotFormItems() {
+      const rows = document.querySelectorAll('#cot-items-tbody tr');
+      const items = [];
+      rows.forEach(r => {
+        const desc = r.querySelector('.cot-item-desc').value;
+        const qty = parseFloat(r.querySelector('.cot-item-qty').value) || 1;
+        const price = parseFloat(r.querySelector('.cot-item-price').value) || 0;
+        if (desc.trim() || price > 0) {
+          items.push({ desc: desc.trim(), qty, price, total: qty * price });
+        }
+      });
+      return items;
+    }
+
+    function calculateCotTotals() {
+      const items = getCotFormItems();
+      const rows = document.querySelectorAll('#cot-items-tbody tr');
+      rows.forEach(r => {
+        const qty = parseFloat(r.querySelector('.cot-item-qty').value) || 1;
+        const price = parseFloat(r.querySelector('.cot-item-price').value) || 0;
+        r.querySelector('.cot-item-row-total').textContent = formatMoney(qty * price);
+      });
+
+      const subtotal = items.reduce((acc, i) => acc + (i.qty * i.price), 0);
+      const discountPct = parseFloat(document.getElementById('cot-discount-pct').value) || 0;
+      const discountAmount = Math.round(subtotal * (discountPct / 100));
+      const extraCharges = parseFloat(document.getElementById('cot-extra-charges').value) || 0;
+      const baseForTax = Math.max(0, subtotal - discountAmount + extraCharges);
+      const taxRate = parseFloat(document.getElementById('cot-tax-rate').value) || 0;
+      const taxAmount = Math.round(baseForTax * (taxRate / 100));
+      const grandTotal = Math.round(baseForTax + taxAmount);
+
+      document.getElementById('cot-summary-subtotal').textContent = formatMoney(subtotal);
+      document.getElementById('cot-summary-total').textContent = formatMoney(grandTotal);
+
+      return { subtotal, discountPct, discountAmount, extraCharges, taxRate, taxAmount, grandTotal, items };
+    }
+
+    function getFullCotDataFromForm() {
+      const totals = calculateCotTotals();
+      return {
+        id: state.currentCotId || ('cot-' + Date.now()),
+        number: document.getElementById('cot-number').value.trim() || getNextCotizacionNumber(),
+        date: document.getElementById('cot-date').value,
+        validityDays: parseInt(document.getElementById('cot-validity').value, 10) || 15,
+        clientName: document.getElementById('cot-client-name').value.trim() || 'Cliente General',
+        clientPhone: document.getElementById('cot-client-phone').value.trim(),
+        clientDesc: document.getElementById('cot-client-desc').value.trim(),
+        items: totals.items,
+        subtotal: totals.subtotal,
+        discountPct: totals.discountPct,
+        discountAmount: totals.discountAmount,
+        extraCharges: totals.extraCharges,
+        taxRate: totals.taxRate,
+        taxAmount: totals.taxAmount,
+        grandTotal: totals.grandTotal,
+        includeNotes: document.getElementById('cot-include-notes').checked,
+        includeLogo: document.getElementById('cot-include-logo').checked,
+        notes: document.getElementById('cot-notes').value.trim(),
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    function saveCotizacionAction() {
+      const data = getFullCotDataFromForm();
+
+      if (!data.items || data.items.length === 0) {
+        showToast('Agrega al menos un servicio a la cotización', 'warning');
+        return;
+      }
+
+      const existingIndex = state.cotizaciones.findIndex(c => c.id === data.id);
+      if (existingIndex >= 0) {
+        state.cotizaciones[existingIndex] = data;
+        showToast(`Cotización ${data.number} actualizada`);
+      } else {
+        // Verificar si el número ya existe en otra cotización
+        const numConflict = state.cotizaciones.find(c => c.number === data.number);
+        if (numConflict) {
+          if (!confirm(`El número ${data.number} ya existe. ¿Deseas reemplazarlo?`)) {
+            data.number = getNextCotizacionNumber();
+            document.getElementById('cot-number').value = data.number;
+          }
+        }
+        state.cotizaciones.unshift(data);
+        state.currentCotId = data.id;
+        showToast(`Guardada como ${data.number}`);
+      }
+
+      document.getElementById('cot-form-badge').textContent = `Editando ${data.number} – ${data.clientName}`;
+      document.getElementById('cot-form-badge').style.background = 'rgba(16, 185, 129, 0.15)';
+
+      saveState('cotizaciones');
+      updateBadges();
+      updateCotDashboard();
+      if (typeof getAuthToken === 'function' && getAuthToken()) syncDataWithCloud(false);
+    }
+
+    function openCotizacionForEdit(id) {
+      const item = state.cotizaciones.find(c => c.id === id);
+      if (!item) return;
+
+      state.currentCotId = item.id;
+      document.getElementById('cot-form-badge').textContent = `Editando ${item.number} – ${item.clientName}`;
+      document.getElementById('cot-form-badge').style.background = 'rgba(16, 185, 129, 0.15)';
+
+      document.getElementById('cot-number').value = item.number;
+      document.getElementById('cot-date').value = item.date;
+      document.getElementById('cot-validity').value = item.validityDays || 15;
+      document.getElementById('cot-client-name').value = item.clientName || '';
+      document.getElementById('cot-client-phone').value = item.clientPhone || '';
+      document.getElementById('cot-client-desc').value = item.clientDesc || '';
+      document.getElementById('cot-discount-pct').value = item.discountPct || 0;
+      document.getElementById('cot-extra-charges').value = item.extraCharges || 0;
+      document.getElementById('cot-tax-rate').value = String(item.taxRate || 0);
+      document.getElementById('cot-include-notes').checked = item.includeNotes !== false;
+      document.getElementById('cot-include-logo').checked = item.includeLogo !== false;
+      document.getElementById('cot-notes').value = item.notes || '';
+
+      const tbody = document.getElementById('cot-items-tbody');
+      tbody.innerHTML = '';
+      if (item.items && item.items.length > 0) {
+        item.items.forEach(i => addBlankCotItem(i.desc, i.qty, i.price));
+      } else {
+        addBlankCotItem();
+      }
+
+      calculateCotTotals();
+      switchView('view-cot-form');
+    }
+
+    function duplicateCotizacion(id) {
+      const item = state.cotizaciones.find(c => c.id === id);
+      if (!item) return;
+
+      const dup = JSON.parse(JSON.stringify(item));
+      dup.id = 'cot-' + Date.now();
+      dup.number = getNextCotizacionNumber();
+      dup.date = new Date().toISOString().split('T')[0];
+      dup.updatedAt = new Date().toISOString();
+
+      state.cotizaciones.unshift(dup);
+      saveState('cotizaciones');
+      updateBadges();
+      renderCotHistory();
+      updateCotDashboard();
+      showToast(`Cotización duplicada como ${dup.number}`);
+    }
+
+    function deleteCotizacion(id) {
+      const item = state.cotizaciones.find(c => c.id === id);
+      if (!item) return;
+
+      if (confirm(`¿Seguro que deseas eliminar la cotización ${item.number} de ${item.clientName}?`)) {
+        state.cotizaciones = state.cotizaciones.filter(c => c.id !== id);
+        if (state.currentCotId === id) newCotizacionAction();
+        saveState('cotizaciones');
+        updateBadges();
+        renderCotHistory();
+        updateCotDashboard();
+        showToast('Cotización eliminada');
+      }
+    }
+
+    /* ==========================================================================
+       7. CUENTAS DE COBRO: FORMULARIO Y CÁLCULOS
+       ========================================================================== */
+    function newCobroAction() {
+      state.currentCobroId = null;
+      document.getElementById('cc-form-badge').textContent = 'Nueva cuenta de cobro';
+      document.getElementById('cc-form-badge').style.background = 'rgba(139, 92, 246, 0.15)';
+
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('cc-city').value = state.settings.emisorCity || 'Bogotá D.C.';
+      document.getElementById('cc-date').value = today;
+      document.getElementById('cc-client-name').value = '';
+      document.getElementById('cc-client-nit').value = '';
+      document.getElementById('cc-number').value = getNextCobroNumberForClient('', '');
+      document.getElementById('cc-status').value = 'pending';
+      document.getElementById('cc-include-notes').checked = true;
+      document.getElementById('cc-include-legal').checked = false; // Desactivado por defecto según requerimiento
+      document.getElementById('cc-include-logo').checked = true;
+      document.getElementById('cc-notes').value = state.settings.defaultCcNotes || '';
+
+      document.getElementById('cc-conceptos-tbody').innerHTML = '';
+      document.getElementById('cc-adelantos-tbody').innerHTML = '';
+      addBlankConceptoRow();
+
+      calculateCobroTotals();
+      switchView('view-cc-form');
+    }
+
+    function addBlankConceptoRow(desc = '', amount = 0) {
+      const tbody = document.getElementById('cc-conceptos-tbody');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <input type="text" class="cc-concepto-desc" value="${escapeHtml(desc)}" placeholder="Concepto del servicio prestado..." oninput="calculateCobroTotals()">
+        </td>
+        <td style="text-align: right;">
+          <input type="number" class="cc-concepto-amount" value="${amount}" min="0" style="text-align: right;" oninput="calculateCobroTotals()">
+        </td>
+        <td style="text-align: center;">
+          <button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove(); calculateCobroTotals();" style="padding: 2px 7px; min-height: 28px;">✕</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+      calculateCobroTotals();
+    }
+
+    function addBlankAdelantoRow(desc = '', amount = 0) {
+      const tbody = document.getElementById('cc-adelantos-tbody');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <input type="text" class="cc-adelanto-desc" value="${escapeHtml(desc)}" placeholder="Descripción del abono..." oninput="calculateCobroTotals()">
+        </td>
+        <td style="text-align: right;">
+          <input type="number" class="cc-adelanto-amount" value="${amount}" min="0" style="text-align: right;" oninput="calculateCobroTotals()">
+        </td>
+        <td style="text-align: center;">
+          <button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove(); calculateCobroTotals();" style="padding: 2px 7px; min-height: 28px;">✕</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+      calculateCobroTotals();
+    }
+
+    function onCobroClientNameChange() {
+      const name = document.getElementById('cc-client-name').value.trim();
+      const nitInput = document.getElementById('cc-client-nit');
+
+      // Buscar cliente previo para autocompletar NIT y consecutivo
+      if (!state.currentCobroId) {
+        const found = state.cobros.find(c => c.clientName && c.clientName.toLowerCase() === name.toLowerCase());
+        if (found) {
+          if (!nitInput.value.trim() && found.clientNit) nitInput.value = found.clientNit;
+          document.getElementById('cc-number').value = getNextCobroNumberForClient(name, found.clientNit);
+        } else {
+          document.getElementById('cc-number').value = getNextCobroNumberForClient(name, nitInput.value);
+        }
+      }
+    }
+
+    function calculateCobroTotals() {
+      const conceptoRows = document.querySelectorAll('#cc-conceptos-tbody tr');
+      const conceptos = [];
+      let totalConceptos = 0;
+      conceptoRows.forEach(r => {
+        const desc = r.querySelector('.cc-concepto-desc').value;
+        const amount = parseFloat(r.querySelector('.cc-concepto-amount').value) || 0;
+        if (desc.trim() || amount > 0) {
+          conceptos.push({ desc: desc.trim(), amount });
+          totalConceptos += amount;
+        }
+      });
+
+      const adelantoRows = document.querySelectorAll('#cc-adelantos-tbody tr');
+      const adelantos = [];
+      let totalAdelantos = 0;
+      adelantoRows.forEach(r => {
+        const desc = r.querySelector('.cc-adelanto-desc').value;
+        const amount = parseFloat(r.querySelector('.cc-adelanto-amount').value) || 0;
+        if (desc.trim() || amount > 0) {
+          adelantos.push({ desc: desc.trim(), amount });
+          totalAdelantos += amount;
+        }
+      });
+
+      const saldo = Math.max(0, totalConceptos - totalAdelantos);
+
+      document.getElementById('cc-summary-total-conceptos').textContent = formatMoney(totalConceptos);
+      document.getElementById('cc-summary-total-adelantos').textContent = '-' + formatMoney(totalAdelantos);
+      document.getElementById('cc-row-adelantos-disp').style.display = totalAdelantos > 0 ? 'flex' : 'none';
+      document.getElementById('cc-summary-saldo').textContent = formatMoney(saldo);
+
+      // "LA SUMA DE:" siempre muestra el total de conceptos
+      document.getElementById('cc-summary-in-words').textContent = numeroALetras(totalConceptos);
+
+      return { totalConceptos, totalAdelantos, saldo, conceptos, adelantos };
+    }
+
+    function getFullCobroDataFromForm() {
+      const totals = calculateCobroTotals();
+      return {
+        id: state.currentCobroId || ('cobro-' + Date.now()),
+        number: document.getElementById('cc-number').value.trim() || '001',
+        city: document.getElementById('cc-city').value.trim() || 'Bogotá D.C.',
+        date: document.getElementById('cc-date').value,
+        clientName: document.getElementById('cc-client-name').value.trim() || 'Cliente General',
+        clientNit: document.getElementById('cc-client-nit').value.trim(),
+        status: document.getElementById('cc-status').value,
+        conceptos: totals.conceptos,
+        adelantos: totals.adelantos,
+        totalConceptos: totals.totalConceptos,
+        totalAdelantos: totals.totalAdelantos,
+        saldo: totals.saldo,
+        includeNotes: document.getElementById('cc-include-notes').checked,
+        includeLegal: document.getElementById('cc-include-legal').checked,
+        includeLogo: document.getElementById('cc-include-logo').checked,
+        notes: document.getElementById('cc-notes').value.trim(),
+        emisor: {
+          name: state.settings.emisorName || 'Jason',
+          cc: state.settings.emisorCC || '',
+          city: state.settings.emisorCity || 'Bogotá D.C.',
+          phone: state.settings.phone || '3239421252',
+          address: state.settings.address || 'Bogotá, Colombia',
+          signature: state.settings.signatureData || ''
+        },
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    function saveCobroAction() {
+      const data = getFullCobroDataFromForm();
+
+      if (!data.conceptos || data.conceptos.length === 0) {
+        showToast('Agrega al menos un concepto a la cuenta de cobro', 'warning');
+        return;
+      }
+
+      const existingIndex = state.cobros.findIndex(c => c.id === data.id);
+      if (existingIndex >= 0) {
+        state.cobros[existingIndex] = data;
+        showToast(`Cuenta de cobro N° ${data.number} actualizada`);
+      } else {
+        // Verificar si existe conflicto para este cliente
+        const clientKey = normalizeClientKey(data.clientName, data.clientNit);
+        const conflict = state.cobros.find(c => {
+          const k = normalizeClientKey(c.clientName, c.clientNit);
+          return k === clientKey && String(c.number) === String(data.number);
+        });
+
+        if (conflict) {
+          const nextSuggested = getNextCobroNumberForClient(data.clientName, data.clientNit);
+          const choice = confirm(`Ya existe la cuenta N° ${data.number} para ${data.clientName}.\n\n¿Deseas reemplazarla? (Cancelar usará el consecutivo ${nextSuggested})`);
+          if (!choice) {
+            data.number = nextSuggested;
+            document.getElementById('cc-number').value = data.number;
+          }
+        }
+
+        state.cobros.unshift(data);
+        state.currentCobroId = data.id;
+        showToast(`Guardada como Cuenta N° ${data.number}`);
+      }
+
+      document.getElementById('cc-form-badge').textContent = `Editando Cuenta N° ${data.number} – ${data.clientName}`;
+      document.getElementById('cc-form-badge').style.background = 'rgba(16, 185, 129, 0.15)';
+
+      saveState('cobros');
+      updateBadges();
+      updateCobroDashboard();
+      if (typeof getAuthToken === 'function' && getAuthToken()) syncDataWithCloud(false);
+    }
+
+    function openCobroForEdit(id) {
+      const item = state.cobros.find(c => c.id === id);
+      if (!item) return;
+
+      state.currentCobroId = item.id;
+      document.getElementById('cc-form-badge').textContent = `Editando Cuenta N° ${item.number} – ${item.clientName}`;
+      document.getElementById('cc-form-badge').style.background = 'rgba(16, 185, 129, 0.15)';
+
+      document.getElementById('cc-number').value = item.number;
+      document.getElementById('cc-city').value = item.city || 'Bogotá D.C.';
+      document.getElementById('cc-date').value = item.date;
+      document.getElementById('cc-client-name').value = item.clientName || '';
+      document.getElementById('cc-client-nit').value = item.clientNit || '';
+      document.getElementById('cc-status').value = item.status || 'pending';
+      document.getElementById('cc-include-notes').checked = item.includeNotes !== false;
+      document.getElementById('cc-include-legal').checked = item.includeLegal === true;
+      document.getElementById('cc-include-logo').checked = item.includeLogo !== false;
+      document.getElementById('cc-notes').value = item.notes || '';
+
+      const cTbody = document.getElementById('cc-conceptos-tbody');
+      cTbody.innerHTML = '';
+      if (item.conceptos && item.conceptos.length > 0) {
+        item.conceptos.forEach(c => addBlankConceptoRow(c.desc, c.amount));
+      } else {
+        addBlankConceptoRow();
+      }
+
+      const aTbody = document.getElementById('cc-adelantos-tbody');
+      aTbody.innerHTML = '';
+      if (item.adelantos && item.adelantos.length > 0) {
+        item.adelantos.forEach(a => addBlankAdelantoRow(a.desc, a.amount));
+      }
+
+      calculateCobroTotals();
+      switchView('view-cc-form');
+    }
+
+    function toggleCobroStatus(id) {
+      const item = state.cobros.find(c => c.id === id);
+      if (!item) return;
+
+      item.status = item.status === 'paid' ? 'pending' : 'paid';
+      item.updatedAt = new Date().toISOString();
+      saveState('cobros');
+      renderCobroHistory();
+      updateCobroDashboard();
+      showToast(`Cuenta N° ${item.number} marcada como ${item.status === 'paid' ? 'Pagada' : 'Pendiente'}`);
+    }
+
+    function duplicateCobro(id) {
+      const item = state.cobros.find(c => c.id === id);
+      if (!item) return;
+
+      const dup = JSON.parse(JSON.stringify(item));
+      dup.id = 'cobro-' + Date.now();
+      dup.number = getNextCobroNumberForClient(dup.clientName, dup.clientNit);
+      dup.date = new Date().toISOString().split('T')[0];
+      dup.status = 'pending';
+      dup.updatedAt = new Date().toISOString();
+
+      state.cobros.unshift(dup);
+      saveState('cobros');
+      updateBadges();
+      renderCobroHistory();
+      updateCobroDashboard();
+      showToast(`Cuenta duplicada como N° ${dup.number}`);
+    }
+
+    function deleteCobro(id) {
+      const item = state.cobros.find(c => c.id === id);
+      if (!item) return;
+
+      if (confirm(`¿Seguro que deseas eliminar la cuenta de cobro N° ${item.number} de ${item.clientName}?`)) {
+        state.cobros = state.cobros.filter(c => c.id !== id);
+        if (state.currentCobroId === id) newCobroAction();
+        saveState('cobros');
+        updateBadges();
+        renderCobroHistory();
+        updateCobroDashboard();
+        showToast('Cuenta de cobro eliminada');
+      }
+    }
+
+    /* ==========================================================================
+       8. MOTOR UNIFICADO DE GENERACIÓN DE DOCUMENTOS (HTML PURO)
+       UNA SOLA FUNCIÓN GENERA EL DOCUMENTO PARA PANTALLA, PDF E IMPRESIÓN
+       ========================================================================== */
+    function renderDocumentHtml(docType, data) {
+      const isCot = docType === 'cotizacion';
+
+      if (isCot) {
+        // Generar Cotización
+        const subtotal = data.subtotal || 0;
+        const discountAmt = data.discountAmount || 0;
+        const extraCharges = data.extraCharges || 0;
+        const taxRate = data.taxRate || 0;
+        const taxAmt = data.taxAmount || 0;
+        const grandTotal = data.grandTotal || 0;
+        const hasLogo = data.includeLogo !== false;
+
+        const itemsRows = (data.items || []).map((it, idx) => `
+          <tr>
+            <td style="width: 50%; font-weight: 500;">${escapeHtml(it.desc || 'Servicio')}</td>
+            <td style="width: 15%; text-align: center;">${it.qty || 1}</td>
+            <td style="width: 18%; text-align: right;">${formatMoney(it.price || 0)}</td>
+            <td style="width: 17%; text-align: right; font-weight: 600;">${formatMoney((it.qty || 1) * (it.price || 0))}</td>
+          </tr>
+        `).join('');
+
+        const notesBlock = (data.includeNotes !== false && data.notes) ? `
+          <div class="doc-notes-card">
+            <div class="doc-notes-title">Garantías, Notas y Condiciones:</div>
+            <div class="doc-notes-text">${escapeHtml(data.notes)}</div>
+          </div>
+        ` : '';
+
+        return `
+          <div class="doc-sheet-container">
+            <!-- Encabezado con Flexbox -->
+            <div class="doc-header-block">
+              <div class="doc-logo-box">
+                ${hasLogo ? `<img src="./assets/logo.png" alt="Universo Gráfico" class="doc-logo-img">` : ''}
+                <div class="doc-brand-name">${escapeHtml(state.settings.businessName || 'Universo Gráfico')}</div>
+                <div class="doc-brand-info">
+                  Diseño Gráfico & Desarrollo Web<br>
+                  WhatsApp: ${escapeHtml(state.settings.phone || '3239421252')}<br>
+                  ${escapeHtml(state.settings.address || 'Bogotá, Colombia')}
+                </div>
+              </div>
+
+              <div class="doc-meta-box">
+                <div class="doc-title-main">COTIZACIÓN</div>
+                <div class="doc-number-badge">${escapeHtml(data.number || 'COT-0001')}</div>
+                <div class="doc-meta-item"><strong>Fecha:</strong> ${formatDateSpanish(data.date)}</div>
+                <div class="doc-meta-item"><strong>Válida por:</strong> ${data.validityDays || 15} días</div>
+              </div>
+            </div>
+
+            <!-- Datos del Cliente -->
+            <div class="doc-client-card">
+              <div class="doc-client-title">PROPUESTA PRESENTADA A:</div>
+              <div class="doc-client-name">${escapeHtml(data.clientName || 'Cliente General')}</div>
+              ${data.clientPhone ? `<div class="doc-client-details">Teléfono / WhatsApp: ${escapeHtml(data.clientPhone)}</div>` : ''}
+              ${data.clientDesc ? `<div class="doc-client-details">Proyecto: <strong>${escapeHtml(data.clientDesc)}</strong></div>` : ''}
+            </div>
+
+            <!-- Tabla de Ítems -->
+            <table class="doc-table">
+              <thead>
+                <tr>
+                  <th>Descripción del Servicio</th>
+                  <th style="text-align: center;">Cant.</th>
+                  <th style="text-align: right;">V. Unitario</th>
+                  <th style="text-align: right;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsRows}
+              </tbody>
+            </table>
+
+            <!-- Resumen de Totales -->
+            <table class="doc-totals-box">
+              <tr>
+                <td>Subtotal:</td>
+                <td style="text-align: right; font-weight: 600;">${formatMoney(subtotal)}</td>
+              </tr>
+              ${discountAmt > 0 ? `
+                <tr>
+                  <td>Descuento (${data.discountPct}%):</td>
+                  <td style="text-align: right; color: #DC2626;">-${formatMoney(discountAmt)}</td>
+                </tr>
+              ` : ''}
+              ${extraCharges > 0 ? `
+                <tr>
+                  <td>Otros cargos:</td>
+                  <td style="text-align: right;">+${formatMoney(extraCharges)}</td>
+                </tr>
+              ` : ''}
+              ${taxRate > 0 ? `
+                <tr>
+                  <td>IVA (${taxRate}%):</td>
+                  <td style="text-align: right;">+${formatMoney(taxAmt)}</td>
+                </tr>
+              ` : ''}
+              <tr class="grand-total">
+                <td>TOTAL:</td>
+                <td style="text-align: right; color: #8B5CF6;">${formatMoney(grandTotal)}</td>
+              </tr>
+            </table>
+
+            ${notesBlock}
+
+            <!-- Pie de Documento -->
+            <div style="margin-top: 2rem; border-top: 1px solid #E2E8F0; padding-top: 1rem; font-size: 11px; color: #64748B; text-align: center;">
+              Gracias por confiar en <strong>${escapeHtml(state.settings.businessName || 'Universo Gráfico')}</strong>. Estamos listos para materializar tus ideas.
+            </div>
+          </div>
+        `;
+      } else {
+        // Generar Cuenta de Cobro según estándar colombiano
+        const hasLogo = data.includeLogo !== false;
+        const totalConceptos = data.totalConceptos || 0;
+        const totalAdelantos = data.totalAdelantos || 0;
+        const saldo = data.saldo || Math.max(0, totalConceptos - totalAdelantos);
+        const emisor = data.emisor || state.settings;
+        const hasSignature = !!emisor.signature;
+
+        const conceptosList = (data.conceptos || []).map(c => `
+          <li><strong>${escapeHtml(c.desc || 'Servicio')}</strong> por un valor de <strong>${formatMoney(c.amount || 0)}</strong></li>
+        `).join('');
+
+        const adelantosBlock = (totalAdelantos > 0) ? `
+          <div style="background: #FEF2F2; border: 1px solid #FECACA; border-radius: 6px; padding: 0.8rem 1rem; margin: 1rem 0;">
+            <div style="font-weight: 700; color: #991B1B; font-size: 11px; text-transform: uppercase;">Resumen de Cobro y Abonos:</div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 4px;">
+              <span>Total Servicios:</span>
+              <span>${formatMoney(totalConceptos)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: #DC2626;">
+              <span>Menos Anticipos / Abonos recibidos:</span>
+              <span>-${formatMoney(totalAdelantos)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 800; border-top: 1px dashed #F87171; padding-top: 5px; margin-top: 5px; color: #7F1D1D;">
+              <span>SALDO A COBRAR:</span>
+              <span>${formatMoney(saldo)}</span>
+            </div>
+          </div>
+        ` : '';
+
+        const notesBlock = (data.includeNotes !== false && data.notes) ? `
+          <div class="doc-notes-card">
+            <div class="doc-notes-title">Garantías y Observaciones:</div>
+            <div class="doc-notes-text">${escapeHtml(data.notes)}</div>
+          </div>
+        ` : '';
+
+        const legalParagraphs = (data.includeLegal === true && state.settings.legalText)
+          ? state.settings.legalText.split('\n').filter(p => p.trim()).map(p => `<p>${escapeHtml(p.trim())}</p>`).join('')
+          : '';
+
+        return `
+          <div class="doc-sheet-container">
+            ${hasLogo ? `
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #8B5CF6; padding-bottom: 12px; margin-bottom: 1.5rem;">
+                <img src="./assets/logo.png" alt="Universo Gráfico" class="doc-logo-img" style="margin-bottom:0;">
+                <div style="font-size: 11px; color: #64748B; text-align: right;">
+                  ${escapeHtml(state.settings.businessName || 'Universo Gráfico')}<br>
+                  Tel: ${escapeHtml(state.settings.phone || '3239421252')}
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- 1. Ciudad y Fecha -->
+            <div class="doc-cobro-date-line">
+              <strong>${escapeHtml(data.city || 'Bogotá D.C.')}, ${formatDateSpanish(data.date)}</strong>
+            </div>
+
+            <!-- 2. Título Centrado -->
+            <div class="doc-cobro-center-title">
+              CUENTA DE COBRO N° ${escapeHtml(data.number || '001')}
+            </div>
+
+            <!-- 3. Deudor / Cliente -->
+            <div class="doc-cobro-statement">
+              <strong>${escapeHtml(data.clientName || 'Cliente General')}</strong><br>
+              ${data.clientNit ? `NIT / C.C. ${escapeHtml(data.clientNit)}<br>` : ''}
+              <strong>DEBE A:</strong><br>
+              <strong>${escapeHtml(emisor.name || 'Jason')}</strong><br>
+              C.C. ${escapeHtml(emisor.cc || '')} de ${escapeHtml(emisor.city || 'Bogotá D.C.')}
+            </div>
+
+            <!-- 4. La suma de: siempre el total en letras y números -->
+            <div style="font-size: 12px; font-weight: 700; color: #475569; margin-top: 1.25rem;">LA SUMA DE:</div>
+            <div class="doc-cobro-amount-in-words">
+              ${numeroALetras(totalConceptos)}
+            </div>
+
+            <!-- 5. Por concepto de con viñetas -->
+            <div style="font-size: 12px; font-weight: 700; color: #475569; margin-top: 1.25rem;">POR CONCEPTO DE:</div>
+            <ul class="doc-cobro-concepts-list">
+              ${conceptosList}
+            </ul>
+
+            ${adelantosBlock}
+            ${notesBlock}
+
+            ${legalParagraphs ? `
+              <div class="doc-cobro-legal-box">
+                ${legalParagraphs}
+              </div>
+            ` : ''}
+
+            <!-- Bloque de Firma -->
+            <div class="doc-signature-block">
+              <div style="font-size: 12px; margin-bottom: 8px;">Cordialmente,</div>
+              ${hasSignature ? `<img src="${emisor.signature}" alt="Firma" class="doc-signature-img">` : '<div style="height: 35px;"></div>'}
+              <div class="doc-signature-line">${escapeHtml(emisor.name || 'Jason')}</div>
+              <div class="doc-signature-sub">C.C. ${escapeHtml(emisor.cc || '')} de ${escapeHtml(emisor.city || 'Bogotá D.C.')}</div>
+              <div class="doc-signature-sub">Teléfono: ${escapeHtml(emisor.phone || state.settings.phone || '3239421252')}</div>
+              ${emisor.address ? `<div class="doc-signature-sub">Dirección: ${escapeHtml(emisor.address)}</div>` : ''}
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    /* ==========================================================================
+       9. MODAL DE VISTA PREVIA Y ACCIONES DE COMPARTIR / IMPRIMIR
+       ========================================================================== */
+    function previewDocModal(docType, data = null) {
+      if (!data) {
+        data = (docType === 'cotizacion') ? getFullCotDataFromForm() : getFullCobroDataFromForm();
+      }
+
+      state.modalActiveDocType = docType;
+      state.modalActiveDocData = data;
+
+      const title = (docType === 'cotizacion')
+        ? `Cotización ${data.number} – ${data.clientName}`
+        : `Cuenta de Cobro N° ${data.number} – ${data.clientName}`;
+
+      document.getElementById('doc-modal-title').textContent = title;
+      const html = renderDocumentHtml(docType, data);
+      document.getElementById('doc-modal-content-stage').innerHTML = html;
+
+      document.getElementById('doc-modal-overlay').classList.add('active');
+    }
+
+    function closeDocModal() {
+      document.getElementById('doc-modal-overlay').classList.remove('active');
+    }
+
+    function printCurrentDocFromModal() {
+      if (!state.modalActiveDocType || !state.modalActiveDocData) return;
+      const html = renderDocumentHtml(state.modalActiveDocType, state.modalActiveDocData);
+      const stage = document.getElementById('print-staging-area');
+      stage.innerHTML = html;
+      window.print();
+    }
+
+    function generatePlainTextSummary(docType, data) {
+      if (docType === 'cotizacion') {
+        let text = `*UNIVERSO GRÁFICO – COTIZACIÓN ${data.number}*\n`;
+        text += `Cliente: ${data.clientName}\n`;
+        text += `Fecha: ${formatDateSpanish(data.date)}\n\n`;
+        text += `*Servicios Cotizados:*\n`;
+        (data.items || []).forEach(it => {
+          text += `• ${it.desc} (${it.qty} x ${formatMoney(it.price)}) = ${formatMoney(it.qty * it.price)}\n`;
+        });
+        text += `\n*TOTAL: ${formatMoney(data.grandTotal)}*\n`;
+        if (data.notes && data.includeNotes !== false) {
+          text += `\n*Condiciones:* ${data.notes}\n`;
+        }
+        text += `\nContacto: ${state.settings.phone || '3239421252'} | Universo Gráfico`;
+        return text;
+      } else {
+        let text = `*UNIVERSO GRÁFICO – CUENTA DE COBRO N° ${data.number}*\n`;
+        text += `${data.city || 'Bogotá D.C.'}, ${formatDateSpanish(data.date)}\n`;
+        text += `Cobro a: ${data.clientName}\n\n`;
+        text += `*Por concepto de:*\n`;
+        (data.conceptos || []).forEach(c => {
+          text += `• ${c.desc}: ${formatMoney(c.amount)}\n`;
+        });
+        text += `\n*TOTAL: ${formatMoney(data.totalConceptos)}*\n`;
+        text += `_${numeroALetras(data.totalConceptos)}_\n`;
+        if (data.totalAdelantos > 0) {
+          text += `Anticipos: -${formatMoney(data.totalAdelantos)}\n`;
+          text += `*SALDO A COBRAR: ${formatMoney(data.saldo)}*\n`;
+        }
+        text += `\nCordialmente,\n${data.emisor?.name || state.settings.emisorName || 'Jason'}\nTel: ${state.settings.phone || '3239421252'}`;
+        return text;
+      }
+    }
+
+    function shareWhatsAppAction(docType, data = null) {
+      if (!data) {
+        data = (docType === 'cotizacion') ? getFullCotDataFromForm() : getFullCobroDataFromForm();
+      }
+      const text = generatePlainTextSummary(docType, data);
+      const phone = (docType === 'cotizacion' ? data.clientPhone : '') || '';
+      const cleanPhone = phone.replace(/\D/g, '');
+
+      // Probar Web Share API si tiene soporte
+      if (navigator.share) {
+        navigator.share({
+          title: `Documento Universo Gráfico N° ${data.number}`,
+          text: text
+        }).catch(() => {
+          openWhatsAppUrl(cleanPhone, text);
+        });
+      } else {
+        openWhatsAppUrl(cleanPhone, text);
+      }
+    }
+
+    function shareWhatsAppFromModal() {
+      if (!state.modalActiveDocType || !state.modalActiveDocData) return;
+      shareWhatsAppAction(state.modalActiveDocType, state.modalActiveDocData);
+    }
+
+    function openWhatsAppUrl(phone, text) {
+      let url = 'https://api.whatsapp.com/send?';
+      if (phone) url += `phone=${encodeURIComponent(phone)}&`;
+      url += `text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank');
+    }
+
+    function copyPlainTextAction() {
+      const docType = state.modalActiveDocType || (state.activeView.includes('cot') ? 'cotizacion' : 'cuenta_cobro');
+      const data = state.modalActiveDocData || (docType === 'cotizacion' ? getFullCotDataFromForm() : getFullCobroDataFromForm());
+      const text = generatePlainTextSummary(docType, data);
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('Resumen copiado al portapapeles');
+        }).catch(() => {
+          fallbackCopyText(text);
+        });
+      } else {
+        fallbackCopyText(text);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast('Resumen copiado al portapapeles');
+      } catch (err) {
+        showToast('No se pudo copiar automáticamente', 'error');
+      }
+      document.body.removeChild(ta);
+    }
+
+    /* ==========================================================================
+       10. ACCIONES EN BARRA FIJA MÓVIL (STICKY BAR)
+       ========================================================================== */
+    function triggerCurrentViewSave() {
+      if (state.activeView === 'view-cot-form' || state.activeView.startsWith('view-cot')) {
+        saveCotizacionAction();
+      } else if (state.activeView === 'view-cc-form' || state.activeView.startsWith('view-cc')) {
+        saveCobroAction();
+      } else if (state.activeView === 'view-settings') {
+        saveSettingsAction();
+      } else {
+        showToast('Guardado automático activo');
+      }
+    }
+
+    function triggerCurrentViewPreview() {
+      if (state.activeView.startsWith('view-cc')) {
+        previewDocModal('cuenta_cobro');
+      } else {
+        previewDocModal('cotizacion');
+      }
+    }
+
+    function triggerCurrentViewWhatsApp() {
+      if (state.activeView.startsWith('view-cc')) {
+        shareWhatsAppAction('cuenta_cobro');
+      } else {
+        shareWhatsAppAction('cotizacion');
+      }
+    }
+
+    function triggerCurrentViewPrint() {
+      const docType = state.activeView.startsWith('view-cc') ? 'cuenta_cobro' : 'cotizacion';
+      const data = (docType === 'cotizacion') ? getFullCotDataFromForm() : getFullCobroDataFromForm();
+      const html = renderDocumentHtml(docType, data);
+      document.getElementById('print-staging-area').innerHTML = html;
+      window.print();
+    }
+
+    function newDocumentFromCurrentView() {
+      if (state.activeView.startsWith('view-cc')) {
+        newCobroAction();
+      } else {
+        newCotizacionAction();
+      }
+    }
+
+    function openActionSheet() {
+      document.getElementById('action-sheet-overlay').style.display = 'block';
+      document.getElementById('action-sheet').classList.add('active');
+    }
+
+    function closeActionSheet() {
+      document.getElementById('action-sheet-overlay').style.display = 'none';
+      document.getElementById('action-sheet').classList.remove('active');
+    }
+
+    /* ==========================================================================
+       11. RENDERIZADO DE HISTORIALES Y DASHBOARDS
+       ========================================================================== */
+    function updateBadges() {
+      document.getElementById('badge-count-cot').textContent = state.cotizaciones.length;
+      document.getElementById('badge-count-cc').textContent = state.cobros.length;
+    }
+
+    function updateCotDashboard() {
+      document.getElementById('dash-cot-count').textContent = state.cotizaciones.length;
+      const total = state.cotizaciones.reduce((acc, c) => acc + (c.grandTotal || 0), 0);
+      document.getElementById('dash-cot-total').textContent = formatMoney(total);
+
+      const recentList = document.getElementById('dash-cot-recent-list');
+      const recent = state.cotizaciones.slice(0, 5);
+
+      if (recent.length === 0) {
+        recentList.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-muted);">
+            No tienes cotizaciones guardadas aún. Pulsa <strong>+ Crear Cotización</strong> para iniciar.
+          </div>
+        `;
+        return;
+      }
+
+      recentList.innerHTML = recent.map(c => `
+        <div class="history-card">
+          <div class="history-card-top">
+            <span class="doc-badge">${escapeHtml(c.number)}</span>
+            <span class="history-date">${formatDateSpanish(c.date)}</span>
+          </div>
+          <div class="history-client-name" title="${escapeHtml(c.clientName)}">${escapeHtml(c.clientName)}</div>
+          <div class="history-concept-text">${escapeHtml(c.clientDesc || (c.items && c.items[0]?.desc) || 'Servicios varios')}</div>
+          <div class="history-card-meta">
+            <span style="font-size:0.8rem; color:var(--text-dim);">Total</span>
+            <span class="history-amount">${formatMoney(c.grandTotal)}</span>
+          </div>
+          <div class="history-actions-bar">
+            <button class="btn btn-secondary btn-sm" onclick="openCotizacionForEdit('${c.id}')">Abrir</button>
+            <button class="btn btn-outline btn-sm" onclick='previewDocModal("cotizacion", ${JSON.stringify(c).replace(/'/g, "&#39;")})'>Ver PDF</button>
+            <button class="btn btn-whatsapp btn-sm" onclick='shareWhatsAppAction("cotizacion", ${JSON.stringify(c).replace(/'/g, "&#39;")})'>WA</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateCobroDashboard() {
+      let pendingTotal = 0;
+      let pendingCount = 0;
+      let paidTotal = 0;
+      let paidCount = 0;
+
+      const pendingItems = [];
+
+      state.cobros.forEach(cb => {
+        const saldo = cb.saldo || (cb.totalConceptos - (cb.totalAdelantos || 0));
+        if (cb.status === 'paid') {
+          paidTotal += cb.totalConceptos || 0;
+          paidCount++;
+        } else {
+          pendingTotal += saldo;
+          pendingCount++;
+          pendingItems.push(cb);
+        }
+      });
+
+      document.getElementById('dash-cc-pending-total').textContent = formatMoney(pendingTotal);
+      document.getElementById('dash-cc-pending-count').textContent = `${pendingCount} cuenta${pendingCount === 1 ? '' : 's'} pendiente${pendingCount === 1 ? '' : 's'}`;
+      document.getElementById('dash-cc-paid-total').textContent = formatMoney(paidTotal);
+      document.getElementById('dash-cc-paid-count').textContent = `${paidCount} cuenta${paidCount === 1 ? '' : 's'} pagada${paidCount === 1 ? '' : 's'}`;
+
+      const pendingContainer = document.getElementById('dash-cc-pending-list');
+      if (pendingItems.length === 0) {
+        pendingContainer.innerHTML = `
+          <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+            ¡Excelente! No tienes cuentas de cobro pendientes de pago en este momento.
+          </div>
+        `;
+        return;
+      }
+
+      pendingContainer.innerHTML = pendingItems.slice(0, 5).map(cb => {
+        const saldo = cb.saldo || (cb.totalConceptos - (cb.totalAdelantos || 0));
+        return `
+          <div class="pending-row-item" onclick="openCobroForEdit('${cb.id}')">
+            <div class="pending-row-info">
+              <span class="doc-badge" style="margin-bottom: 4px;">Cuenta N° ${escapeHtml(cb.number)}</span>
+              <div class="pending-row-client" title="${escapeHtml(cb.clientName)}">${escapeHtml(cb.clientName)}</div>
+              <div style="font-size: 0.78rem; color: var(--text-dim); margin-top: 2px;">${formatDateSpanish(cb.date)}</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="pending-row-amount">${formatMoney(saldo)}</div>
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderCotHistory() {
+      const q = (document.getElementById('cot-search-input').value || '').trim().toLowerCase();
+      const monthFilter = document.getElementById('cot-filter-month').value;
+      const listEl = document.getElementById('cot-history-list');
+
+      let filtered = state.cotizaciones.filter(c => {
+        const matchSearch = !q ||
+          (c.clientName && c.clientName.toLowerCase().includes(q)) ||
+          (c.number && c.number.toLowerCase().includes(q)) ||
+          (c.clientDesc && c.clientDesc.toLowerCase().includes(q));
+
+        const matchMonth = !monthFilter || (c.date && c.date.startsWith(monthFilter));
+        return matchSearch && matchMonth;
+      });
+
+      // Llenar selector de meses si no tiene opciones
+      populateMonthSelector('cot-filter-month', state.cotizaciones.map(c => c.date));
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">
+            No se encontraron cotizaciones con los filtros actuales.
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(c => `
+        <div class="history-card">
+          <div class="history-card-top">
+            <span class="doc-badge">${escapeHtml(c.number)}</span>
+            <span class="history-date">${formatDateSpanish(c.date)}</span>
+          </div>
+          <div class="history-client-name" title="${escapeHtml(c.clientName)}">${escapeHtml(c.clientName)}</div>
+          <div class="history-concept-text">${escapeHtml(c.clientDesc || (c.items && c.items[0]?.desc) || 'Servicios')}</div>
+          <div class="history-card-meta">
+            <span style="font-size:0.8rem; color:var(--text-dim);">Total</span>
+            <span class="history-amount">${formatMoney(c.grandTotal)}</span>
+          </div>
+          <!-- Botones siempre visibles según requerimiento de calidad -->
+          <div class="history-actions-bar">
+            <button class="btn btn-secondary btn-sm" onclick="openCotizacionForEdit('${c.id}')">Abrir</button>
+            <button class="btn btn-outline btn-sm" onclick='previewDocModal("cotizacion", ${JSON.stringify(c).replace(/'/g, "&#39;")})'>Ver PDF</button>
+            <button class="btn btn-whatsapp btn-sm" onclick='shareWhatsAppAction("cotizacion", ${JSON.stringify(c).replace(/'/g, "&#39;")})'>WA</button>
+            <button class="btn btn-outline btn-sm" onclick="duplicateCotizacion('${c.id}')">Duplicar</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteCotizacion('${c.id}')">Eliminar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderCobroHistory() {
+      const q = (document.getElementById('cc-search-input').value || '').trim().toLowerCase();
+      const statusFilter = document.getElementById('cc-filter-status').value;
+      const monthFilter = document.getElementById('cc-filter-month').value;
+      const listEl = document.getElementById('cc-history-list');
+
+      let filtered = state.cobros.filter(cb => {
+        const matchSearch = !q ||
+          (cb.clientName && cb.clientName.toLowerCase().includes(q)) ||
+          (cb.number && String(cb.number).toLowerCase().includes(q)) ||
+          (cb.conceptos && cb.conceptos.some(co => co.desc.toLowerCase().includes(q)));
+
+        const matchStatus = !statusFilter || (cb.status === statusFilter);
+        const matchMonth = !monthFilter || (cb.date && cb.date.startsWith(monthFilter));
+        return matchSearch && matchStatus && matchMonth;
+      });
+
+      populateMonthSelector('cc-filter-month', state.cobros.map(c => c.date));
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">
+            No se encontraron cuentas de cobro con los filtros actuales.
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(cb => {
+        const saldo = cb.saldo || (cb.totalConceptos - (cb.totalAdelantos || 0));
+        const isPaid = cb.status === 'paid';
+        return `
+          <div class="history-card">
+            <div class="history-card-top">
+              <span class="doc-badge">Cuenta N° ${escapeHtml(cb.number)}</span>
+              <span class="status-badge ${isPaid ? 'paid' : 'pending'}">${isPaid ? 'Pagada' : 'Pendiente'}</span>
+            </div>
+            <div class="history-client-name" title="${escapeHtml(cb.clientName)}">${escapeHtml(cb.clientName)}</div>
+            <div class="history-concept-text">${escapeHtml((cb.conceptos && cb.conceptos[0]?.desc) || 'Conceptos varios')}</div>
+            <div class="history-card-meta">
+              <span class="history-date">${formatDateSpanish(cb.date)}</span>
+              <span class="history-amount" style="color: ${isPaid ? 'var(--color-success)' : 'var(--color-warning)'}">${formatMoney(saldo)}</span>
+            </div>
+            <!-- Botones siempre visibles -->
+            <div class="history-actions-bar">
+              <button class="btn btn-secondary btn-sm" onclick="openCobroForEdit('${cb.id}')">Abrir</button>
+              <button class="btn btn-outline btn-sm" onclick='previewDocModal("cuenta_cobro", ${JSON.stringify(cb).replace(/'/g, "&#39;")})'>Ver PDF</button>
+              <button class="btn btn-whatsapp btn-sm" onclick='shareWhatsAppAction("cuenta_cobro", ${JSON.stringify(cb).replace(/'/g, "&#39;")})'>WA</button>
+              <button class="btn btn-outline btn-sm" onclick="duplicateCobro('${cb.id}')">Duplicar</button>
+              <button class="btn ${isPaid ? 'btn-outline' : 'btn-success'} btn-sm" onclick="toggleCobroStatus('${cb.id}')">${isPaid ? 'Pendiente' : 'Pagada'}</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteCobro('${cb.id}')">Eliminar</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function populateMonthSelector(elementId, datesArray) {
+      const select = document.getElementById(elementId);
+      if (!select) return;
+      const currentVal = select.value;
+
+      const monthsSet = new Set();
+      datesArray.forEach(d => {
+        if (d && d.length >= 7) monthsSet.add(d.substring(0, 7));
+      });
+
+      const sorted = Array.from(monthsSet).sort().reverse();
+      select.innerHTML = '<option value="">Todos los meses</option>';
+      sorted.forEach(m => {
+        const [y, mm] = m.split('-');
+        const names = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        const label = `${names[parseInt(mm, 10) - 1]} ${y}`;
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = label;
+        if (m === currentVal) opt.selected = true;
+        select.appendChild(opt);
+      });
+    }
+
+    /* ==========================================================================
+       12. CATÁLOGO DE SERVICIOS
+       ========================================================================== */
+    function renderCatalogView() {
+      const container = document.getElementById('catalog-categories-container');
+      const selectInCot = document.getElementById('cot-catalog-select');
+
+      // Agrupar por categoría
+      const grouped = {};
+      state.catalog.forEach(item => {
+        const cat = item.category || 'Varios';
+        if (!grouped[cat]) grouped[cat] = [];
+        grouped[cat].push(item);
+      });
+
+      // Llenar selector del formulario de cotizaciones
+      if (selectInCot) {
+        selectInCot.innerHTML = '<option value="">+ Agregar desde Catálogo...</option>';
+        Object.keys(grouped).forEach(cat => {
+          const optgroup = document.createElement('optgroup');
+          optgroup.label = cat;
+          grouped[cat].forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item.id;
+            opt.textContent = `${item.name} (${formatMoney(item.price)})`;
+            optgroup.appendChild(opt);
+          });
+          selectInCot.appendChild(optgroup);
+        });
+      }
+
+      // Renderizar listado editable
+      if (Object.keys(grouped).length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+            Catálogo vacío. Puedes restaurar el catálogo inicial de Universo Gráfico.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = Object.keys(grouped).map(cat => `
+        <div style="margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.05rem; color: var(--brand-purple); margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.4rem;">
+            ${escapeHtml(cat)}
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            ${grouped[cat].map(it => `
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0.75rem 1rem; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 200px;">
+                  <strong style="color: var(--text-main); font-size: 0.95rem;">${escapeHtml(it.name)}</strong>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <span style="font-family: var(--font-heading); font-weight: 700; color: var(--text-main); font-size: 1.05rem;">
+                    ${formatMoney(it.price)}
+                  </span>
+                  <button class="btn btn-secondary btn-sm" onclick="openEditCatalogModal('${it.id}')">Editar</button>
+                  <button class="btn btn-danger btn-sm" onclick="deleteCatalogItem('${it.id}')">✕</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openNewCatalogModal() {
+      document.getElementById('catalog-modal-title').textContent = 'Agregar Servicio al Catálogo';
+      document.getElementById('cat-modal-id').value = '';
+      document.getElementById('cat-modal-category').value = 'Páginas web';
+      document.getElementById('cat-modal-name').value = '';
+      document.getElementById('cat-modal-price').value = '';
+      document.getElementById('catalog-modal-overlay').classList.add('active');
+    }
+
+    function openEditCatalogModal(id) {
+      const it = state.catalog.find(c => c.id === id);
+      if (!it) return;
+
+      document.getElementById('catalog-modal-title').textContent = 'Editar Servicio';
+      document.getElementById('cat-modal-id').value = it.id;
+      document.getElementById('cat-modal-category').value = it.category || '';
+      document.getElementById('cat-modal-name').value = it.name || '';
+      document.getElementById('cat-modal-price').value = it.price || 0;
+      document.getElementById('catalog-modal-overlay').classList.add('active');
+    }
+
+    function closeCatalogModal() {
+      document.getElementById('catalog-modal-overlay').classList.remove('active');
+    }
+
+    function saveCatalogItemFromModal() {
+      const id = document.getElementById('cat-modal-id').value;
+      const category = document.getElementById('cat-modal-category').value.trim() || 'Servicios';
+      const name = document.getElementById('cat-modal-name').value.trim();
+      const price = parseFloat(document.getElementById('cat-modal-price').value) || 0;
+
+      if (!name) {
+        showToast('El nombre del servicio es obligatorio', 'warning');
+        return;
+      }
+
+      if (id) {
+        const item = state.catalog.find(c => c.id === id);
+        if (item) {
+          item.category = category;
+          item.name = name;
+          item.price = price;
+        }
+        showToast('Servicio actualizado');
+      } else {
+        state.catalog.push({
+          id: 'cat-' + Date.now(),
+          category,
+          name,
+          price
+        });
+        showToast('Servicio añadido al catálogo');
+      }
+
+      saveState('catalog');
+      renderCatalogView();
+      closeCatalogModal();
+    }
+
+    function deleteCatalogItem(id) {
+      if (confirm('¿Eliminar este servicio del catálogo?')) {
+        state.catalog = state.catalog.filter(c => c.id !== id);
+        saveState('catalog');
+        renderCatalogView();
+        showToast('Servicio eliminado');
+      }
+    }
+
+    function resetDefaultCatalog() {
+      if (confirm('¿Restaurar los servicios y precios iniciales de Universo Gráfico?')) {
+        state.catalog = JSON.parse(JSON.stringify(DEFAULT_CATALOG));
+        saveState('catalog');
+        renderCatalogView();
+        showToast('Catálogo inicial restaurado');
+      }
+    }
+
+    /* ==========================================================================
+       13. MIS DATOS & PREFERENCIAS
+       ========================================================================== */
+    function loadSettingsToForm() {
+      const s = state.settings;
+      document.getElementById('cfg-business-name').value = s.businessName || 'Universo Gráfico';
+      document.getElementById('cfg-business-phone').value = s.phone || '3239421252';
+      document.getElementById('cfg-business-email').value = s.email || '';
+      document.getElementById('cfg-business-address').value = s.address || '';
+      document.getElementById('cfg-emisor-name').value = s.emisorName || '';
+      document.getElementById('cfg-emisor-cc').value = s.emisorCC || '';
+      document.getElementById('cfg-emisor-city').value = s.emisorCity || 'Bogotá D.C.';
+      document.getElementById('cfg-numbering-mode').value = s.numberingMode || 'per-client';
+      document.getElementById('cfg-default-cot-notes').value = s.defaultCotNotes || '';
+      document.getElementById('cfg-default-cc-notes').value = s.defaultCcNotes || '';
+      document.getElementById('cfg-default-legal-text').value = s.legalText || '';
+
+      updateSignaturePreview();
+    }
+
+    function saveSettingsAction() {
+      state.settings.businessName = document.getElementById('cfg-business-name').value.trim() || 'Universo Gráfico';
+      state.settings.phone = document.getElementById('cfg-business-phone').value.trim() || '3239421252';
+      state.settings.email = document.getElementById('cfg-business-email').value.trim();
+      state.settings.address = document.getElementById('cfg-business-address').value.trim();
+      state.settings.emisorName = document.getElementById('cfg-emisor-name').value.trim() || 'Jason';
+      state.settings.emisorCC = document.getElementById('cfg-emisor-cc').value.trim();
+      state.settings.emisorCity = document.getElementById('cfg-emisor-city').value.trim() || 'Bogotá D.C.';
+      state.settings.numberingMode = document.getElementById('cfg-numbering-mode').value;
+      state.settings.defaultCotNotes = document.getElementById('cfg-default-cot-notes').value.trim();
+      state.settings.defaultCcNotes = document.getElementById('cfg-default-cc-notes').value.trim();
+      state.settings.legalText = document.getElementById('cfg-default-legal-text').value.trim();
+
+      saveState('settings');
+      showToast('Configuración guardada correctamente');
+    }
+
+    function handleSignatureFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        state.settings.signatureData = e.target.result;
+        updateSignaturePreview();
+        saveState('settings');
+        showToast('Firma cargada');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearSignature() {
+      state.settings.signatureData = '';
+      updateSignaturePreview();
+      saveState('settings');
+      showToast('Firma removida');
+    }
+
+    function updateSignaturePreview() {
+      const img = document.getElementById('cfg-signature-preview-img');
+      const empty = document.getElementById('cfg-signature-empty-text');
+      if (state.settings.signatureData) {
+        img.src = state.settings.signatureData;
+        img.style.display = 'block';
+        empty.style.display = 'none';
+      } else {
+        img.src = '';
+        img.style.display = 'none';
+        empty.style.display = 'block';
+      }
+    }
+
+    /* ==========================================================================
+       14. RESPALDO Y EXPORTACIÓN / IMPORTACIÓN JSON
+       ========================================================================== */
+    function exportDataBackup() {
+      const backupData = {
+        version: '1.1.0',
+        exportedAt: new Date().toISOString(),
+        business: 'Universo Gráfico',
+        cotizaciones: state.cotizaciones,
+        cobros: state.cobros,
+        catalog: state.catalog,
+        settings: state.settings
+      };
+
+      const jsonStr = JSON.stringify(backupData, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const dateStr = new Date().toISOString().split('T')[0];
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Backup_UniversoGrafico_${dateStr}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showToast('Copia de seguridad descargada');
+    }
+
+    function importDataBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (!imported.cotizaciones && !imported.cobros && !imported.catalog) {
+            throw new Error('Formato de archivo inválido');
+          }
+
+          if (confirm('¿Restaurar este respaldo? Reemplazará la información existente en este dispositivo.')) {
+            if (Array.isArray(imported.cotizaciones)) state.cotizaciones = imported.cotizaciones;
+            if (Array.isArray(imported.cobros)) state.cobros = imported.cobros;
+            if (Array.isArray(imported.catalog)) state.catalog = imported.catalog;
+            if (imported.settings) state.settings = { ...DEFAULT_SETTINGS, ...imported.settings };
+
+            saveState();
+            loadSettingsToForm();
+            updateBadges();
+            updateCotDashboard();
+            updateCobroDashboard();
+            renderCatalogView();
+            showToast('Datos restaurados exitosamente');
+          }
+        } catch (err) {
+          console.error(err);
+          showToast('Error: El archivo no es un respaldo JSON válido', 'error');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    /* ==========================================================================
+       15. NOTIFICACIONES TOAST Y UTILIDADES
+       ========================================================================== */
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast-msg';
+
+      let icon = '✓';
+      if (type === 'error') icon = '✕';
+      if (type === 'warning') icon = '⚠';
+
+      toast.innerHTML = `<span>${icon}</span> <span>${escapeHtml(msg)}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    /* ==========================================================================
+       16. INTEGRACIÓN PWA (SERVICE WORKER & BEFOREINSTALLPROMPT)
+       ========================================================================== */
+    function registerPwa() {
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => {
+              console.log('[PWA] Service Worker registrado:', reg.scope);
+              reg.addEventListener('updatefound', () => {
+                const newWorker = reg.installing;
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    showToast('Hay una actualización disponible');
+                  }
+                });
+              });
+            })
+            .catch(err => {
+              console.warn('[PWA] Error registrando Service Worker:', err);
+            });
+        });
+      }
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        state.pwaPromptEvent = e;
+        const btn = document.getElementById('pwa-install-btn');
+        if (btn) btn.style.display = 'inline-flex';
+      });
+
+      window.addEventListener('appinstalled', () => {
+        state.pwaPromptEvent = null;
+        const btn = document.getElementById('pwa-install-btn');
+        if (btn) btn.style.display = 'none';
+        showToast('¡App Universo Gráfico instalada!');
+      });
+    }
+
+    function installPwaAction() {
+      if (!state.pwaPromptEvent) {
+        alert('Para instalar en iPhone o PC: selecciona "Compartir" -> "Agregar a inicio" o el ícono de instalar en la barra del navegador.');
+        return;
+      }
+      state.pwaPromptEvent.prompt();
+      state.pwaPromptEvent.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          showToast('Instalando aplicación...');
+        }
+        state.pwaPromptEvent = null;
+      });
+    }
+
+    /* ==========================================================================
+       17. MOTOR DE AUTENTICACIÓN Y SINCRONIZACIÓN CON CLOUDFLARE D1
+       ========================================================================== */
+    const STORAGE_KEY_AUTH_TOKEN = 'ug_auth_token_v1';
+    const STORAGE_KEY_AUTH_USER = 'ug_auth_user_v1';
+    let isSyncing = false;
+
+    function getAuthToken() {
+      return localStorage.getItem(STORAGE_KEY_AUTH_TOKEN);
+    }
+
+    function getAuthUser() {
+      try {
+        const u = localStorage.getItem(STORAGE_KEY_AUTH_USER);
+        return u ? JSON.parse(u) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function updateAuthStatusUI() {
+      const token = getAuthToken();
+      const user = getAuthUser();
+      const loggedOutPanel = document.getElementById('cloud-logged-out-panel');
+      const loggedInPanel = document.getElementById('cloud-logged-in-panel');
+      const statusPillText = document.getElementById('db-status-text');
+      const userDisplay = document.getElementById('cloud-user-email-display');
+
+      if (token && user) {
+        if (loggedOutPanel) loggedOutPanel.style.display = 'none';
+        if (loggedInPanel) loggedInPanel.style.display = 'block';
+        if (userDisplay) userDisplay.textContent = user.email || 'Usuario conectado';
+        if (statusPillText) statusPillText.textContent = 'D1 Cloud';
+      } else {
+        if (loggedOutPanel) loggedOutPanel.style.display = 'block';
+        if (loggedInPanel) loggedInPanel.style.display = 'none';
+        if (statusPillText) statusPillText.textContent = 'Local';
+      }
+    }
+
+    async function loginCloudUser() {
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      const errorEl = document.getElementById('auth-error-msg');
+      const btn = document.getElementById('btn-login-cloud');
+
+      if (!email || !password) {
+        if (errorEl) {
+          errorEl.textContent = 'Por favor ingresa correo y contraseña.';
+          errorEl.style.display = 'block';
+        }
+        return;
+      }
+
+      if (errorEl) errorEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Verificando con Cloudflare...';
+
+      try {
+        const resp = await fetch('./api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await resp.json();
+        if (!resp.ok || !data.token) {
+          throw new Error(data.error || 'Credenciales inválidas o base de datos no conectada');
+        }
+
+        localStorage.setItem(STORAGE_KEY_AUTH_TOKEN, data.token);
+        localStorage.setItem(STORAGE_KEY_AUTH_USER, JSON.stringify(data.user));
+        updateAuthStatusUI();
+        showToast('Sesión iniciada con Cloudflare D1');
+
+        // Sincronizar inmediatamente al iniciar sesión
+        await syncDataWithCloud(true);
+      } catch (err) {
+        if (errorEl) {
+          errorEl.textContent = err.message;
+          errorEl.style.display = 'block';
+        }
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Iniciar Sesión / Conectar';
+      }
+    }
+
+    async function registerCloudUser() {
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      const errorEl = document.getElementById('auth-error-msg');
+
+      if (!email || !password) {
+        if (errorEl) {
+          errorEl.textContent = 'Ingresa correo y contraseña para registrarte.';
+          errorEl.style.display = 'block';
+        }
+        return;
+      }
+
+      try {
+        const resp = await fetch('./api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, nombre: 'Universo Gráfico' })
+        });
+
+        const data = await resp.json();
+        if (!resp.ok || !data.token) {
+          throw new Error(data.error || 'No se pudo crear la cuenta');
+        }
+
+        localStorage.setItem(STORAGE_KEY_AUTH_TOKEN, data.token);
+        localStorage.setItem(STORAGE_KEY_AUTH_USER, JSON.stringify(data.user));
+        updateAuthStatusUI();
+        showToast('¡Cuenta creada y conectada!');
+        await syncDataWithCloud(true);
+      } catch (err) {
+        if (errorEl) {
+          errorEl.textContent = err.message;
+          errorEl.style.display = 'block';
+        }
+        showToast(err.message, 'error');
+      }
+    }
+
+    function logoutCloudUser() {
+      localStorage.removeItem(STORAGE_KEY_AUTH_TOKEN);
+      localStorage.removeItem(STORAGE_KEY_AUTH_USER);
+      updateAuthStatusUI();
+      showToast('Sesión de Cloudflare cerrada. Modo local activo.');
+    }
+
+    // Sincronización bidireccional (Push de datos locales + Pull de cambios remotos)
+    async function syncDataWithCloud(isManual = false) {
+      const token = getAuthToken();
+      if (!token || isSyncing) return;
+
+      isSyncing = true;
+      const statusText = document.getElementById('cloud-sync-status-text');
+      const timeDisplay = document.getElementById('cloud-last-sync-time');
+      if (statusText && isManual) statusText.textContent = 'Sincronizando registros con Cloudflare D1...';
+
+      try {
+        // Empaquetar registros locales
+        const itemsToPush = [];
+
+        state.cotizaciones.forEach(c => {
+          itemsToPush.push({
+            id: c.id,
+            tipo: 'cotizacion',
+            datos: c,
+            deleted: 0,
+            updated_at: c.updatedAt || new Date().toISOString()
+          });
+        });
+
+        state.cobros.forEach(cb => {
+          itemsToPush.push({
+            id: cb.id,
+            tipo: 'cuenta_cobro',
+            datos: cb,
+            deleted: 0,
+            updated_at: cb.updatedAt || new Date().toISOString()
+          });
+        });
+
+        itemsToPush.push({
+          id: 'ug-catalog-main',
+          tipo: 'catalogo',
+          datos: state.catalog,
+          deleted: 0,
+          updated_at: new Date().toISOString()
+        });
+
+        itemsToPush.push({
+          id: 'ug-config-main',
+          tipo: 'config',
+          datos: state.settings,
+          deleted: 0,
+          updated_at: new Date().toISOString()
+        });
+
+        const resp = await fetch('./api/sync', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ items: itemsToPush })
+        });
+
+        if (resp.status === 401) {
+          logoutCloudUser();
+          throw new Error('Sesión expirada. Inicia sesión nuevamente.');
+        }
+
+        const resData = await resp.json();
+        if (!resp.ok) throw new Error(resData.error || 'Error al sincronizar con D1');
+
+        // Procesar registros remotos recibidos
+        if (Array.isArray(resData.items)) {
+          let hasRemoteChanges = false;
+          resData.items.forEach(row => {
+            try {
+              const rawData = typeof row.datos === 'string' ? JSON.parse(row.datos) : row.datos;
+              if (row.tipo === 'cotizacion') {
+                const idx = state.cotizaciones.findIndex(c => c.id === row.id);
+                if (idx >= 0) {
+                  const localTime = new Date(state.cotizaciones[idx].updatedAt || 0).getTime();
+                  const remoteTime = new Date(row.updated_at || 0).getTime();
+                  if (remoteTime > localTime) {
+                    state.cotizaciones[idx] = rawData;
+                    hasRemoteChanges = true;
+                  }
+                } else if (!row.deleted) {
+                  state.cotizaciones.push(rawData);
+                  hasRemoteChanges = true;
+                }
+              } else if (row.tipo === 'cuenta_cobro') {
+                const idx = state.cobros.findIndex(cb => cb.id === row.id);
+                if (idx >= 0) {
+                  const localTime = new Date(state.cobros[idx].updatedAt || 0).getTime();
+                  const remoteTime = new Date(row.updated_at || 0).getTime();
+                  if (remoteTime > localTime) {
+                    state.cobros[idx] = rawData;
+                    hasRemoteChanges = true;
+                  }
+                } else if (!row.deleted) {
+                  state.cobros.push(rawData);
+                  hasRemoteChanges = true;
+                }
+              }
+            } catch (rowErr) {
+              console.warn('Error procesando fila remota:', rowErr);
+            }
+          });
+
+          if (hasRemoteChanges) {
+            saveState('cotizaciones');
+            saveState('cobros');
+            updateBadges();
+            updateCotDashboard();
+            updateCobroDashboard();
+          }
+        }
+
+        const nowStr = new Date().toLocaleTimeString('es-CO');
+        if (timeDisplay) timeDisplay.textContent = nowStr;
+        if (statusText) statusText.innerHTML = `<span style="color:var(--color-success)">✓ Sincronizado a las ${nowStr} (${resData.processed || 0} subidos).</span>`;
+        if (isManual) showToast('Sincronización completada con éxito');
+      } catch (err) {
+        console.warn('[Sync Error]', err);
+        if (statusText) statusText.innerHTML = `<span style="color:var(--color-danger)">✕ ${err.message}</span>`;
+        if (isManual) showToast(err.message, 'error');
+      } finally {
+        isSyncing = false;
+      }
+    }
+
+    async function testCloudConnection() {
+      const resEl = document.getElementById('cloud-sync-status-text') || document.getElementById('cloud-test-result');
+      if (resEl) resEl.textContent = 'Probando conexión con API Cloudflare...';
+      try {
+        const resp = await fetch('./api/status');
+        if (resp.ok) {
+          const json = await resp.json();
+          if (resEl) resEl.innerHTML = `<span style="color:var(--color-success)">✓ Conexión exitosa con Cloudflare API (${json.service}).</span>`;
+          showToast('API de Cloudflare responde correctamente');
+        } else {
+          if (resEl) resEl.innerHTML = `<span style="color:var(--color-warning)">API respondió con código ${resp.status}</span>`;
+        }
+      } catch (err) {
+        if (resEl) resEl.innerHTML = '<span style="color:var(--text-muted)">Servidor local activo. El backend se ejecutará en Cloudflare Pages.</span>';
+      }
+    }
+
+    /* ==========================================================================
+       18. INICIALIZACIÓN DE LA APLICACIÓN
+       ========================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      loadAllLocalData();
+      loadSettingsToForm();
+      updateBadges();
+      renderCatalogView();
+      updateCotDashboard();
+      updateCobroDashboard();
+
+      // Iniciar formulario de cotización por defecto
+      newCotizacionAction();
+      switchView('view-cot-dashboard');
+
+      registerPwa();
+      updateAuthStatusUI();
+
+      // Sincronización automática si hay sesión activa
+      if (getAuthToken()) {
+        syncDataWithCloud(false);
+      }
+
+      // Sincronizar periódicamente cada 60s si hay conexión
+      setInterval(() => {
+        if (getAuthToken() && navigator.onLine) {
+          syncDataWithCloud(false);
+        }
+      }, 60000);
+
+      window.addEventListener('online', () => {
+        if (getAuthToken()) syncDataWithCloud(false);
+      });
+    });
+  </script>
+</body>
+</html>
