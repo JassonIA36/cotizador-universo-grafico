@@ -788,7 +788,16 @@
     const waUrl = cleanPhone
       ? `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(messageText)}`
       : `https://api.whatsapp.com/send?text=${encodeURIComponent(messageText)}`;
-    window.open(waUrl, '_blank');
+    const win = window.open(waUrl, '_blank');
+    if (!win || win.closed || typeof win.closed === 'undefined') {
+      const link = document.createElement('a');
+      link.href = waUrl;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => link.remove(), 200);
+    }
 
     if (typeof onDesktopFallback === 'function') {
       onDesktopFallback(fileName);

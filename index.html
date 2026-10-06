@@ -3171,6 +3171,9 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
     </div>
   </div>
 
+  <!-- Contenedor de Notificaciones Toast -->
+  <div id="toast-container" class="toast-container"></div>
+
   <!-- Librerías jsPDF, AutoTable y Motor PDF Universo Gráfico -->
   <script src="./assets/jspdf.umd.min.js"></script>
   <script src="./assets/jspdf.plugin.autotable.min.js"></script>
@@ -4325,23 +4328,24 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
     }
 
     async function shareWhatsAppAction(docType, data = null) {
-      if (!data) {
-        data = (docType === 'cotizacion') ? getFullCotDataFromForm() : getFullCobroDataFromForm();
-      }
-
-      // Validar datos mínimos antes de proceder
-      if (docType === 'cotizacion' && (!data.items || data.items.length === 0)) {
-        showToast('Agrega al menos un servicio a la cotización', 'warning');
-        return;
-      }
-      if (docType === 'cuenta_cobro' && (!data.conceptos || data.conceptos.length === 0)) {
-        showToast('Agrega al menos un concepto a la cuenta de cobro', 'warning');
-        return;
-      }
-
-      showToast('Generando documento PDF...', 'info');
-
       try {
+        if (!data) {
+          data = (docType === 'cotizacion') ? getFullCotDataFromForm() : getFullCobroDataFromForm();
+        }
+
+        // Si no tiene ítems, asegurar ítems por defecto para no bloquear al usuario
+        if (docType === 'cotizacion') {
+          if (!data.items || data.items.length === 0) {
+            data.items = [{ desc: 'Servicios de Diseño e Impresión', qty: 1, price: data.grandTotal || data.subtotal || 0, total: data.grandTotal || data.subtotal || 0 }];
+          }
+        } else if (docType === 'cuenta_cobro') {
+          if (!data.conceptos || data.conceptos.length === 0) {
+            data.conceptos = [{ desc: 'Servicios de Diseño Gráfico y Publicidad', amount: data.totalConceptos || 0, valor: data.totalConceptos || 0 }];
+          }
+        }
+
+        showToast('Generando documento PDF...', 'info');
+
         if (window.UniversoGraficoPdf && typeof window.UniversoGraficoPdf.shareDocViaWhatsApp === 'function') {
           const result = await window.UniversoGraficoPdf.shareDocViaWhatsApp(docType, data, (fileName) => {
             showAppModal(
@@ -4356,19 +4360,22 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
             showToast('Compartiendo PDF directamente en WhatsApp...', 'success');
           }
         } else {
-          throw new Error('Módulo de PDF no disponible');
-        }
-      } catch (err) {
-        console.error('Error al generar o compartir PDF para WhatsApp:', err);
-        const fallbackText = confirm(
-          'Ocurrió un inconveniente al generar el archivo PDF adjunto.\n\n' +
-          '¿Deseas enviar el resumen de la propuesta por WhatsApp solo en texto?'
-        );
-        if (fallbackText) {
+          // Si las librerías aún no están cargadas o disponibles, fallback a texto de inmediato
+          console.warn('Módulo de PDF aún no cargado, usando enlace directo a WhatsApp...');
           const text = generatePlainTextSummary(docType, data);
           const phone = (docType === 'cotizacion' ? (data.clientPhone || '') : '') || '';
           const cleanPhone = phone.replace(/\D/g, '');
           openWhatsAppUrl(cleanPhone, text);
+        }
+      } catch (err) {
+        console.error('Error al generar o compartir PDF para WhatsApp:', err);
+        try {
+          const text = generatePlainTextSummary(docType, data);
+          const phone = (docType === 'cotizacion' ? (data.clientPhone || '') : '') || '';
+          const cleanPhone = phone.replace(/\D/g, '');
+          openWhatsAppUrl(cleanPhone, text);
+        } catch (e2) {
+          console.error('Error en fallback:', e2);
         }
       }
     }
@@ -4382,7 +4389,16 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       let url = 'https://api.whatsapp.com/send?';
       if (phone) url += `phone=${encodeURIComponent(phone)}&`;
       url += `text=${encodeURIComponent(text)}`;
-      window.open(url, '_blank');
+      const win = window.open(url, '_blank');
+      if (!win || win.closed || typeof win.closed === 'undefined') {
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        setTimeout(() => link.remove(), 200);
+      }
     }
 
     function copyPlainTextAction() {
@@ -4989,7 +5005,13 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
        15. NOTIFICACIONES TOAST Y UTILIDADES
        ========================================================================== */
     function showToast(msg, type = 'info') {
-      const container = document.getElementById('toast-container');
+      let container = document.getElementById('toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+      }
       const toast = document.createElement('div');
       toast.className = 'toast-msg';
 
