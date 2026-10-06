@@ -3154,8 +3154,28 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
   <!-- Área de Impresión Dedicada -->
   <div id="print-staging-area"></div>
 
-  <!-- Contenedor de Notificaciones Toast -->
-  <div id="toast-container" class="toast-container"></div>
+  <!-- Modal de Notificaciones y Avisos de la Aplicación -->
+  <div id="info-modal-overlay" class="modal-overlay">
+    <div class="modal-dialog" style="max-width: 460px;">
+      <div class="modal-header">
+        <h3 id="info-modal-title" style="font-size: 1.1rem;">Aviso</h3>
+        <button class="icon-btn" onclick="closeInfoModal()" aria-label="Cerrar modal">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body" id="info-modal-body" style="font-size: 0.9rem; line-height: 1.5; color: var(--text-muted);">
+      </div>
+      <div class="modal-footer" style="justify-content: flex-end;">
+        <button class="btn btn-primary" id="info-modal-ok-btn" onclick="closeInfoModal()">Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Librerías jsPDF, AutoTable y Motor PDF Universo Gráfico -->
+  <script src="./assets/jspdf.umd.min.js"></script>
+  <script src="./assets/jspdf.plugin.autotable.min.js"></script>
+  <script src="./assets/logo-data.js"></script>
+  <script src="./assets/pdf-generator.js"></script>
 
   <!-- ==========================================================================
        LÓGICA JAVASCRIPT NATIVA Y AUTÓNOMA
@@ -4283,24 +4303,73 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       }
     }
 
-    function shareWhatsAppAction(docType, data = null) {
+    function showAppModal(title, bodyHtml, confirmText = 'Entendido', onConfirm = null) {
+      const overlay = document.getElementById('info-modal-overlay');
+      const titleEl = document.getElementById('info-modal-title');
+      const bodyEl = document.getElementById('info-modal-body');
+      const okBtn = document.getElementById('info-modal-ok-btn');
+      if (!overlay || !titleEl || !bodyEl || !okBtn) return;
+      titleEl.innerHTML = title;
+      bodyEl.innerHTML = bodyHtml;
+      okBtn.textContent = confirmText;
+      okBtn.onclick = () => {
+        closeInfoModal();
+        if (typeof onConfirm === 'function') onConfirm();
+      };
+      overlay.classList.add('active');
+    }
+
+    function closeInfoModal() {
+      const overlay = document.getElementById('info-modal-overlay');
+      if (overlay) overlay.classList.remove('active');
+    }
+
+    async function shareWhatsAppAction(docType, data = null) {
       if (!data) {
         data = (docType === 'cotizacion') ? getFullCotDataFromForm() : getFullCobroDataFromForm();
       }
-      const text = generatePlainTextSummary(docType, data);
-      const phone = (docType === 'cotizacion' ? data.clientPhone : '') || '';
-      const cleanPhone = phone.replace(/\D/g, '');
 
-      // Probar Web Share API si tiene soporte
-      if (navigator.share) {
-        navigator.share({
-          title: `Documento Universo Gráfico N° ${data.number}`,
-          text: text
-        }).catch(() => {
+      // Validar datos mínimos antes de proceder
+      if (docType === 'cotizacion' && (!data.items || data.items.length === 0)) {
+        showToast('Agrega al menos un servicio a la cotización', 'warning');
+        return;
+      }
+      if (docType === 'cuenta_cobro' && (!data.conceptos || data.conceptos.length === 0)) {
+        showToast('Agrega al menos un concepto a la cuenta de cobro', 'warning');
+        return;
+      }
+
+      showToast('Generando documento PDF...', 'info');
+
+      try {
+        if (window.UniversoGraficoPdf && typeof window.UniversoGraficoPdf.shareDocViaWhatsApp === 'function') {
+          const result = await window.UniversoGraficoPdf.shareDocViaWhatsApp(docType, data, (fileName) => {
+            showAppModal(
+              '📄 PDF Descargado & WhatsApp Abierto',
+              `<p>El archivo <strong>${escapeHtml(fileName)}</strong> se descargó a tu computador.</p>
+               <p style="margin-top: 8px;">En la pestaña de WhatsApp que acabamos de abrir con tu cliente, simplemente <strong>arrastra el PDF</strong> o dale clic en el clip 📎 y selecciona el archivo descargado para enviarlo.</p>`,
+              'Entendido'
+            );
+          });
+
+          if (result && result.success && result.method === 'native-share') {
+            showToast('Compartiendo PDF directamente en WhatsApp...', 'success');
+          }
+        } else {
+          throw new Error('Módulo de PDF no disponible');
+        }
+      } catch (err) {
+        console.error('Error al generar o compartir PDF para WhatsApp:', err);
+        const fallbackText = confirm(
+          'Ocurrió un inconveniente al generar el archivo PDF adjunto.\n\n' +
+          '¿Deseas enviar el resumen de la propuesta por WhatsApp solo en texto?'
+        );
+        if (fallbackText) {
+          const text = generatePlainTextSummary(docType, data);
+          const phone = (docType === 'cotizacion' ? (data.clientPhone || '') : '') || '';
+          const cleanPhone = phone.replace(/\D/g, '');
           openWhatsAppUrl(cleanPhone, text);
-        });
-      } else {
-        openWhatsAppUrl(cleanPhone, text);
+        }
       }
     }
 

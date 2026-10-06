@@ -1,5 +1,5 @@
 // Service Worker para Universo Gráfico – Cotizador PWA
-const CACHE_NAME = 'ug-cotizador-v1.4.0';
+const CACHE_NAME = 'ug-cotizador-v1.5.0';
 
 const ASSETS_TO_CACHE = [
   './',
@@ -7,6 +7,10 @@ const ASSETS_TO_CACHE = [
   './manifest.webmanifest',
   './assets/logo.png',
   './assets/favicon.svg',
+  './assets/jspdf.umd.min.js',
+  './assets/jspdf.plugin.autotable.min.js',
+  './assets/logo-data.js',
+  './assets/pdf-generator.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-512-maskable.png'
