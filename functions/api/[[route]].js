@@ -196,6 +196,34 @@ export async function onRequest(context) {
     }
   }
 
+  // Endpoint: Restablecer / Recuperar Contraseña
+  if (path === 'auth/reset' && request.method === 'POST') {
+    try {
+      const { email, newPassword } = await request.json();
+      if (!email || !newPassword) {
+        return jsonResponse({ error: 'Email y nueva contraseña requeridos' }, 400);
+      }
+      const cleanEmail = email.trim().toLowerCase();
+      const user = await db.prepare('SELECT id, nombre FROM usuarios WHERE email = ?').bind(cleanEmail).first();
+      if (!user) {
+        return jsonResponse({ error: 'No se encontró ningún usuario con ese correo electrónico' }, 404);
+      }
+      const newHash = await hashPassword(newPassword);
+      await db.prepare('UPDATE usuarios SET password_hash = ? WHERE id = ?').bind(newHash, user.id).run();
+
+      const secret = env.JWT_SECRET || 'ug_secret_jwt_key_2026';
+      const token = await createToken({ id: user.id, email: cleanEmail, nombre: user.nombre }, secret);
+      return jsonResponse({
+        success: true,
+        message: 'Contraseña actualizada correctamente',
+        token,
+        user: { id: user.id, email: cleanEmail, nombre: user.nombre }
+      });
+    } catch (err) {
+      return jsonResponse({ error: 'Error al restablecer contraseña: ' + err.message }, 500);
+    }
+  }
+
   // Endpoints protegidos: Sincronización
   const authUser = await authenticateRequest(request, env);
   if (!authUser) {

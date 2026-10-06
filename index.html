@@ -1321,6 +1321,94 @@
       overflow-x: auto;
     }
 
+    /* Contenedor de inputs con botón para ver/ocultar contraseña */
+    .password-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .password-input-wrap .form-control {
+      padding-right: 44px !important;
+      width: 100%;
+    }
+
+    .btn-toggle-password {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      border-radius: var(--radius-sm);
+      transition: color 0.15s ease, background 0.15s ease;
+      z-index: 2;
+    }
+
+    .btn-toggle-password:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Tarjeta de usuario en el sidebar */
+    .sidebar-user-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .sidebar-user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .sidebar-user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--brand-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+      color: white;
+    }
+
+    .sidebar-user-details {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .sidebar-user-email {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+    }
+
+    .sidebar-user-status {
+      font-size: 0.68rem;
+      color: var(--color-success);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
     /* ==========================================================================
        BARRA FIJA INFERIOR PARA MÓVILES (STICKY BAR)
        ========================================================================== */
@@ -1620,6 +1708,199 @@
       .pdf-modal-sheet-wrap {
         padding: 0.6rem;
       }
+
+      /* Optimizaciones completas para el modal de PDF en móvil (cero desbordamiento) */
+      #doc-modal-overlay {
+        padding: 0 !important;
+        align-items: stretch !important;
+        justify-content: stretch !important;
+      }
+
+      #doc-modal-overlay .modal-dialog {
+        max-width: 100vw !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        max-height: 100vh !important;
+        max-height: 100dvh !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
+
+      #doc-modal-overlay .modal-header {
+        padding: 0.65rem 0.85rem !important;
+        flex-shrink: 0 !important;
+        background: var(--bg-card) !important;
+        border-bottom: 1px solid var(--border-color) !important;
+      }
+
+      #doc-modal-overlay .modal-header h3 {
+        font-size: 0.92rem !important;
+        max-width: 78vw !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+
+      #doc-modal-overlay .modal-body {
+        padding: 0.4rem !important;
+        flex: 1 !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        background: #0b101e !important;
+      }
+
+      #doc-modal-overlay .pdf-modal-sheet-wrap {
+        padding: 0 !important;
+        background: transparent !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
+      }
+
+      #doc-modal-overlay .doc-sheet-container {
+        padding: 1rem 0.65rem !important;
+        font-size: 11px !important;
+        border-radius: 6px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+        overflow-wrap: break-word !important;
+        word-break: break-word !important;
+      }
+
+      #doc-modal-overlay .doc-header-block {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
+        border-bottom: 2px solid #8B5CF6 !important;
+        padding-bottom: 0.75rem !important;
+        margin-bottom: 0.75rem !important;
+      }
+
+      #doc-modal-overlay .doc-logo-img {
+        max-height: 44px !important;
+      }
+
+      #doc-modal-overlay .doc-brand-name {
+        font-size: 1.05rem !important;
+      }
+
+      #doc-modal-overlay .doc-brand-info {
+        font-size: 10px !important;
+      }
+
+      #doc-modal-overlay .doc-meta-box {
+        text-align: left !important;
+        width: 100% !important;
+        border-top: 1px dashed #E2E8F0 !important;
+        padding-top: 6px !important;
+      }
+
+      #doc-modal-overlay .doc-title-main {
+        font-size: 1.15rem !important;
+      }
+
+      #doc-modal-overlay .doc-number-badge {
+        font-size: 0.95rem !important;
+      }
+
+      #doc-modal-overlay .doc-client-card {
+        padding: 0.6rem 0.75rem !important;
+        margin-bottom: 0.85rem !important;
+      }
+
+      #doc-modal-overlay .doc-client-name {
+        font-size: 0.95rem !important;
+      }
+
+      #doc-modal-overlay .doc-table {
+        width: 100% !important;
+        table-layout: fixed !important;
+        font-size: 10px !important;
+        margin-bottom: 0.85rem !important;
+      }
+
+      #doc-modal-overlay .doc-table th {
+        font-size: 9px !important;
+        padding: 5px 3px !important;
+        letter-spacing: 0 !important;
+      }
+
+      #doc-modal-overlay .doc-table td {
+        padding: 5px 3px !important;
+        font-size: 10px !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+      }
+
+      #doc-modal-overlay .doc-table th:nth-child(1),
+      #doc-modal-overlay .doc-table td:nth-child(1) {
+        width: 44% !important;
+      }
+
+      #doc-modal-overlay .doc-table th:nth-child(2),
+      #doc-modal-overlay .doc-table td:nth-child(2) {
+        width: 14% !important;
+        text-align: center !important;
+      }
+
+      #doc-modal-overlay .doc-table th:nth-child(3),
+      #doc-modal-overlay .doc-table td:nth-child(3) {
+        width: 21% !important;
+        text-align: right !important;
+        font-size: 9.5px !important;
+      }
+
+      #doc-modal-overlay .doc-table th:nth-child(4),
+      #doc-modal-overlay .doc-table td:nth-child(4) {
+        width: 21% !important;
+        text-align: right !important;
+        font-size: 9.5px !important;
+      }
+
+      #doc-modal-overlay .doc-totals-box {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-bottom: 0.85rem !important;
+        font-size: 10.5px !important;
+      }
+
+      #doc-modal-overlay .doc-totals-box td {
+        padding: 3px 4px !important;
+      }
+
+      #doc-modal-overlay .doc-totals-box tr.grand-total td {
+        font-size: 12.5px !important;
+        padding-top: 6px !important;
+      }
+
+      #doc-modal-overlay .modal-footer {
+        padding: 0.45rem 0.65rem !important;
+        flex-shrink: 0 !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+        background: var(--bg-card) !important;
+        border-top: 1px solid var(--border-color) !important;
+      }
+
+      #doc-modal-overlay .modal-footer .btn {
+        padding: 0.45rem 0.5rem !important;
+        font-size: 0.78rem !important;
+        justify-content: center !important;
+        min-height: 38px !important;
+      }
+
+      #doc-modal-overlay .modal-footer .btn-primary {
+        grid-column: span 2 !important;
+      }
     }
 
     @media (max-width: 480px) {
@@ -1843,8 +2124,30 @@
       </div>
 
       <div class="sidebar-footer">
+        <!-- Tarjeta de Usuario Activo en Sidebar -->
+        <div id="sidebar-user-card" class="sidebar-user-card" style="display: none;">
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-avatar">👤</div>
+            <div class="sidebar-user-details">
+              <span id="sidebar-user-email" class="sidebar-user-email">usuario</span>
+              <span class="sidebar-user-status">● Conectado (D1)</span>
+            </div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="logoutCloudUser()" style="width: 100%; justify-content: center; padding: 0.4rem 0.5rem; font-size: 0.78rem;" title="Cerrar sesión de Cloudflare">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            <span>Cerrar Sesión</span>
+          </button>
+        </div>
+
+        <!-- Botón para conectar cuando no ha iniciado sesión -->
+        <div id="sidebar-guest-card" style="display: block; margin-bottom: 0.75rem;">
+          <button class="btn btn-outline btn-sm" onclick="openLoginModal()" style="width: 100%; justify-content: center; font-size: 0.78rem; border-color: var(--brand-purple); color: var(--brand-purple);">
+            <span>🔐 Conectar Nube (D1)</span>
+          </button>
+        </div>
+
         <div class="sidebar-system-info">
-          <span>PWA v1.1.0</span>
+          <span>PWA v1.4.0</span>
           <span>Offline Ready</span>
         </div>
       </div>
@@ -2500,21 +2803,65 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
               </div>
 
               <!-- Formulario de Login -->
-              <div class="card" style="background: var(--bg-surface); max-width: 480px; margin: 0 auto 1.5rem;">
+              <div class="card" id="cloud-login-box" style="background: var(--bg-surface); max-width: 480px; margin: 0 auto 1.5rem;">
                 <h3 style="font-size: 1.05rem; margin-bottom: 1rem; text-align: center;">Acceso a tu Cuenta</h3>
                 <div class="form-group" style="margin-bottom: 1rem;">
                   <label for="auth-email">Correo Electrónico</label>
                   <input type="email" id="auth-email" class="form-control" placeholder="tu-correo@ejemplo.com">
                 </div>
-                <div class="form-group" style="margin-bottom: 1.25rem;">
+                <div class="form-group" style="margin-bottom: 0.5rem;">
                   <label for="auth-password">Contraseña</label>
-                  <input type="password" id="auth-password" class="form-control" placeholder="••••••••">
+                  <div class="password-input-wrap">
+                    <input type="password" id="auth-password" class="form-control" placeholder="••••••••">
+                    <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('auth-password', this)" title="Mostrar/ocultar contraseña" aria-label="Mostrar u ocultar contraseña">
+                      <svg class="eye-icon eye-open" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                      <svg class="eye-icon eye-closed" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>
+                    </button>
+                  </div>
+                </div>
+                <div style="text-align: right; margin-bottom: 1.25rem;">
+                  <a href="javascript:void(0)" onclick="toggleCloudResetMode(true)" style="font-size: 0.8rem; color: var(--brand-purple); text-decoration: underline;">¿Olvidaste tu contraseña? / Recuperar</a>
                 </div>
                 <div style="display: flex; gap: 10px; flex-direction: column;">
                   <button class="btn btn-primary" onclick="loginCloudUser()" id="btn-login-cloud">Iniciar Sesión / Conectar</button>
                   <button class="btn btn-outline btn-sm" onclick="registerCloudUser()">Crear Cuenta Nueva</button>
                 </div>
                 <div id="auth-error-msg" style="color: var(--color-danger); font-size: 0.85rem; margin-top: 10px; text-align: center; display: none;"></div>
+              </div>
+
+              <!-- Formulario de Recuperación de Contraseña -->
+              <div class="card" id="cloud-reset-box" style="background: var(--bg-surface); max-width: 480px; margin: 0 auto 1.5rem; display: none;">
+                <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem; text-align: center;">Recuperar Contraseña</h3>
+                <p style="font-size: 0.82rem; color: var(--text-muted); text-align: center; margin-bottom: 1.25rem;">Ingresa tu correo registrado y escribe tu nueva contraseña.</p>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="cloud-reset-email">Correo Electrónico</label>
+                  <input type="email" id="cloud-reset-email" class="form-control" placeholder="tu-correo@ejemplo.com">
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="cloud-reset-newpass">Nueva Contraseña</label>
+                  <div class="password-input-wrap">
+                    <input type="password" id="cloud-reset-newpass" class="form-control" placeholder="Mínimo 4 caracteres">
+                    <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('cloud-reset-newpass', this)" title="Mostrar/ocultar contraseña" aria-label="Mostrar u ocultar contraseña">
+                      <svg class="eye-icon eye-open" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                      <svg class="eye-icon eye-closed" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                  <label for="cloud-reset-confirm">Confirmar Nueva Contraseña</label>
+                  <div class="password-input-wrap">
+                    <input type="password" id="cloud-reset-confirm" class="form-control" placeholder="Repite la contraseña">
+                    <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('cloud-reset-confirm', this)" title="Mostrar/ocultar contraseña" aria-label="Mostrar u ocultar contraseña">
+                      <svg class="eye-icon eye-open" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                      <svg class="eye-icon eye-closed" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>
+                    </button>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 10px; flex-direction: column;">
+                  <button class="btn btn-primary" onclick="resetPasswordFromCloud()" id="btn-cloud-reset">Restablecer Contraseña y Entrar</button>
+                  <button class="btn btn-secondary btn-sm" onclick="toggleCloudResetMode(false)">← Volver al Inicio de Sesión</button>
+                </div>
+                <div id="cloud-reset-error-msg" style="color: var(--color-danger); font-size: 0.85rem; margin-top: 10px; text-align: center; display: none;"></div>
               </div>
             </div>
 
@@ -2671,20 +3018,22 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
   </div>
 
   <!-- ==========================================================================
-       MODAL DE INICIO DE SESIÓN / REGISTRO PARA SINCRONIZACIÓN AUTOMÁTICA
+       MODAL DE INICIO DE SESIÓN / REGISTRO / RECUPERACIÓN PARA NUBE
        ========================================================================== -->
   <div id="login-modal-overlay" class="modal-overlay">
     <div class="modal-dialog" style="max-width: 460px;">
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 1.3rem;">🔐</span>
+          <span style="font-size: 1.3rem;" id="login-modal-icon">🔐</span>
           <h3 id="login-modal-title" style="font-size: 1.15rem;">Sincronización Cloudflare D1</h3>
         </div>
         <button class="icon-btn" onclick="closeLoginModal()">
           <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
-      <div class="modal-body">
+
+      <!-- Modo 1: Iniciar Sesión / Registro -->
+      <div class="modal-body" id="login-modal-mode-login">
         <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">
           Inicia sesión para activar la <strong>sincronización automática continua</strong> con tu base de datos de Cloudflare. Si es tu primera vez, tu cuenta se registrará automáticamente.
         </p>
@@ -2692,9 +3041,18 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
           <label for="modal-auth-email">Correo Electrónico</label>
           <input type="email" id="modal-auth-email" class="form-control" placeholder="tu-correo@ejemplo.com">
         </div>
-        <div class="form-group" style="margin-bottom: 1.25rem;">
+        <div class="form-group" style="margin-bottom: 0.5rem;">
           <label for="modal-auth-password">Contraseña</label>
-          <input type="password" id="modal-auth-password" class="form-control" placeholder="••••••••">
+          <div class="password-input-wrap">
+            <input type="password" id="modal-auth-password" class="form-control" placeholder="••••••••">
+            <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('modal-auth-password', this)" title="Mostrar/ocultar contraseña" aria-label="Mostrar u ocultar contraseña">
+              <svg class="eye-icon eye-open" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              <svg class="eye-icon eye-closed" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>
+            </button>
+          </div>
+        </div>
+        <div style="text-align: right; margin-bottom: 1.25rem;">
+          <a href="javascript:void(0)" onclick="toggleLoginModalMode('reset')" style="font-size: 0.82rem; color: var(--brand-purple); text-decoration: underline;">¿Olvidaste tu contraseña? / Recuperar</a>
         </div>
         <div id="modal-auth-error-msg" style="color: var(--color-danger); font-size: 0.85rem; margin-bottom: 12px; display: none;"></div>
         <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -2702,9 +3060,93 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
           <button class="btn btn-outline btn-sm" onclick="registerFromModal()">Crear Cuenta Nueva</button>
         </div>
       </div>
+
+      <!-- Modo 2: Recuperar / Restablecer Contraseña -->
+      <div class="modal-body" id="login-modal-mode-reset" style="display: none;">
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+          Ingresa tu correo registrado y asigna una <strong>nueva contraseña</strong> para restaurar tu acceso.
+        </p>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="modal-reset-email">Correo Electrónico</label>
+          <input type="email" id="modal-reset-email" class="form-control" placeholder="tu-correo@ejemplo.com">
+        </div>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="modal-reset-password">Nueva Contraseña</label>
+          <div class="password-input-wrap">
+            <input type="password" id="modal-reset-password" class="form-control" placeholder="Mínimo 4 caracteres">
+            <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('modal-reset-password', this)" title="Mostrar/ocultar contraseña" aria-label="Mostrar u ocultar contraseña">
+              <svg class="eye-icon eye-open" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              <svg class="eye-icon eye-closed" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 1.25rem;">
+          <label for="modal-reset-password-confirm">Confirmar Nueva Contraseña</label>
+          <div class="password-input-wrap">
+            <input type="password" id="modal-reset-password-confirm" class="form-control" placeholder="Repite la nueva contraseña">
+            <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('modal-reset-password-confirm', this)" title="Mostrar/ocultar contraseña" aria-label="Mostrar u ocultar contraseña">
+              <svg class="eye-icon eye-open" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              <svg class="eye-icon eye-closed" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>
+            </button>
+          </div>
+        </div>
+        <div id="modal-reset-error-msg" style="color: var(--color-danger); font-size: 0.85rem; margin-bottom: 12px; display: none;"></div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button class="btn btn-primary" id="btn-modal-reset" onclick="resetPasswordFromModal()">Restablecer Contraseña y Entrar</button>
+          <button class="btn btn-secondary btn-sm" onclick="toggleLoginModalMode('login')">← Volver al Inicio de Sesión</button>
+        </div>
+      </div>
+
       <div class="modal-footer" style="justify-content: space-between;">
-        <span style="font-size: 0.78rem; color: var(--text-dim);">Datos encriptados en Cloudflare Edge</span>
+        <span style="font-size: 0.78rem; color: var(--text-dim);">Cloudflare Edge D1</span>
         <button class="btn btn-secondary btn-sm" onclick="closeLoginModal()">Continuar en local</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL DE SESIÓN ACTIVA (CERRAR SESIÓN / INFO DE CUENTA)
+       ========================================================================== -->
+  <div id="user-session-modal" class="modal-overlay">
+    <div class="modal-dialog" style="max-width: 440px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.3rem;">👤</span>
+          <h3 style="font-size: 1.15rem;">Tu Sesión de Usuario</h3>
+        </div>
+        <button class="icon-btn" onclick="closeUserSessionModal()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.1rem; margin-bottom: 1.25rem;">
+          <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 4px;">Cuenta Conectada</div>
+          <div id="modal-user-email-display" style="font-size: 1.05rem; font-weight: 700; color: var(--text-main); word-break: break-all;">usuario@ejemplo.com</div>
+          <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 0.82rem; color: var(--color-success);">
+            <span class="db-status-dot" style="background-color: var(--color-success); box-shadow: 0 0 8px var(--color-success);"></span>
+            <span>Sincronización en la Nube Activada</span>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; border-top: 1px dashed var(--border-color); padding-top: 8px;">
+            Última sincronización: <strong id="modal-last-sync-display" style="color: var(--text-main);">Pendiente</strong>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button class="btn btn-primary" onclick="syncDataWithCloud(true); closeUserSessionModal();" style="justify-content: center;">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <span>Sincronizar Datos Ahora</span>
+          </button>
+          <button class="btn btn-secondary" onclick="switchView('view-cloud'); closeUserSessionModal();" style="justify-content: center;">
+            <span>Administrar Nube (D1)</span>
+          </button>
+          <button class="btn btn-danger" onclick="logoutCloudUser(); closeUserSessionModal();" style="justify-content: center; margin-top: 6px; font-weight: 600;">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            <span>Cerrar Sesión</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: flex-end;">
+        <button class="btn btn-secondary btn-sm" onclick="closeUserSessionModal()">Cerrar</button>
       </div>
     </div>
   </div>
@@ -4570,6 +5012,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
     }
 
     function openLoginModal() {
+      toggleLoginModalMode('login');
       const overlay = document.getElementById('login-modal-overlay');
       if (overlay) overlay.classList.add('active');
     }
@@ -4579,12 +5022,217 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       if (overlay) overlay.classList.remove('active');
     }
 
+    function openUserSessionModal() {
+      const overlay = document.getElementById('user-session-modal');
+      if (!overlay) return;
+      const user = getAuthUser();
+      const emailDisplay = document.getElementById('modal-user-email-display');
+      const lastSyncDisplay = document.getElementById('modal-last-sync-display');
+      const cloudLastSync = document.getElementById('cloud-last-sync-time');
+
+      if (emailDisplay && user) emailDisplay.textContent = user.email || 'Usuario';
+      if (lastSyncDisplay && cloudLastSync) lastSyncDisplay.textContent = cloudLastSync.textContent || 'Pendiente';
+      overlay.classList.add('active');
+    }
+
+    function closeUserSessionModal() {
+      const overlay = document.getElementById('user-session-modal');
+      if (overlay) overlay.classList.remove('active');
+    }
+
     function handleDbPillClick() {
       const token = getAuthToken();
       if (!token) {
         openLoginModal();
       } else {
-        switchView('view-cloud');
+        openUserSessionModal();
+      }
+    }
+
+    function togglePasswordVisibility(inputId, btnEl) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      const isPass = input.type === 'password';
+      input.type = isPass ? 'text' : 'password';
+      if (btnEl) {
+        const eyeOpen = btnEl.querySelector('.eye-open');
+        const eyeClosed = btnEl.querySelector('.eye-closed');
+        if (eyeOpen && eyeClosed) {
+          eyeOpen.style.display = isPass ? 'none' : 'block';
+          eyeClosed.style.display = isPass ? 'block' : 'none';
+        }
+      }
+    }
+
+    function toggleLoginModalMode(mode) {
+      const loginBody = document.getElementById('login-modal-mode-login');
+      const resetBody = document.getElementById('login-modal-mode-reset');
+      const modalTitle = document.getElementById('login-modal-title');
+      const modalIcon = document.getElementById('login-modal-icon');
+      const authErr = document.getElementById('modal-auth-error-msg');
+      const resetErr = document.getElementById('modal-reset-error-msg');
+      if (authErr) authErr.style.display = 'none';
+      if (resetErr) resetErr.style.display = 'none';
+
+      if (mode === 'reset') {
+        if (loginBody) loginBody.style.display = 'none';
+        if (resetBody) resetBody.style.display = 'block';
+        if (modalTitle) modalTitle.textContent = 'Recuperar Contraseña';
+        if (modalIcon) modalIcon.textContent = '🔑';
+        const emailLogin = document.getElementById('modal-auth-email')?.value.trim();
+        const emailReset = document.getElementById('modal-reset-email');
+        if (emailLogin && emailReset) emailReset.value = emailLogin;
+      } else {
+        if (loginBody) loginBody.style.display = 'block';
+        if (resetBody) resetBody.style.display = 'none';
+        if (modalTitle) modalTitle.textContent = 'Sincronización Cloudflare D1';
+        if (modalIcon) modalIcon.textContent = '🔐';
+      }
+    }
+
+    async function resetPasswordFromModal() {
+      const email = document.getElementById('modal-reset-email').value.trim();
+      const newPassword = document.getElementById('modal-reset-password').value;
+      const confirmPassword = document.getElementById('modal-reset-password-confirm').value;
+      const errorEl = document.getElementById('modal-reset-error-msg');
+      const btn = document.getElementById('btn-modal-reset');
+
+      if (!email || !newPassword) {
+        if (errorEl) {
+          errorEl.textContent = 'Por favor ingresa tu correo y tu nueva contraseña.';
+          errorEl.style.display = 'block';
+        }
+        return;
+      }
+      if (newPassword.length < 4) {
+        if (errorEl) {
+          errorEl.textContent = 'La contraseña debe tener al menos 4 caracteres.';
+          errorEl.style.display = 'block';
+        }
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        if (errorEl) {
+          errorEl.textContent = 'Las contraseñas no coinciden. Verifícalas.';
+          errorEl.style.display = 'block';
+        }
+        return;
+      }
+
+      if (errorEl) errorEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Actualizando contraseña en Cloudflare...';
+
+      try {
+        const resp = await fetch('./api/auth/reset', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, newPassword })
+        });
+
+        const data = await resp.json();
+        if (!resp.ok || !data.token) {
+          throw new Error(data.error || 'No se pudo restablecer la contraseña.');
+        }
+
+        localStorage.setItem(STORAGE_KEY_AUTH_TOKEN, data.token);
+        localStorage.setItem(STORAGE_KEY_AUTH_USER, JSON.stringify(data.user));
+        updateAuthStatusUI();
+        closeLoginModal();
+        showToast('✓ Contraseña actualizada con éxito');
+        await syncDataWithCloud(true);
+      } catch (err) {
+        if (errorEl) {
+          errorEl.textContent = err.message;
+          errorEl.style.display = 'block';
+        }
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Restablecer Contraseña y Entrar';
+      }
+    }
+
+    function toggleCloudResetMode(showReset) {
+      const loginBox = document.getElementById('cloud-login-box');
+      const resetBox = document.getElementById('cloud-reset-box');
+      const errLogin = document.getElementById('auth-error-msg');
+      const errReset = document.getElementById('cloud-reset-error-msg');
+      if (errLogin) errLogin.style.display = 'none';
+      if (errReset) errReset.style.display = 'none';
+
+      if (showReset) {
+        if (loginBox) loginBox.style.display = 'none';
+        if (resetBox) resetBox.style.display = 'block';
+        const emailInput = document.getElementById('auth-email')?.value.trim();
+        const emailReset = document.getElementById('cloud-reset-email');
+        if (emailInput && emailReset) emailReset.value = emailInput;
+      } else {
+        if (loginBox) loginBox.style.display = 'block';
+        if (resetBox) resetBox.style.display = 'none';
+      }
+    }
+
+    async function resetPasswordFromCloud() {
+      const email = document.getElementById('cloud-reset-email').value.trim();
+      const newPassword = document.getElementById('cloud-reset-newpass').value;
+      const confirmPassword = document.getElementById('cloud-reset-confirm').value;
+      const errorEl = document.getElementById('cloud-reset-error-msg');
+      const btn = document.getElementById('btn-cloud-reset');
+
+      if (!email || !newPassword) {
+        if (errorEl) {
+          errorEl.textContent = 'Ingresa tu correo y nueva contraseña.';
+          errorEl.style.display = 'block';
+        }
+        return;
+      }
+      if (newPassword.length < 4) {
+        if (errorEl) {
+          errorEl.textContent = 'La contraseña debe tener mínimo 4 caracteres.';
+          errorEl.style.display = 'block';
+        }
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        if (errorEl) {
+          errorEl.textContent = 'Las contraseñas no coinciden.';
+          errorEl.style.display = 'block';
+        }
+        return;
+      }
+
+      if (errorEl) errorEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Actualizando contraseña...';
+
+      try {
+        const resp = await fetch('./api/auth/reset', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, newPassword })
+        });
+
+        const data = await resp.json();
+        if (!resp.ok || !data.token) {
+          throw new Error(data.error || 'Error al restablecer contraseña.');
+        }
+
+        localStorage.setItem(STORAGE_KEY_AUTH_TOKEN, data.token);
+        localStorage.setItem(STORAGE_KEY_AUTH_USER, JSON.stringify(data.user));
+        updateAuthStatusUI();
+        toggleCloudResetMode(false);
+        showToast('✓ Contraseña actualizada correctamente');
+        await syncDataWithCloud(true);
+      } catch (err) {
+        if (errorEl) {
+          errorEl.textContent = err.message;
+          errorEl.style.display = 'block';
+        }
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Restablecer Contraseña y Entrar';
       }
     }
 
@@ -4596,6 +5244,9 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       const statusPillText = document.getElementById('db-status-text');
       const userDisplay = document.getElementById('cloud-user-email-display');
       const pillDot = document.getElementById('db-status-dot');
+      const sidebarUserCard = document.getElementById('sidebar-user-card');
+      const sidebarGuestCard = document.getElementById('sidebar-guest-card');
+      const sidebarEmail = document.getElementById('sidebar-user-email');
 
       if (token && user) {
         if (loggedOutPanel) loggedOutPanel.style.display = 'none';
@@ -4606,6 +5257,9 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
           pillDot.style.backgroundColor = 'var(--color-success)';
           pillDot.style.boxShadow = '0 0 8px var(--color-success)';
         }
+        if (sidebarUserCard) sidebarUserCard.style.display = 'block';
+        if (sidebarGuestCard) sidebarGuestCard.style.display = 'none';
+        if (sidebarEmail) sidebarEmail.textContent = user.email || 'Usuario';
       } else {
         if (loggedOutPanel) loggedOutPanel.style.display = 'block';
         if (loggedInPanel) loggedInPanel.style.display = 'none';
@@ -4614,6 +5268,8 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
           pillDot.style.backgroundColor = 'var(--brand-purple)';
           pillDot.style.boxShadow = '0 0 8px var(--brand-purple)';
         }
+        if (sidebarUserCard) sidebarUserCard.style.display = 'none';
+        if (sidebarGuestCard) sidebarGuestCard.style.display = 'block';
       }
     }
 
