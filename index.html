@@ -173,40 +173,44 @@
     }
 
     .sidebar-brand {
-      padding: 1.25rem 1.5rem;
+      padding: 1.25rem 1.25rem 1rem;
       display: flex;
-      align-items: center;
-      gap: 12px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
       border-bottom: 1px solid var(--border-color);
     }
 
     .sidebar-logo {
-      width: 38px;
       height: 38px;
-      border-radius: 10px;
+      width: auto;
+      max-width: 195px;
       object-fit: contain;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 3px;
+      display: block;
+      transition: opacity 0.2s ease;
     }
 
-    .sidebar-brand-title {
-      font-size: 1.15rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      background: var(--brand-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: flex;
-      flex-direction: column;
+    /* Alternar logotipo automáticamente según pantalla de día o de noche */
+    [data-theme="dark"] .logo-day {
+      display: none !important;
+    }
+    [data-theme="dark"] .logo-night {
+      display: block !important;
+    }
+
+    [data-theme="light"] .logo-night {
+      display: none !important;
+    }
+    [data-theme="light"] .logo-day {
+      display: block !important;
     }
 
     .sidebar-brand-sub {
       font-size: 0.72rem;
       font-family: var(--font-main);
       color: var(--text-muted);
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      -webkit-text-fill-color: var(--text-muted);
       font-weight: 600;
     }
 
@@ -976,6 +980,9 @@
       font-size: 13px;
       line-height: 1.5;
       box-sizing: border-box;
+      position: relative;
+      border-top: 5px solid transparent;
+      border-image: linear-gradient(90deg, #E11D62, #6D28D9) 1;
     }
 
     .doc-sheet-container * {
@@ -987,17 +994,17 @@
       justify-content: space-between;
       align-items: flex-start;
       margin-bottom: 1.25rem;
-      border-bottom: 3px solid #8B5CF6;
+      border-bottom: 2px solid #0F172A;
       padding-bottom: 1.25rem;
       gap: 15px;
     }
 
     .doc-logo-box {
-      max-width: 200px;
+      max-width: 220px;
     }
 
     .doc-logo-img {
-      max-height: 65px;
+      max-height: 52px;
       width: auto;
       object-fit: contain;
       display: block;
@@ -1027,7 +1034,7 @@
       font-family: 'Outfit', sans-serif;
       font-size: 1.5rem;
       font-weight: 800;
-      color: #8B5CF6;
+      color: #0F172A;
       text-transform: uppercase;
       letter-spacing: -0.02em;
     }
@@ -1058,7 +1065,7 @@
       font-size: 10px;
       text-transform: uppercase;
       font-weight: 700;
-      color: #64748B;
+      color: #0F172A;
       letter-spacing: 0.05em;
       margin-bottom: 4px;
     }
@@ -1085,7 +1092,7 @@
     }
 
     .doc-table th {
-      background-color: #8B5CF6 !important;
+      background-color: #0F172A !important;
       color: #FFFFFF !important;
       font-size: 11px;
       font-weight: 700;
@@ -1126,7 +1133,7 @@
     }
 
     .doc-totals-box tr.grand-total td {
-      border-top: 2px solid #8B5CF6;
+      border-top: 2px solid #0F172A;
       font-size: 14px;
       font-weight: 800;
       color: #0F172A;
@@ -2013,11 +2020,9 @@
     <!-- Menú Lateral Fijo (Sidebar) -->
     <aside class="app-sidebar" id="app-sidebar">
       <div class="sidebar-brand">
-        <img src="./assets/logo.png" alt="Logo" class="sidebar-logo">
-        <div class="sidebar-brand-title">
-          Universo Gráfico
-          <span class="sidebar-brand-sub">Cotizador & Cobros</span>
-        </div>
+        <img src="./assets/logo.png" alt="Universo Gráfico" class="sidebar-logo logo-day">
+        <img src="./assets/logo-white.png" alt="Universo Gráfico" class="sidebar-logo logo-night">
+        <span class="sidebar-brand-sub">Cotizador & Cobros</span>
       </div>
 
       <div class="sidebar-content">
@@ -4118,7 +4123,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
               ` : ''}
               <tr class="grand-total">
                 <td>TOTAL:</td>
-                <td style="text-align: right; color: #8B5CF6;">${formatMoney(grandTotal)}</td>
+                <td style="text-align: right; color: #0F172A; font-weight: 800;">${formatMoney(grandTotal)}</td>
               </tr>
             </table>
 
@@ -4175,7 +4180,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         return `
           <div class="doc-sheet-container">
             ${hasLogo ? `
-              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #8B5CF6; padding-bottom: 12px; margin-bottom: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0F172A; padding-bottom: 12px; margin-bottom: 1.5rem;">
                 <img src="./assets/logo.png" alt="Universo Gráfico" class="doc-logo-img" style="margin-bottom:0;">
                 <div style="font-size: 11px; color: #64748B; text-align: right;">
                   ${escapeHtml(state.settings.businessName || 'Universo Gráfico')}<br>

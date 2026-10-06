@@ -96,6 +96,23 @@
     return dateStr;
   }
 
+  // Dibuja una barra superior con degradado idéntico al logotipo oficial (Magenta cálido a Violeta profundo)
+  function drawLogoGradientBar(doc, pageWidth, height = 4.5) {
+    const steps = 140;
+    const sliceWidth = pageWidth / steps;
+    // Degradado del logo: Magenta cálido (#E11D62) a Morado profundo (#6D28D9)
+    const c1 = [225, 29, 98];   // Magenta
+    const c2 = [109, 40, 217];  // Morado Universo
+    for (let i = 0; i < steps; i++) {
+      const t = i / (steps - 1);
+      const r = Math.round(c1[0] + t * (c2[0] - c1[0]));
+      const g = Math.round(c1[1] + t * (c2[1] - c1[1]));
+      const b = Math.round(c1[2] + t * (c2[2] - c1[2]));
+      doc.setFillColor(r, g, b);
+      doc.rect(i * sliceWidth, 0, sliceWidth + 0.3, height, 'F');
+    }
+  }
+
   // ==========================================================================
   // 1. GENERACIÓN DE COTIZACIÓN EN PDF (FORMATO A4 / CARTA UNIVERSO GRÁFICO)
   // ==========================================================================
@@ -116,21 +133,20 @@
     const pageHeight = doc.internal.pageSize.getHeight();
     const margin = 14;
 
-    // Colores de marca Universo Gráfico
-    const primaryColor = [139, 92, 246]; // Violeta Universo #8B5CF6
+    // Colores del documento: Estilo corporativo formal con partes moradas cambiadas a negro
+    const primaryColor = [15, 23, 42];   // Negro / grafito elegante (#0F172A)
     const darkColor = [15, 23, 42];      // #0F172A
     const grayText = [100, 116, 139];    // #64748B
     const lightBg = [248, 250, 252];     // #F8FAFC
     const borderColor = [226, 232, 240]; // #E2E8F0
 
-    // Barra superior decorativa con color de marca
-    doc.setFillColor(139, 92, 246);
-    doc.rect(0, 0, pageWidth, 5, 'F');
+    // Barra superior con degradado morado idéntico al logotipo
+    drawLogoGradientBar(doc, pageWidth, 4.5);
 
     // 1. Logo de Universo Gráfico
     let yPos = 13;
-    const logoW = 46;
-    const logoH = 12.4; // Proporción 3.72:1
+    const logoW = 48;
+    const logoH = 13; // Proporción 3.72:1
 
     if (data.includeLogo !== false && window.UNIVERSO_GRAFICO_LOGO) {
       try {
@@ -407,14 +423,17 @@
     const contentWidth = pageWidth - (margin * 2);
 
     let yPos = 14;
-    const primaryColor = [139, 92, 246]; // #8B5CF6
+    const primaryColor = [15, 23, 42]; // Negro corporativo (#0F172A)
     const darkColor = [15, 23, 42];
+
+    // Barra superior con degradado idéntico al logotipo
+    drawLogoGradientBar(doc, pageWidth, 4.5);
 
     // Encabezado con Logo si está activado
     if (data.includeLogo !== false && window.UNIVERSO_GRAFICO_LOGO) {
       try {
-        const logoW = 42;
-        const logoH = 11.3;
+        const logoW = 46;
+        const logoH = 12.4;
         doc.addImage(window.UNIVERSO_GRAFICO_LOGO, 'PNG', margin, yPos, logoW, logoH);
 
         doc.setFont('helvetica', 'normal');
