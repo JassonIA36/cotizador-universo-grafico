@@ -1,5 +1,5 @@
 // Service Worker para Universo Gráfico – Cotizador PWA
-const CACHE_NAME = 'ug-cotizador-v1.2.0';
+const CACHE_NAME = 'ug-cotizador-v1.3.0';
 
 const ASSETS_TO_CACHE = [
   './',
