@@ -3672,14 +3672,17 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
     const STORAGE_KEY_COBROS = 'ug_cobros_v1';
     const STORAGE_KEY_CATALOG = 'ug_catalogo_v1';
     const STORAGE_KEY_CLIENTES = 'ug_clientes_v1';
-    const STORAGE_KEY_SETTINGS = 'ug_settings_v1';            // Solo textos planos (< 2 KB)
+    const STORAGE_KEY_SETTINGS = 'ug_settings_v1';            // CLAVE PRINCIPAL ÚNICA (< 2 KB textos planos)
     const STORAGE_KEY_SETTINGS_LOGO = 'ug_settings_logo_v1';  // Imagen logo base64 separada
     const STORAGE_KEY_SETTINGS_SIG = 'ug_settings_sig_v1';    // Imagen firma base64 separada
     const STORAGE_KEY_SETTINGS_META = 'ug_settings_meta_v1';
     const STORAGE_KEY_THEME = 'ug_theme_v1';
     const STORAGE_KEY_INITIALIZED = 'ug_initialized_v1';
 
-    // Metadatos y marcas de tiempo por campo para sincronización y diagnóstico de Mis Datos
+    // Sincronización de configuración desactivada: modo local estricto
+    const SYNC_CONFIG = false;
+
+    // Metadatos y marcas de tiempo por campo para diagnóstico de Mis Datos
     let settingsMeta = {
       fieldTimestamps: {},
       version: 1,
@@ -3691,17 +3694,228 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       lastError: null
     };
 
-    // ÚNICA FUENTE DE VERDAD (Requerimiento 1): Devuelve la configuración actual consolidada
+    // ==========================================================================
+    // FUNCIÓN ÚNICA DE LECTURA DE CONFIGURACIÓN (Requerimiento 3)
+    // Lee siempre de la clave principal STORAGE_KEY_SETTINGS de forma síncrona
+    // ==========================================================================
+    function readSettingsFromStorage() {
+      let loaded = { ...DEFAULT_SETTINGS };
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_SETTINGS);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            Object.keys(parsed).forEach(k => {
+              let v = parsed[k];
+              if (v && typeof v === 'object' && 'v' in v) v = v.v;
+              if (v !== undefined && v !== null) loaded[k] = v;
+            });
+          }
+        }
+      } catch (e) {
+        console.error('Error leyendo ' + STORAGE_KEY_SETTINGS, e);
+      }
+      loaded.logoData = localStorage.getItem(STORAGE_KEY_SETTINGS_LOGO) || (state.settings && state.settings.logoData) || '';
+      loaded.signatureData = localStorage.getItem(STORAGE_KEY_SETTINGS_SIG) || (state.settings && state.settings.signatureData) || '';
+      loaded.version = (settingsMeta && settingsMeta.version) || 1;
+      return loaded;
+    }
+
+    // ÚNICA FUENTE DE VERDAD: Devuelve la configuración actual consolidada desde readSettingsFromStorage
     function getConfig() {
-      const s = state.settings || { ...DEFAULT_SETTINGS };
-      return {
-        ...s,
-        logoData: (state.settings && state.settings.logoData) || localStorage.getItem(STORAGE_KEY_SETTINGS_LOGO) || '',
-        signatureData: (state.settings && state.settings.signatureData) || localStorage.getItem(STORAGE_KEY_SETTINGS_SIG) || '',
-        version: (settingsMeta && settingsMeta.version) || 1
-      };
+      return readSettingsFromStorage();
     }
     window.getConfig = getConfig;
+
+    // Respaldo diario de configuración: máximo 1 al día, solo texto, máximo 2 últimas copias (Requerimiento 3)
+    function createDailyTextBackupIfNeeded(cleanText) {
+      try {
+        const todayStr = new Date().toISOString().slice(0, 10);
+        const dailyKey = 'respaldo_cfg_diario_' + todayStr;
+        if (localStorage.getItem(dailyKey)) {
+          return; // Ya existe el respaldo diario de hoy
+        }
+        localStorage.setItem(dailyKey, JSON.stringify(cleanText));
+
+        // Conservar solo las 2 copias más recientes
+        const dailyKeys = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith('respaldo_cfg_diario_')) {
+            dailyKeys.push(k);
+          }
+        }
+        dailyKeys.sort();
+        while (dailyKeys.length > 2) {
+          const oldest = dailyKeys.shift();
+          localStorage.removeItem(oldest);
+        }
+      } catch (e) {
+        console.warn('No se pudo guardar respaldo diario:', e);
+      }
+    }
+
+    // ==========================================================================
+    // FUNCIÓN ÚNICA DE GUARDADO DE CONFIGURACIÓN (Requerimiento 3)
+    // Escribe SIEMPRE en la clave principal STORAGE_KEY_SETTINGS de forma síncrona,
+    // verifica inmediatamente que el valor quedó y actualiza el indicador
+    // ==========================================================================
+    function saveSettingsToStorage(updates = null) {
+      if (updates && typeof updates === 'object') {
+        Object.assign(state.settings, updates);
+      }
+
+      // Extraer solo texto para la clave principal (< 2 KB)
+      const cleanText = extractTextOnlySettings(state.settings);
+
+      // 1. Escribir de forma síncrona en la clave principal
+      localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(cleanText));
+
+      // Guardar imágenes en claves dedicadas si fueron modificadas
+      if (state.settings.logoData !== undefined) {
+        localStorage.setItem(STORAGE_KEY_SETTINGS_LOGO, state.settings.logoData || '');
+        saveMediaToIdb('logo', state.settings.logoData || '');
+      }
+      if (state.settings.signatureData !== undefined) {
+        localStorage.setItem(STORAGE_KEY_SETTINGS_SIG, state.settings.signatureData || '');
+        saveMediaToIdb('signature', state.settings.signatureData || '');
+      }
+
+      // 2. Releer la clave y verificar que el valor quedó
+      const verifiedRaw = localStorage.getItem(STORAGE_KEY_SETTINGS);
+      if (!verifiedRaw) {
+        throw new Error('Verificación fallida: ' + STORAGE_KEY_SETTINGS + ' está vacío tras guardar.');
+      }
+      const verified = JSON.parse(verifiedRaw);
+      if (updates && typeof updates === 'object') {
+        Object.keys(updates).forEach(k => {
+          if (k !== 'logoData' && k !== 'signatureData' && verified[k] !== updates[k]) {
+            throw new Error(`Verificación fallida para "${k}": se esperaba "${updates[k]}" pero se leyó "${verified[k]}".`);
+          }
+        });
+      }
+
+      // 3. Incrementar versión de configuración e invalidar PDF en caché
+      settingsMeta.version = (settingsMeta.version || 1) + 1;
+      saveSettingsMeta();
+      if (window.UniversoGraficoPdf && typeof window.UniversoGraficoPdf.clearPdfCache === 'function') {
+        window.UniversoGraficoPdf.clearPdfCache();
+      }
+
+      // 4. Muestra "Guardado ✓ [hora]"
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) || now.toTimeString().split(' ')[0];
+      const statusLabel = `Guardado ✓ ${timeStr}`;
+
+      const badge = document.getElementById('cfg-sync-status-badge');
+      if (badge) {
+        badge.style.background = 'rgba(16, 185, 129, 0.2)';
+        badge.style.color = 'var(--color-success)';
+        badge.textContent = statusLabel;
+      }
+
+      // 5. Crear respaldo diario de texto si aún no existe el de hoy (máx 1 al día, máx 2 copias)
+      createDailyTextBackupIfNeeded(cleanText);
+
+      return statusLabel;
+    }
+
+    // ==========================================================================
+    // RECUPERACIÓN DE DATOS PREVIOS DESDE EL RESPALDO MÁS RECIENTE (Requerimiento 2)
+    // ==========================================================================
+    function recoverLatestSettingsBackup() {
+      try {
+        if (localStorage.getItem('mis_datos_recuperados_v1')) {
+          return null;
+        }
+
+        const backupKeys = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && (k.startsWith('respaldo_config_') || k.startsWith('respaldo_cfg_txt_') || k.startsWith('respaldo_cfg_diario_'))) {
+            backupKeys.push(k);
+          }
+        }
+
+        if (backupKeys.length === 0) return null;
+
+        // Ordenar alfabéticamente (marcas ISO / timestamps quedan ordenados cronológicamente)
+        backupKeys.sort();
+        const latestKey = backupKeys[backupKeys.length - 1];
+        const latestRaw = localStorage.getItem(latestKey);
+        if (!latestRaw) return null;
+
+        let latestData = JSON.parse(latestRaw);
+        if (!latestData || typeof latestData !== 'object') return null;
+
+        const currentRaw = localStorage.getItem(STORAGE_KEY_SETTINGS);
+        let currentPrincipal = {};
+        try {
+          currentPrincipal = currentRaw ? JSON.parse(currentRaw) : {};
+        } catch (e) {
+          currentPrincipal = {};
+        }
+
+        // Antes de tocar la clave principal, guardar copia en "mis_datos_antes_de_recuperar"
+        if (!localStorage.getItem('mis_datos_antes_de_recuperar')) {
+          localStorage.setItem('mis_datos_antes_de_recuperar', currentRaw || JSON.stringify(currentPrincipal));
+        }
+
+        let recoveredCount = 0;
+        const recoveredInfo = {};
+
+        Object.keys(latestData).forEach(field => {
+          let val = latestData[field];
+          if (val && typeof val === 'object' && 'v' in val) val = val.v;
+
+          if (field === 'logoData' || field === 'signatureData') {
+            if (val && typeof val === 'string' && val.startsWith('data:image')) {
+              if (field === 'logoData' && !localStorage.getItem(STORAGE_KEY_SETTINGS_LOGO)) {
+                localStorage.setItem(STORAGE_KEY_SETTINGS_LOGO, val);
+                recoveredCount++;
+                recoveredInfo[field] = `Imagen (${Math.round(val.length / 1024)} KB)`;
+              }
+              if (field === 'signatureData' && !localStorage.getItem(STORAGE_KEY_SETTINGS_SIG)) {
+                localStorage.setItem(STORAGE_KEY_SETTINGS_SIG, val);
+                recoveredCount++;
+                recoveredInfo[field] = `Firma (${Math.round(val.length / 1024)} KB)`;
+              }
+            }
+            return;
+          }
+
+          const currentVal = currentPrincipal[field];
+          if (val !== undefined && val !== null && val !== '' && val !== currentVal) {
+            currentPrincipal[field] = val;
+            recoveredCount++;
+            recoveredInfo[field] = val;
+          }
+        });
+
+        if (recoveredCount > 0) {
+          localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(currentPrincipal));
+          console.log(`[Recuperación Exitosa] Se recuperaron datos desde ${latestKey}:`, recoveredInfo);
+          setTimeout(() => {
+            showToast('Se recuperaron tus datos más recientes ✓', 'success', 6000);
+          }, 300);
+        }
+
+        // Borrar todas las claves respaldo_config_* antiguas, MENOS la más reciente
+        backupKeys.forEach(k => {
+          if (k !== latestKey && (k.startsWith('respaldo_config_') || k.startsWith('respaldo_cfg_txt_'))) {
+            localStorage.removeItem(k);
+          }
+        });
+
+        // Marcar que la recuperación ya fue completada para que no vuelva a sobreescribir ediciones futuras
+        localStorage.setItem('mis_datos_recuperados_v1', 'true');
+
+        return { key: latestKey, recoveredCount, recoveredInfo };
+      } catch (err) {
+        console.error('Error en recuperación de respaldo:', err);
+        return null;
+      }
+    }
 
     // IndexedDB para persistencia desacoplada y sin límite de cuota para imágenes
     const IDB_MEDIA_DB = 'ug_assets_db_v1';
@@ -3860,11 +4074,11 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         const storedClients = localStorage.getItem(STORAGE_KEY_CLIENTES);
         state.clientes = storedClients ? JSON.parse(storedClients) : [];
 
-        // Purgar inmediatamente copias de respaldo_config_* pesadas que contenían imágenes
-        purgeHeavyConfigBackups();
+        // 1. Recuperar los datos más recientes desde el respaldo si existieran (Requerimiento 2)
+        recoverLatestSettingsBackup();
 
-        // Respaldo confiable: SOLO de campos de texto, máximo 2 copias
-        backupLocalSettingsBeforeMerge();
+        // 2. Cargar configuración desde la función única de lectura (Requerimiento 3)
+        state.settings = readSettingsFromStorage();
 
         const storedMeta = localStorage.getItem(STORAGE_KEY_SETTINGS_META);
         if (storedMeta) {
@@ -3874,49 +4088,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         }
         if (!settingsMeta.fieldTimestamps) settingsMeta.fieldTimestamps = {};
         if (!settingsMeta.version) settingsMeta.version = 1;
-
-        // Cargar imágenes de claves desacopladas
-        let separateLogo = localStorage.getItem(STORAGE_KEY_SETTINGS_LOGO) || '';
-        let separateSig = localStorage.getItem(STORAGE_KEY_SETTINGS_SIG) || '';
-
-        // Lectura segura y normalización con soporte para estructura antigua y nueva (Requerimiento 1 y 2)
-        const storedSettingsRaw = localStorage.getItem(STORAGE_KEY_SETTINGS);
-        if (storedSettingsRaw) {
-          try {
-            const parsed = JSON.parse(storedSettingsRaw);
-            const normalized = normalizeSettingsFromStorage(parsed, settingsMeta.fieldTimestamps);
-            state.settings = normalized.settings;
-            settingsMeta.fieldTimestamps = normalized.timestamps;
-
-            // Si la estructura antigua aún guardaba imágenes dentro del JSON de texto, migrarlas a sus claves
-            if (parsed.logoData && !separateLogo) {
-              separateLogo = parsed.logoData;
-              localStorage.setItem(STORAGE_KEY_SETTINGS_LOGO, separateLogo);
-              saveMediaToIdb('logo', separateLogo);
-            }
-            if (parsed.signatureData && !separateSig) {
-              separateSig = parsed.signatureData;
-              localStorage.setItem(STORAGE_KEY_SETTINGS_SIG, separateSig);
-              saveMediaToIdb('signature', separateSig);
-            }
-
-            state.settings.logoData = separateLogo;
-            state.settings.signatureData = separateSig;
-
-            // Guardar de inmediato la configuración limpia de texto (< 2 KB) en STORAGE_KEY_SETTINGS
-            const cleanText = extractTextOnlySettings(state.settings);
-            localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(cleanText));
-            saveSettingsMeta();
-          } catch (e) {
-            console.error('Error parseando configuración:', e);
-            state.settings = { ...DEFAULT_SETTINGS, logoData: separateLogo, signatureData: separateSig };
-          }
-        } else {
-          state.settings = { ...DEFAULT_SETTINGS, logoData: separateLogo, signatureData: separateSig };
-          const cleanText = extractTextOnlySettings(state.settings);
-          localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(cleanText));
-          saveSettingsMeta();
-        }
+        saveSettingsMeta();
 
         // Intento de recuperación asíncrona desde IndexedDB si faltan imágenes
         getMediaFromIdb('logo').then(idbLogo => {
@@ -3940,64 +4112,6 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       }
     }
 
-    // Copia de seguridad de configuración: SOLO campos de texto, máximo 2 copias (Requerimiento 3)
-    function backupLocalSettingsBeforeMerge() {
-      try {
-        const textOnly = extractTextOnlySettings(state.settings);
-        const nowKey = 'respaldo_cfg_txt_' + Date.now();
-        localStorage.setItem(nowKey, JSON.stringify(textOnly));
-
-        const backupKeys = [];
-        for (let i = 0; i < localStorage.length; i++) {
-          const k = localStorage.key(i);
-          if (k && k.startsWith('respaldo_cfg_txt_')) {
-            backupKeys.push(k);
-          }
-        }
-        backupKeys.sort();
-        while (backupKeys.length > 2) {
-          const oldest = backupKeys.shift();
-          localStorage.removeItem(oldest);
-        }
-      } catch (e) {
-        console.warn('No se pudo guardar respaldo_cfg_txt:', e);
-      }
-    }
-
-    // Normalizador de configuración local: soporta formato plano antiguo y nuevo con { v, t }
-    // Asigna marca actual si el valor difiere del por defecto para protegerlo en migración (Requerimiento 1 y 2)
-    function normalizeSettingsFromStorage(rawObj, existingTimestamps = {}) {
-      const settings = {};
-      const timestamps = { ...existingTimestamps };
-      const nowIso = new Date().toISOString();
-
-      if (!rawObj || typeof rawObj !== 'object') {
-        return { settings: { ...DEFAULT_SETTINGS }, timestamps };
-      }
-
-      const allKeys = new Set([...Object.keys(DEFAULT_SETTINGS), ...Object.keys(rawObj)]);
-      allKeys.forEach(k => {
-        const val = rawObj[k];
-        if (val && typeof val === 'object' && ('v' in val || 't' in val)) {
-          settings[k] = val.v !== undefined ? val.v : (DEFAULT_SETTINGS[k] !== undefined ? DEFAULT_SETTINGS[k] : '');
-          if (val.t && !timestamps[k]) {
-            timestamps[k] = val.t;
-          }
-        } else if (val !== undefined) {
-          settings[k] = val;
-        } else {
-          settings[k] = DEFAULT_SETTINGS[k] !== undefined ? DEFAULT_SETTINGS[k] : '';
-        }
-
-        // Si el valor local es distinto del valor por defecto y no tiene marca, asignarle la fecha actual
-        if (!timestamps[k] && DEFAULT_SETTINGS[k] !== undefined && settings[k] !== DEFAULT_SETTINGS[k]) {
-          timestamps[k] = nowIso;
-        }
-      });
-
-      return { settings, timestamps };
-    }
-
     function saveSettingsMeta() {
       try {
         localStorage.setItem(STORAGE_KEY_SETTINGS_META, JSON.stringify(settingsMeta));
@@ -4013,20 +4127,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         if (!key || key === 'catalog' || key === 'catalogo') localStorage.setItem(STORAGE_KEY_CATALOG, JSON.stringify(state.catalog));
         if (!key || key === 'clientes' || key === 'cliente') localStorage.setItem(STORAGE_KEY_CLIENTES, JSON.stringify(state.clientes));
         if (!key || key === 'settings') {
-          const cleanText = extractTextOnlySettings(state.settings);
-          localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(cleanText));
-          if (state.settings.logoData !== undefined) {
-            localStorage.setItem(STORAGE_KEY_SETTINGS_LOGO, state.settings.logoData || '');
-            saveMediaToIdb('logo', state.settings.logoData || '');
-          }
-          if (state.settings.signatureData !== undefined) {
-            localStorage.setItem(STORAGE_KEY_SETTINGS_SIG, state.settings.signatureData || '');
-            saveMediaToIdb('signature', state.settings.signatureData || '');
-          }
-          saveSettingsMeta();
-          // Verificación síncrona
-          const verified = localStorage.getItem(STORAGE_KEY_SETTINGS);
-          if (!verified) throw new Error('Verificación fallida: no se pudo leer STORAGE_KEY_SETTINGS');
+          saveSettingsToStorage();
         }
       } catch (err) {
         console.error('Error guardando en localStorage:', err);
@@ -6585,44 +6686,20 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
 
       if (!settingsMeta.fieldTimestamps) settingsMeta.fieldTimestamps = {};
       settingsMeta.fieldTimestamps[fieldKey] = nowIso;
-      settingsMeta.version = (settingsMeta.version || 1) + 1;
-      settingsMeta.pendingUpload = true;
-      settingsMeta.lastError = null;
-
-      // Invalida inmediatamente cualquier PDF compilado en memoria
-      if (window.UniversoGraficoPdf && typeof window.UniversoGraficoPdf.clearPdfCache === 'function') {
-        window.UniversoGraficoPdf.clearPdfCache();
-      }
 
       try {
-        if (fieldKey === 'logoData') {
-          localStorage.setItem(STORAGE_KEY_SETTINGS_LOGO, value || '');
-          saveMediaToIdb('logo', value || '');
-        } else if (fieldKey === 'signatureData') {
-          localStorage.setItem(STORAGE_KEY_SETTINGS_SIG, value || '');
-          saveMediaToIdb('signature', value || '');
-        } else {
-          // 1. Guardar de inmediato y de forma síncrona en localStorage (SOLO texto, <2 KB)
-          const cleanText = extractTextOnlySettings(state.settings);
-          localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(cleanText));
-
-          // 2. Volver a leer lo guardado para confirmar persistencia real
-          const readBackRaw = localStorage.getItem(STORAGE_KEY_SETTINGS);
-          if (!readBackRaw) throw new Error('localStorage no devolvió datos');
-          const readBack = JSON.parse(readBackRaw);
-          if (readBack[fieldKey] !== value) {
-            throw new Error('El valor guardado en localStorage no coincide');
-          }
-        }
-
-        saveSettingsMeta();
-
-        // 3. Mostrar "Guardado ✓" de inmediato
-        updateSettingsSyncUI('saved');
+        const updateObj = {};
+        updateObj[fieldKey] = value;
+        saveSettingsToStorage(updateObj);
         updateSyncDiagnosticsUI();
       } catch (saveErr) {
         console.error('Error al guardar configuración localmente:', saveErr);
-        updateSettingsSyncUI('error', 'Error al guardar: ' + saveErr.message);
+        const badge = document.getElementById('cfg-sync-status-badge');
+        if (badge) {
+          badge.style.background = 'rgba(239, 68, 68, 0.15)';
+          badge.style.color = 'var(--color-danger)';
+          badge.textContent = '✕ Error al guardar: ' + saveErr.message;
+        }
         showToast('Error al guardar localmente: ' + saveErr.message, 'error', 6000);
         return;
       }
@@ -6630,16 +6707,6 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       if (fieldKey === 'businessName') {
         updateAppBrandingUI();
       }
-
-      // 4. Sincronización secundaria debounced 1,5s
-      clearTimeout(settingsDebounceTimer);
-      settingsDebounceTimer = setTimeout(() => {
-        if (typeof getAuthToken === 'function' && getAuthToken() && navigator.onLine) {
-          syncDataWithCloud(false);
-        } else if (settingsMeta.pendingUpload) {
-          updateSettingsSyncUI('pending');
-        }
-      }, 1500);
     }
 
     // Inicializar listeners adicionales en el formulario (input, change, blur) (Requerimiento 1)
@@ -6691,32 +6758,27 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
 
       const nowIso = new Date().toISOString();
       if (!settingsMeta.fieldTimestamps) settingsMeta.fieldTimestamps = {};
+      const updates = {};
       fields.forEach(([k, v]) => {
         if (state.settings[k] !== v) {
-          state.settings[k] = v;
           settingsMeta.fieldTimestamps[k] = nowIso;
         }
+        updates[k] = v;
       });
 
-      settingsMeta.version = (settingsMeta.version || 1) + 1;
-      settingsMeta.pendingUpload = true;
-
       try {
-        saveState('settings');
-        if (window.UniversoGraficoPdf && typeof window.UniversoGraficoPdf.clearPdfCache === 'function') {
-          window.UniversoGraficoPdf.clearPdfCache();
-        }
+        saveSettingsToStorage(updates);
         refreshAppWithSettings();
-        updateSettingsSyncUI('saved');
         showToast('Configuración guardada ✓');
         updateSyncDiagnosticsUI();
-
-        if (typeof getAuthToken === 'function' && getAuthToken() && navigator.onLine) {
-          syncDataWithCloud(true);
-        }
       } catch (err) {
         console.error('Error al guardar configuración:', err);
-        updateSettingsSyncUI('error', 'Error al guardar: ' + err.message);
+        const badge = document.getElementById('cfg-sync-status-badge');
+        if (badge) {
+          badge.style.background = 'rgba(239, 68, 68, 0.15)';
+          badge.style.color = 'var(--color-danger)';
+          badge.textContent = '✕ Error: ' + err.message;
+        }
         showToast('Error al guardar: ' + err.message, 'error', 6000);
       }
     }
@@ -6777,77 +6839,10 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       showToast('Firma digital removida ✓');
     }
 
-    // Fusión por campo de configuración remota vs local (Requerimiento 2, 3 y 4)
+    // Fusión por campo de configuración remota vs local (Desactivada: SYNC_CONFIG = false)
     function mergeRemoteConfigFields(remoteConfigRaw, remoteUpdatedAt) {
-      if (!remoteConfigRaw || typeof remoteConfigRaw !== 'object') return false;
-
-      // Respaldo de seguridad local antes de fusionar (Requerimiento 3)
-      backupLocalSettingsBeforeMerge();
-
-      let changed = false;
-      const fallbackRemoteTime = remoteUpdatedAt ? new Date(remoteUpdatedAt).getTime() : 0;
-
-      if (!settingsMeta.fieldTimestamps) settingsMeta.fieldTimestamps = {};
-
-      Object.keys(remoteConfigRaw).forEach(key => {
-        const remoteEntry = remoteConfigRaw[key];
-        let remoteVal = remoteEntry;
-        let remoteTime = 0;
-
-        if (remoteEntry && typeof remoteEntry === 'object' && ('v' in remoteEntry || 't' in remoteEntry)) {
-          remoteVal = remoteEntry.v !== undefined ? remoteEntry.v : '';
-          remoteTime = remoteEntry.t ? new Date(remoteEntry.t).getTime() : fallbackRemoteTime;
-        } else {
-          remoteVal = remoteEntry;
-          remoteTime = fallbackRemoteTime;
-        }
-
-        const localVal = state.settings[key];
-        const localTStr = settingsMeta.fieldTimestamps[key];
-        let localTime = localTStr ? new Date(localTStr).getTime() : 0;
-
-        // Si el usuario está enfocado y escribiendo en este campo, no pisar lo que escribe (Requerimiento 2)
-        const fieldDomIdMap = {
-          businessName: 'cfg-business-name',
-          phone: 'cfg-business-phone',
-          email: 'cfg-business-email',
-          address: 'cfg-business-address',
-          emisorName: 'cfg-emisor-name',
-          emisorCC: 'cfg-emisor-cc',
-          emisorCity: 'cfg-emisor-city',
-          numberingMode: 'cfg-numbering-mode',
-          defaultCotNotes: 'cfg-default-cot-notes',
-          defaultCcNotes: 'cfg-default-cc-notes',
-          legalText: 'cfg-default-legal-text'
-        };
-        const activeEl = typeof document !== 'undefined' ? document.activeElement : null;
-        if (activeEl && fieldDomIdMap[key] && activeEl.id === fieldDomIdMap[key]) {
-          return;
-        }
-
-        // Si el valor local no tiene marca pero difiere del default, asignar marca actual para protegerlo
-        if (!localTime && localVal !== undefined && DEFAULT_SETTINGS[key] !== undefined && localVal !== DEFAULT_SETTINGS[key]) {
-          localTime = Date.now();
-          settingsMeta.fieldTimestamps[key] = new Date(localTime).toISOString();
-        }
-
-        // Un campo de la nube SOLO reemplaza al local si su marca es estrictamente más reciente como fecha
-        if (localVal === undefined || remoteTime > localTime) {
-          if (state.settings[key] !== remoteVal) {
-            state.settings[key] = remoteVal;
-            changed = true;
-          }
-          if (remoteTime > 0) {
-            settingsMeta.fieldTimestamps[key] = new Date(remoteTime).toISOString();
-          }
-        }
-      });
-
-      if (changed) {
-        saveState('settings');
-      }
-
-      return changed;
+      if (!SYNC_CONFIG) return false;
+      return false;
     }
 
     // Forzar subida de Mis Datos a la nube (Requerimiento 6)
@@ -7671,24 +7666,26 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
           });
         });
 
-        const authUser = getAuthUser();
-        const configId = (authUser && authUser.id) ? authUser.id : 'ug-config-main';
+        if (SYNC_CONFIG) {
+          const authUser = getAuthUser();
+          const configId = (authUser && authUser.id) ? authUser.id : 'ug-config-main';
 
-        const configWithTimestamps = {};
-        Object.keys(state.settings).forEach(key => {
-          configWithTimestamps[key] = {
-            v: state.settings[key],
-            t: (settingsMeta.fieldTimestamps && settingsMeta.fieldTimestamps[key]) || nowIso
-          };
-        });
+          const configWithTimestamps = {};
+          Object.keys(state.settings).forEach(key => {
+            configWithTimestamps[key] = {
+              v: state.settings[key],
+              t: (settingsMeta.fieldTimestamps && settingsMeta.fieldTimestamps[key]) || nowIso
+            };
+          });
 
-        itemsToPush.push({
-          id: configId,
-          tipo: 'config',
-          datos: configWithTimestamps,
-          deleted: 0,
-          updated_at: nowIso
-        });
+          itemsToPush.push({
+            id: configId,
+            tipo: 'config',
+            datos: configWithTimestamps,
+            deleted: 0,
+            updated_at: nowIso
+          });
+        }
 
         // 3. Enviar a Cloudflare API (POST efectúa upsert remoto y retorna el estado de la nube)
         const resp = await fetch('./api/sync', {
@@ -7747,7 +7744,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
                   hasRemoteChanges = true;
                 }
               } else if (row.tipo === 'config') {
-                if (!remoteDeleted) {
+                if (SYNC_CONFIG && !remoteDeleted) {
                   cloudConfigCount++;
                 }
               }
@@ -7756,37 +7753,39 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
             }
           });
 
-          // Consolidar filas 'config' de la nube tomando como base la de updated_at más reciente (Requerimiento 3)
-          const configRows = resData.items.filter(r => r && r.tipo === 'config');
-          if (configRows.length > 0) {
-            configRows.sort((a, b) => new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime());
-            const newestRow = configRows[0];
-            let consolidatedData = typeof newestRow.datos === 'string' ? JSON.parse(newestRow.datos || '{}') : (newestRow.datos || {});
+          // Consolidar filas 'config' de la nube tomando como base la de updated_at más reciente
+          if (SYNC_CONFIG) {
+            const configRows = resData.items.filter(r => r && r.tipo === 'config');
+            if (configRows.length > 0) {
+              configRows.sort((a, b) => new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime());
+              const newestRow = configRows[0];
+              let consolidatedData = typeof newestRow.datos === 'string' ? JSON.parse(newestRow.datos || '{}') : (newestRow.datos || {});
 
-            for (let i = 1; i < configRows.length; i++) {
-              const olderData = typeof configRows[i].datos === 'string' ? JSON.parse(configRows[i].datos || '{}') : (configRows[i].datos || {});
-              Object.keys(olderData).forEach(k => {
-                if (!(k in consolidatedData)) {
-                  consolidatedData[k] = olderData[k];
-                }
-              });
+              for (let i = 1; i < configRows.length; i++) {
+                const olderData = typeof configRows[i].datos === 'string' ? JSON.parse(configRows[i].datos || '{}') : (configRows[i].datos || {});
+                Object.keys(olderData).forEach(k => {
+                  if (!(k in consolidatedData)) {
+                    consolidatedData[k] = olderData[k];
+                  }
+                });
+              }
+
+              if (mergeRemoteConfigFields(consolidatedData, newestRow.updated_at)) {
+                hasRemoteChanges = true;
+                hasConfigChanges = true;
+              }
             }
 
-            if (mergeRemoteConfigFields(consolidatedData, newestRow.updated_at)) {
-              hasRemoteChanges = true;
-              hasConfigChanges = true;
-            }
+            // Actualizar metadatos y diagnóstico de configuración
+            settingsMeta.lastPush = syncTimestamp;
+            settingsMeta.lastPull = syncTimestamp;
+            settingsMeta.pendingUpload = false;
+            settingsMeta.localCount = 1;
+            settingsMeta.cloudCount = cloudConfigCount > 0 ? cloudConfigCount : 1;
+            settingsMeta.lastError = null;
+            saveSettingsMeta();
+            updateSettingsSyncUI('synced');
           }
-
-          // Actualizar metadatos y diagnóstico de configuración
-          settingsMeta.lastPush = syncTimestamp;
-          settingsMeta.lastPull = syncTimestamp;
-          settingsMeta.pendingUpload = false;
-          settingsMeta.localCount = 1;
-          settingsMeta.cloudCount = cloudConfigCount > 0 ? cloudConfigCount : 1;
-          settingsMeta.lastError = null;
-          saveSettingsMeta();
-          updateSettingsSyncUI('synced');
 
           saveState();
           updateBadges();
