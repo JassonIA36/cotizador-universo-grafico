@@ -314,10 +314,11 @@ export async function onRequest(context) {
           let deleted = item.deleted ? 1 : 0;
           let updatedAt = item.updated_at || new Date().toISOString();
 
-          // REQUERIMIENTO 1: La configuración vive en UNA sola fila por usuario con id = authUser.id
+          // REGLA: La configuración vive en UNA sola fila por usuario con id = authUser.id
+          // Gana la configuración COMPLETA con el updated_at más reciente (sin fusión campo por campo)
           if (tipo === 'config') {
-            id = authUser.id; // Forzar el ID fijo del usuario autenticado
-            deleted = 0;      // La fila canónica de configuración siempre se mantiene activa
+            id = authUser.id; // Id fijo del usuario autenticado
+            deleted = 0;      // La fila canónica siempre permanece activa
 
             // Migración: Buscar todas las filas 'config' existentes de este usuario en D1
             const existingConfigs = await db.prepare(
@@ -325,31 +326,31 @@ export async function onRequest(context) {
             ).bind(authUser.id).all();
 
             const rows = existingConfigs.results || [];
-            const clientData = typeof item.datos === 'string' ? JSON.parse(item.datos || '{}') : (item.datos || {});
-            let mergedPayload = { ...clientData };
-
             if (rows.length > 0) {
-              // Requerimiento 3: Ordenar por updated_at descendente para tomar la más reciente como base
               rows.sort((a, b) => new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime());
               const newestRow = rows[0];
-              let consolidatedBase = typeof newestRow.datos === 'string' ? JSON.parse(newestRow.datos || '{}') : (newestRow.datos || {});
+              const clientTime = new Date(updatedAt).getTime();
+              const newestTime = new Date(newestRow.updated_at || 0).getTime();
 
-              // Fusionar las otras filas más antiguas si existen
-              for (let i = 1; i < rows.length; i++) {
-                const olderData = typeof rows[i].datos === 'string' ? JSON.parse(rows[i].datos || '{}') : (rows[i].datos || {});
-                consolidatedBase = mergeConfigObjects(consolidatedBase, olderData, newestRow.updated_at, rows[i].updated_at);
+              if (newestTime > clientTime) {
+                // La nube es más reciente: conserva el objeto completo de la nube
+                datos = typeof newestRow.datos === 'string' ? newestRow.datos : JSON.stringify(newestRow.datos || {});
+                updatedAt = newestRow.updated_at;
               }
 
-              // Fusionar la consolidada con clientData que envía el dispositivo (gana el campo más nuevo o igual)
-              mergedPayload = mergeConfigObjects(consolidatedBase, clientData, newestRow.updated_at, updatedAt);
-
-              // Marcar cualquier otra fila config que no sea authUser.id como deleted = 1
+              // Marcar cualquier fila config antigua que no sea authUser.id como deleted = 1 sin vaciar su contenido
               await db.prepare(
-                'UPDATE registros SET deleted = 1, updated_at = datetime("now") WHERE user_id = ? AND tipo = "config" AND id != ?'
+                'UPDATE registros SET deleted = 1 WHERE user_id = ? AND tipo = "config" AND id != ?'
               ).bind(authUser.id, authUser.id).run();
             }
+          }
 
-            datos = JSON.stringify(mergedPayload);
+          // Logo y firma en filas dedicadas con id fijo por usuario
+          if (tipo === 'config_logo') {
+            id = authUser.id + '_logo';
+          }
+          if (tipo === 'config_firma') {
+            id = authUser.id + '_firma';
           }
 
           // Consultar registro existente en D1
@@ -369,9 +370,8 @@ export async function onRequest(context) {
             const serverTime = new Date(existing.updated_at).getTime();
 
             let shouldUpdate = false;
-            if (tipo === 'config') {
-              // Para config ya fue fusionado campo por campo, siempre actualizamos la fila canónica
-              shouldUpdate = true;
+            if (tipo === 'config' || tipo === 'config_logo' || tipo === 'config_firma') {
+              if (clientTime >= serverTime) shouldUpdate = true;
             } else if (deleted === 1) {
               // Si el cliente lo borró, gana si su timestamp es igual o más reciente
               if (clientTime >= serverTime) shouldUpdate = true;
