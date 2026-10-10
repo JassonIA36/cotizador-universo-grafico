@@ -662,22 +662,22 @@
        TABLA DE ITEMS Y CALCULOS
        ========================================================================== */
     .items-table-wrapper {
-      overflow-x: auto;
       margin: 1.25rem 0;
       border: 1px solid var(--border-color);
       border-radius: var(--radius-md);
       background: var(--bg-input);
+      overflow-x: visible;
     }
 
     .items-table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 650px;
+      min-width: 0;
     }
 
     .items-table th {
       background: var(--bg-surface);
-      padding: 0.8rem 1rem;
+      padding: 0.8rem 0.85rem;
       text-align: left;
       font-size: 0.78rem;
       font-weight: 700;
@@ -688,27 +688,226 @@
     }
 
     .items-table td {
-      padding: 0.65rem 0.85rem;
+      padding: 0.75rem 0.75rem;
       border-bottom: 1px solid var(--border-color);
-      vertical-align: middle;
+      vertical-align: top;
     }
 
     .items-table tr:last-child td {
       border-bottom: none;
     }
 
-    .items-table td input {
+    /* Anchos y alineación en escritorio (> 900px) */
+    @media (min-width: 901px) {
+      .th-cot-desc, .cot-item-row .cell-desc {
+        width: 55%;
+        min-width: 55%;
+      }
+      .th-cot-qty, .cot-item-row .cell-qty {
+        width: 80px;
+        text-align: center;
+      }
+      .th-cot-price, .cot-item-row .cell-price {
+        width: 150px;
+        text-align: right;
+      }
+      .th-cot-total, .cot-item-row .cell-total {
+        width: 140px;
+        text-align: right;
+      }
+      .th-cot-del, .cot-item-row .cell-del {
+        width: 52px;
+        text-align: center;
+      }
+
+      /* Cuentas de cobro: descripción mínimo 65%, valor 160px a la derecha alineado arriba */
+      .th-cc-desc, .cc-item-row .cell-desc {
+        min-width: 65%;
+        width: calc(100% - 225px);
+      }
+      .th-cc-amount, .cc-item-row .cell-amount {
+        width: 160px;
+        min-width: 160px;
+        text-align: right;
+      }
+      .th-cc-del, .cc-item-row .cell-del {
+        width: 52px;
+        text-align: center;
+      }
+
+      .mobile-cell-label {
+        display: none !important;
+      }
+      .desc-field-top label {
+        display: none !important;
+      }
+    }
+
+    /* Campo de descripción y controles */
+    .desc-field-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      width: 100%;
+    }
+
+    .desc-field-top {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .btn-bullet-insert {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(139, 92, 246, 0.12);
+      color: var(--brand-purple-light);
+      border: 1px solid rgba(139, 92, 246, 0.32);
+      border-radius: var(--radius-sm);
+      padding: 0.25rem 0.65rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      min-height: 32px;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .btn-bullet-insert:hover {
+      background: rgba(139, 92, 246, 0.24);
+      border-color: var(--brand-purple);
+      color: #FFFFFF;
+      transform: translateY(-1px);
+    }
+
+    .auto-grow-desc {
+      width: 100%;
+      min-height: 52px;
+      font-size: 16px !important; /* evita auto-zoom en navegadores móviles */
+      line-height: 1.45;
+      padding: 0.6rem 0.75rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      resize: none;
+      overflow-y: hidden;
+      box-sizing: border-box;
+      font-family: inherit;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .auto-grow-desc:focus {
+      outline: none;
+      border-color: var(--brand-purple);
+      box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.22);
+    }
+
+    .field-col-wrap {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .items-table td input[type="number"],
+    .items-table td input[type="text"] {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
       padding: 0.5rem 0.75rem;
       color: var(--text-main);
       width: 100%;
+      min-height: 44px;
+      font-size: 16px;
+      box-sizing: border-box;
     }
 
     .items-table td input:focus {
       outline: none;
       border-color: var(--brand-purple);
+      box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.22);
+    }
+
+    .cot-item-row-total {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      font-weight: 700;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      box-sizing: border-box;
+    }
+
+    .btn-row-del {
+      min-height: 44px;
+      min-width: 44px;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+
+    /* Formato de documento y viñetas */
+    .doc-desc-block {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .doc-bullet-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-left: 0.85rem;
+      margin-top: 2px;
+      margin-bottom: 2px;
+      line-height: 1.45;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .doc-bullet-dot {
+      font-weight: 700;
+      color: #334155;
+      line-height: 1.45;
+      user-select: none;
+    }
+
+    .doc-bullet-text {
+      color: #1E293B;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .doc-text-line {
+      color: #1E293B;
+      line-height: 1.45;
+      word-break: break-word;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .doc-cobro-single-concept,
+    .doc-cobro-multi-concept {
+      margin-bottom: 0.85rem;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .doc-cobro-concept-head {
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: #0F172A;
     }
 
     .totals-summary-card {
@@ -1710,12 +1909,137 @@
 
       .items-table-wrapper {
         width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+        overflow-x: visible !important;
+        background: transparent !important;
+        border: none !important;
+        margin: 0.75rem 0 !important;
       }
 
       .items-table {
-        min-width: 550px;
+        display: block !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        border: none !important;
+      }
+
+      .items-table thead {
+        display: none !important;
+      }
+
+      .items-table tbody {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.9rem !important;
+        width: 100% !important;
+      }
+
+      .items-table tr.cot-item-row {
+        display: grid !important;
+        grid-template-columns: 80px 1fr 1fr 44px !important;
+        grid-template-areas:
+          "desc desc desc desc"
+          "qty price total del" !important;
+        gap: 0.65rem !important;
+        background: var(--bg-surface) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: var(--radius-md) !important;
+        padding: 0.9rem !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+        align-items: end !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      .items-table tr.cc-item-row {
+        display: grid !important;
+        grid-template-columns: 1fr 44px !important;
+        grid-template-areas:
+          "desc desc"
+          "amount del" !important;
+        gap: 0.65rem !important;
+        background: var(--bg-surface) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: var(--radius-md) !important;
+        padding: 0.9rem !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+        align-items: end !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      .cot-item-row .cell-desc,
+      .cc-item-row .cell-desc {
+        grid-area: desc !important;
+        width: 100% !important;
+        padding: 0 !important;
+        border: none !important;
+      }
+
+      .cot-item-row .cell-qty {
+        grid-area: qty !important;
+        width: 100% !important;
+        padding: 0 !important;
+        border: none !important;
+      }
+
+      .cot-item-row .cell-price {
+        grid-area: price !important;
+        width: 100% !important;
+        padding: 0 !important;
+        border: none !important;
+      }
+
+      .cot-item-row .cell-total {
+        grid-area: total !important;
+        width: 100% !important;
+        padding: 0 !important;
+        border: none !important;
+      }
+
+      .cc-item-row .cell-amount {
+        grid-area: amount !important;
+        width: 100% !important;
+        padding: 0 !important;
+        border: none !important;
+      }
+
+      .cot-item-row .cell-del,
+      .cc-item-row .cell-del {
+        grid-area: del !important;
+        width: 44px !important;
+        padding: 0 !important;
+        border: none !important;
+        display: flex !important;
+        justify-content: flex-end !important;
+        align-items: flex-end !important;
+      }
+
+      .mobile-cell-label {
+        display: block !important;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        margin-bottom: 4px;
+        letter-spacing: 0.03em;
+      }
+
+      .desc-field-top label {
+        display: inline-block !important;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .cot-item-row-total {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        padding: 0 0.55rem;
+        color: var(--brand-purple-light);
+        font-size: 0.95rem;
       }
 
       .modal-dialog {
@@ -2323,11 +2647,11 @@
               <table class="items-table">
                 <thead>
                   <tr>
-                    <th style="width: 50%;">Descripción del Servicio</th>
-                    <th style="width: 15%; text-align: center;">Cantidad</th>
-                    <th style="width: 20%; text-align: right;">Precio Unitario ($)</th>
-                    <th style="width: 15%; text-align: right;">Total ($)</th>
-                    <th style="width: 45px; text-align: center;"></th>
+                    <th class="th-cot-desc">Descripción del Servicio</th>
+                    <th class="th-cot-qty">Cantidad</th>
+                    <th class="th-cot-price">Precio Unitario ($)</th>
+                    <th class="th-cot-total">Total ($)</th>
+                    <th class="th-cot-del"></th>
                   </tr>
                 </thead>
                 <tbody id="cot-items-tbody">
@@ -2547,9 +2871,9 @@
               <table class="items-table">
                 <thead>
                   <tr>
-                    <th style="width: 70%;">Descripción del Concepto / Servicio Realizado</th>
-                    <th style="width: 25%; text-align: right;">Valor ($)</th>
-                    <th style="width: 45px; text-align: center;"></th>
+                    <th class="th-cc-desc">Descripción del Concepto / Servicio Realizado</th>
+                    <th class="th-cc-amount">Valor ($)</th>
+                    <th class="th-cc-del"></th>
                   </tr>
                 </thead>
                 <tbody id="cc-conceptos-tbody">
@@ -2571,9 +2895,9 @@
               <table class="items-table">
                 <thead>
                   <tr>
-                    <th style="width: 70%;">Descripción del Adelanto / Abono</th>
-                    <th style="width: 25%; text-align: right;">Monto Abonado ($)</th>
-                    <th style="width: 45px; text-align: center;"></th>
+                    <th class="th-cc-desc">Descripción del Adelanto / Abono</th>
+                    <th class="th-cc-amount">Monto Abonado ($)</th>
+                    <th class="th-cc-del"></th>
                   </tr>
                 </thead>
                 <tbody id="cc-adelantos-tbody">
@@ -3923,27 +4247,296 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       switchView('view-cot-form');
     }
 
+    function autoResizeTextarea(el) {
+      if (!el) return;
+      el.style.height = 'auto';
+      el.style.height = Math.max(52, el.scrollHeight) + 'px';
+    }
+
+    function handleDescInput(textarea, type) {
+      autoResizeTextarea(textarea);
+      if (type === 'cot') {
+        calculateCotTotals();
+      } else {
+        calculateCobroTotals();
+      }
+    }
+
+    function handleDescKeydown(e, textarea) {
+      if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
+        const val = textarea.value;
+        const pos = textarea.selectionStart;
+        const lastNewline = val.lastIndexOf('\n', pos - 1);
+        const nextNewline = val.indexOf('\n', pos);
+        const lineStart = lastNewline === -1 ? 0 : lastNewline + 1;
+        const lineEnd = nextNewline === -1 ? val.length : nextNewline;
+        const currentLine = val.slice(lineStart, lineEnd);
+        const bulletMatch = currentLine.match(/^(\s*)(•|-|\*)\s*/);
+
+        if (bulletMatch) {
+          e.preventDefault();
+          e.stopPropagation();
+          const bulletPrefix = bulletMatch[0];
+          const restOfLine = currentLine.slice(bulletPrefix.length).trim();
+
+          if (restOfLine === '') {
+            // Enter en viñeta vacía: quita la viñeta y sale de la lista
+            const newVal = val.slice(0, lineStart) + val.slice(lineEnd);
+            textarea.value = newVal;
+            textarea.selectionStart = textarea.selectionEnd = lineStart;
+          } else {
+            // Continúa la viñeta en la siguiente línea
+            const insert = '\n• ';
+            const newVal = val.slice(0, pos) + insert + val.slice(pos);
+            textarea.value = newVal;
+            textarea.selectionStart = textarea.selectionEnd = pos + insert.length;
+          }
+
+          autoResizeTextarea(textarea);
+          const formType = textarea.classList.contains('cot-item-desc') ? 'cot' : 'cobro';
+          handleDescInput(textarea, formType);
+          return;
+        }
+
+        // Enter normal: detiene propagación indeseada y ajusta altura
+        e.stopPropagation();
+        setTimeout(() => {
+          autoResizeTextarea(textarea);
+          const formType = textarea.classList.contains('cot-item-desc') ? 'cot' : 'cobro';
+          handleDescInput(textarea, formType);
+        }, 0);
+      }
+    }
+
+    function insertBulletInRow(btn) {
+      const row = btn.closest('tr');
+      if (!row) return;
+      const textarea = row.querySelector('.auto-grow-desc');
+      if (!textarea) return;
+
+      const val = textarea.value;
+      const pos = (textarea.selectionStart !== undefined) ? textarea.selectionStart : val.length;
+      const lastNewline = val.lastIndexOf('\n', pos - 1);
+      const lineStart = lastNewline === -1 ? 0 : lastNewline + 1;
+      const nextNewline = val.indexOf('\n', pos);
+      const lineEnd = nextNewline === -1 ? val.length : nextNewline;
+      const currentLine = val.slice(lineStart, lineEnd);
+
+      let newVal = val;
+      let newPos = pos;
+
+      if (/^\s*(•|-|\*)\s*/.test(currentLine)) {
+        const cleanLine = currentLine.replace(/^\s*(•|-|\*)\s*/, '• ');
+        newVal = val.slice(0, lineStart) + cleanLine + val.slice(lineEnd);
+        newPos = lineStart + cleanLine.length;
+      } else {
+        newVal = val.slice(0, lineStart) + '• ' + val.slice(lineStart);
+        newPos = pos + 2;
+      }
+
+      textarea.value = newVal;
+      textarea.selectionStart = textarea.selectionEnd = newPos;
+      textarea.focus();
+      autoResizeTextarea(textarea);
+      const formType = textarea.classList.contains('cot-item-desc') ? 'cot' : 'cobro';
+      handleDescInput(textarea, formType);
+    }
+
+    function renderFormattedDocDescription(rawText, options = {}) {
+      if (!rawText) return '';
+      const lines = String(rawText).split(/\r?\n/);
+      const container = document.createElement('div');
+      container.className = options.className || 'doc-desc-block';
+
+      lines.forEach((line, idx) => {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          if (lines.length > 1) {
+            const spacer = document.createElement('div');
+            spacer.style.height = '4px';
+            spacer.style.breakInside = 'avoid';
+            container.appendChild(spacer);
+          }
+          return;
+        }
+
+        const bulletMatch = trimmed.match(/^([•\-\*])\s*(.*)$/);
+        const lineEl = document.createElement('div');
+        lineEl.style.breakInside = 'avoid';
+        lineEl.style.pageBreakInside = 'avoid';
+
+        if (bulletMatch) {
+          lineEl.className = 'doc-bullet-item';
+          lineEl.style.display = 'flex';
+          lineEl.style.alignItems = 'flex-start';
+          lineEl.style.gap = '6px';
+          lineEl.style.marginLeft = options.isSubBullet ? '1.25rem' : '0.85rem';
+          lineEl.style.marginTop = '2px';
+          lineEl.style.marginBottom = '2px';
+          lineEl.style.lineHeight = '1.45';
+
+          const bulletSymbol = document.createElement('span');
+          bulletSymbol.className = 'doc-bullet-dot';
+          bulletSymbol.textContent = '•';
+
+          const bulletContent = document.createElement('span');
+          bulletContent.className = 'doc-bullet-text';
+          bulletContent.textContent = bulletMatch[2];
+
+          lineEl.appendChild(bulletSymbol);
+          lineEl.appendChild(bulletContent);
+        } else {
+          lineEl.className = 'doc-text-line';
+          lineEl.style.lineHeight = '1.45';
+          if (idx > 0 && options.indentSubLines) {
+            lineEl.style.marginLeft = '1.25rem';
+          }
+          lineEl.textContent = trimmed;
+        }
+        container.appendChild(lineEl);
+      });
+
+      return container.outerHTML;
+    }
+
+    function renderCotItemDescHtml(rawDesc) {
+      if (!rawDesc) return 'Servicio';
+      const lines = String(rawDesc).split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length <= 1) {
+        const d = document.createElement('div');
+        d.style.fontWeight = '500';
+        d.style.breakInside = 'avoid';
+        d.textContent = lines[0] || 'Servicio';
+        return d.outerHTML;
+      }
+      const firstLine = lines[0].replace(/^[•\-\*]\s*/, '');
+      const subLines = lines.slice(1);
+
+      const wrap = document.createElement('div');
+      wrap.style.breakInside = 'avoid';
+
+      const head = document.createElement('div');
+      head.style.fontWeight = '600';
+      head.style.marginBottom = '4px';
+      head.style.color = '#0F172A';
+      head.textContent = firstLine;
+      wrap.appendChild(head);
+
+      const subHtml = renderFormattedDocDescription(subLines.join('\n'), { isSubBullet: true });
+      const subContainer = document.createElement('div');
+      subContainer.innerHTML = subHtml;
+      wrap.appendChild(subContainer);
+
+      return wrap.outerHTML;
+    }
+
+    function renderCobroConceptosDocHtml(conceptos) {
+      const list = (conceptos && conceptos.length > 0)
+        ? conceptos
+        : [{ desc: 'Servicios de diseño / desarrollo', amount: 0 }];
+      const isSingle = list.length === 1;
+
+      const container = document.createElement('div');
+      container.className = 'doc-cobro-concepts-container';
+
+      list.forEach(c => {
+        const rawDesc = c.desc || 'Servicio';
+        const lines = rawDesc.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+        const firstLine = (lines.length > 0) ? lines[0].replace(/^[•\-\*]\s*/, '') : 'Servicio';
+        const subLines = lines.slice(1);
+
+        const itemWrap = document.createElement('div');
+        itemWrap.className = isSingle ? 'doc-cobro-single-concept' : 'doc-cobro-multi-concept';
+        itemWrap.style.marginBottom = '0.85rem';
+        itemWrap.style.breakInside = 'avoid';
+        itemWrap.style.pageBreakInside = 'avoid';
+
+        const headLine = document.createElement('div');
+        headLine.className = 'doc-cobro-concept-head';
+        headLine.style.fontSize = '12.5px';
+        headLine.style.lineHeight = '1.5';
+        headLine.style.color = '#0F172A';
+
+        if (!isSingle) {
+          headLine.style.display = 'flex';
+          headLine.style.alignItems = 'flex-start';
+          headLine.style.gap = '8px';
+
+          const dot = document.createElement('span');
+          dot.style.fontWeight = '700';
+          dot.style.color = '#334155';
+          dot.textContent = '•';
+          headLine.appendChild(dot);
+        }
+
+        const headContent = document.createElement(isSingle ? 'span' : 'div');
+        const strongTitle = document.createElement('strong');
+        strongTitle.textContent = firstLine;
+        headContent.appendChild(strongTitle);
+
+        const suffixNode = document.createTextNode(' por un valor de ');
+        headContent.appendChild(suffixNode);
+
+        const strongAmount = document.createElement('strong');
+        strongAmount.textContent = formatMoney(c.amount || 0);
+        headContent.appendChild(strongAmount);
+
+        headLine.appendChild(headContent);
+        itemWrap.appendChild(headLine);
+
+        if (subLines.length > 0) {
+          const subContainer = document.createElement('div');
+          subContainer.style.marginTop = '4px';
+          subContainer.style.marginLeft = isSingle ? '0.25rem' : '1.25rem';
+          subContainer.innerHTML = renderFormattedDocDescription(subLines.join('\n'), { isSubBullet: true, indentSubLines: true });
+          itemWrap.appendChild(subContainer);
+        }
+
+        container.appendChild(itemWrap);
+      });
+
+      return container.outerHTML;
+    }
+
     function addBlankCotItem(desc = '', qty = 1, price = 0) {
       const tbody = document.getElementById('cot-items-tbody');
       const tr = document.createElement('tr');
+      tr.className = 'cot-item-row';
       tr.innerHTML = `
-        <td>
-          <input type="text" class="cot-item-desc" value="${escapeHtml(desc)}" placeholder="Descripción del servicio..." oninput="calculateCotTotals()">
+        <td class="cell-desc">
+          <div class="desc-field-wrap">
+            <div class="desc-field-top">
+              <label>Descripción</label>
+              <button type="button" class="btn-bullet-insert" onclick="insertBulletInRow(this)" title="Insertar viñeta al inicio de la línea">• Viñeta</button>
+            </div>
+            <textarea class="cot-item-desc form-control auto-grow-desc" rows="2" maxlength="3000" placeholder="Describe el servicio. Enter para agregar otra línea" oninput="handleDescInput(this, 'cot')" onkeydown="handleDescKeydown(event, this)">${escapeHtml(desc)}</textarea>
+          </div>
         </td>
-        <td style="text-align: center;">
-          <input type="number" class="cot-item-qty" value="${qty}" min="1" style="text-align: center;" oninput="calculateCotTotals()">
+        <td class="cell-qty" style="text-align: center;">
+          <div class="field-col-wrap">
+            <span class="mobile-cell-label">Cant.</span>
+            <input type="number" class="cot-item-qty" value="${qty}" min="1" step="any" placeholder="Cant." style="text-align: center;" oninput="calculateCotTotals()">
+          </div>
         </td>
-        <td style="text-align: right;">
-          <input type="number" class="cot-item-price" value="${price}" min="0" style="text-align: right;" oninput="calculateCotTotals()">
+        <td class="cell-price" style="text-align: right;">
+          <div class="field-col-wrap">
+            <span class="mobile-cell-label">Precio Unit.</span>
+            <input type="number" class="cot-item-price" value="${price}" min="0" step="any" placeholder="Precio ($)" style="text-align: right;" oninput="calculateCotTotals()">
+          </div>
         </td>
-        <td style="text-align: right; font-weight: 700; color: var(--text-main);" class="cot-item-row-total">
-          ${formatMoney(qty * price)}
+        <td class="cell-total" style="text-align: right;">
+          <div class="field-col-wrap">
+            <span class="mobile-cell-label">Total</span>
+            <div class="cot-item-row-total">${formatMoney(qty * price)}</div>
+          </div>
         </td>
-        <td style="text-align: center;">
-          <button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove(); calculateCotTotals();" style="padding: 2px 7px; min-height: 28px;" title="Eliminar fila">✕</button>
+        <td class="cell-del" style="text-align: center;">
+          <button type="button" class="btn btn-danger btn-row-del" onclick="this.closest('tr').remove(); calculateCotTotals();" title="Eliminar fila">✕</button>
         </td>
       `;
       tbody.appendChild(tr);
+      const ta = tr.querySelector('.auto-grow-desc');
+      if (ta) autoResizeTextarea(ta);
       calculateCotTotals();
     }
 
@@ -4164,36 +4757,60 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
     function addBlankConceptoRow(desc = '', amount = 0) {
       const tbody = document.getElementById('cc-conceptos-tbody');
       const tr = document.createElement('tr');
+      tr.className = 'cc-item-row cc-concepto-row';
       tr.innerHTML = `
-        <td>
-          <input type="text" class="cc-concepto-desc" value="${escapeHtml(desc)}" placeholder="Concepto del servicio prestado..." oninput="calculateCobroTotals()">
+        <td class="cell-desc">
+          <div class="desc-field-wrap">
+            <div class="desc-field-top">
+              <label>Concepto</label>
+              <button type="button" class="btn-bullet-insert" onclick="insertBulletInRow(this)" title="Insertar viñeta al inicio de la línea">• Viñeta</button>
+            </div>
+            <textarea class="cc-concepto-desc form-control auto-grow-desc" rows="2" maxlength="3000" placeholder="Describe el concepto. Enter para agregar otra línea" oninput="handleDescInput(this, 'cobro')" onkeydown="handleDescKeydown(event, this)">${escapeHtml(desc)}</textarea>
+          </div>
         </td>
-        <td style="text-align: right;">
-          <input type="number" class="cc-concepto-amount" value="${amount}" min="0" style="text-align: right;" oninput="calculateCobroTotals()">
+        <td class="cell-amount" style="text-align: right;">
+          <div class="field-col-wrap">
+            <span class="mobile-cell-label">Valor ($)</span>
+            <input type="number" class="cc-concepto-amount" value="${amount}" min="0" step="any" placeholder="Valor ($)" style="text-align: right;" oninput="calculateCobroTotals()">
+          </div>
         </td>
-        <td style="text-align: center;">
-          <button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove(); calculateCobroTotals();" style="padding: 2px 7px; min-height: 28px;">✕</button>
+        <td class="cell-del" style="text-align: center;">
+          <button type="button" class="btn btn-danger btn-row-del" onclick="this.closest('tr').remove(); calculateCobroTotals();" title="Eliminar fila">✕</button>
         </td>
       `;
       tbody.appendChild(tr);
+      const ta = tr.querySelector('.auto-grow-desc');
+      if (ta) autoResizeTextarea(ta);
       calculateCobroTotals();
     }
 
     function addBlankAdelantoRow(desc = '', amount = 0) {
       const tbody = document.getElementById('cc-adelantos-tbody');
       const tr = document.createElement('tr');
+      tr.className = 'cc-item-row cc-adelanto-row';
       tr.innerHTML = `
-        <td>
-          <input type="text" class="cc-adelanto-desc" value="${escapeHtml(desc)}" placeholder="Descripción del abono..." oninput="calculateCobroTotals()">
+        <td class="cell-desc">
+          <div class="desc-field-wrap">
+            <div class="desc-field-top">
+              <label>Abono</label>
+              <button type="button" class="btn-bullet-insert" onclick="insertBulletInRow(this)" title="Insertar viñeta al inicio de la línea">• Viñeta</button>
+            </div>
+            <textarea class="cc-adelanto-desc form-control auto-grow-desc" rows="2" maxlength="3000" placeholder="Describe el adelanto o abono. Enter para agregar otra línea" oninput="handleDescInput(this, 'cobro')" onkeydown="handleDescKeydown(event, this)">${escapeHtml(desc)}</textarea>
+          </div>
         </td>
-        <td style="text-align: right;">
-          <input type="number" class="cc-adelanto-amount" value="${amount}" min="0" style="text-align: right;" oninput="calculateCobroTotals()">
+        <td class="cell-amount" style="text-align: right;">
+          <div class="field-col-wrap">
+            <span class="mobile-cell-label">Monto Abonado ($)</span>
+            <input type="number" class="cc-adelanto-amount" value="${amount}" min="0" step="any" placeholder="Monto ($)" style="text-align: right;" oninput="calculateCobroTotals()">
+          </div>
         </td>
-        <td style="text-align: center;">
-          <button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove(); calculateCobroTotals();" style="padding: 2px 7px; min-height: 28px;">✕</button>
+        <td class="cell-del" style="text-align: center;">
+          <button type="button" class="btn btn-danger btn-row-del" onclick="this.closest('tr').remove(); calculateCobroTotals();" title="Eliminar fila">✕</button>
         </td>
       `;
       tbody.appendChild(tr);
+      const ta = tr.querySelector('.auto-grow-desc');
+      if (ta) autoResizeTextarea(ta);
       calculateCobroTotals();
     }
 
@@ -4483,11 +5100,11 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         const hasLogo = data.includeLogo !== false;
 
         const itemsRows = (data.items || []).map((it, idx) => `
-          <tr>
-            <td style="width: 50%; font-weight: 500;">${escapeHtml(it.desc || 'Servicio')}</td>
-            <td style="width: 15%; text-align: center;">${it.qty || 1}</td>
-            <td style="width: 18%; text-align: right;">${formatMoney(it.price || 0)}</td>
-            <td style="width: 17%; text-align: right; font-weight: 600;">${formatMoney((it.qty || 1) * (it.price || 0))}</td>
+          <tr style="break-inside: avoid; page-break-inside: avoid;">
+            <td style="width: 50%; font-weight: 500; vertical-align: top;">${renderCotItemDescHtml(it.desc || 'Servicio')}</td>
+            <td style="width: 15%; text-align: center; vertical-align: top;">${it.qty || 1}</td>
+            <td style="width: 18%; text-align: right; vertical-align: top;">${formatMoney(it.price || 0)}</td>
+            <td style="width: 17%; text-align: right; font-weight: 600; vertical-align: top;">${formatMoney((it.qty || 1) * (it.price || 0))}</td>
           </tr>
         `).join('');
 
@@ -4590,9 +5207,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         const emisor = data.emisor || state.settings;
         const hasSignature = !!emisor.signature;
 
-        const conceptosList = (data.conceptos || []).map(c => `
-          <li><strong>${escapeHtml(c.desc || 'Servicio')}</strong> por un valor de <strong>${formatMoney(c.amount || 0)}</strong></li>
-        `).join('');
+        const conceptosBlock = renderCobroConceptosDocHtml(data.conceptos || []);
 
         const adelantosBlock = (totalAdelantos > 0) ? `
           <div style="background: #FEF2F2; border: 1px solid #FECACA; border-radius: 6px; padding: 0.8rem 1rem; margin: 1rem 0;">
@@ -4661,10 +5276,8 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
             </div>
 
             <!-- 5. Por concepto de con viñetas -->
-            <div style="font-size: 12px; font-weight: 700; color: #475569; margin-top: 1.25rem;">POR CONCEPTO DE:</div>
-            <ul class="doc-cobro-concepts-list">
-              ${conceptosList}
-            </ul>
+            <div style="font-size: 12px; font-weight: 700; color: #475569; margin-top: 1.25rem; margin-bottom: 0.5rem;">POR CONCEPTO DE:</div>
+            ${conceptosBlock}
 
             ${adelantosBlock}
             ${notesBlock}
@@ -4730,7 +5343,21 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         text += `Fecha: ${formatDateSpanish(data.date)}\n\n`;
         text += `*Servicios Cotizados:*\n`;
         (data.items || []).forEach(it => {
-          text += `• ${it.desc} (${it.qty} x ${formatMoney(it.price)}) = ${formatMoney(it.qty * it.price)}\n`;
+          const rawDesc = it.desc || 'Servicio';
+          const lines = rawDesc.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+          const firstLine = lines.length > 0 ? lines[0].replace(/^[•\-\*]\s*/, '') : 'Servicio';
+          const subLines = lines.slice(1);
+          const qtyPrice = `(${it.qty || 1} x ${formatMoney(it.price || 0)}) = ${formatMoney((it.qty || 1) * (it.price || 0))}`;
+
+          if (subLines.length === 0) {
+            text += `• ${firstLine} ${qtyPrice}\n`;
+          } else {
+            text += `• *${firstLine}* ${qtyPrice}\n`;
+            subLines.forEach(sub => {
+              const cleanSub = sub.replace(/^[•\-\*]\s*/, '');
+              text += `   • ${cleanSub}\n`;
+            });
+          }
         });
         text += `\n*TOTAL: ${formatMoney(data.grandTotal)}*\n`;
         if (data.notes && data.includeNotes !== false) {
@@ -4743,9 +5370,33 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         text += `${data.city || 'Bogotá D.C.'}, ${formatDateSpanish(data.date)}\n`;
         text += `Cobro a: ${data.clientName}\n\n`;
         text += `*Por concepto de:*\n`;
-        (data.conceptos || []).forEach(c => {
-          text += `• ${c.desc}: ${formatMoney(c.amount)}\n`;
+
+        const conceptos = (data.conceptos && data.conceptos.length > 0)
+          ? data.conceptos
+          : [{ desc: 'Servicios de diseño / desarrollo', amount: data.totalConceptos || 0 }];
+        const isSingle = conceptos.length === 1;
+
+        conceptos.forEach(c => {
+          const rawDesc = c.desc || 'Servicio';
+          const lines = rawDesc.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+          const firstLine = lines.length > 0 ? lines[0].replace(/^[•\-\*]\s*/, '') : 'Servicio';
+          const subLines = lines.slice(1);
+
+          if (isSingle) {
+            text += `*${firstLine}*: ${formatMoney(c.amount || 0)}\n`;
+            subLines.forEach(sub => {
+              const cleanSub = sub.replace(/^[•\-\*]\s*/, '');
+              text += `• ${cleanSub}\n`;
+            });
+          } else {
+            text += `• *${firstLine}*: ${formatMoney(c.amount || 0)}\n`;
+            subLines.forEach(sub => {
+              const cleanSub = sub.replace(/^[•\-\*]\s*/, '');
+              text += `   • ${cleanSub}\n`;
+            });
+          }
         });
+
         text += `\n*TOTAL: ${formatMoney(data.totalConceptos)}*\n`;
         text += `_${numeroALetras(data.totalConceptos)}_\n`;
         if (data.totalAdelantos > 0) {

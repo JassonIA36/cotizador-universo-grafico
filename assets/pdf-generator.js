@@ -540,11 +540,37 @@
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     const conceptos = data.conceptos && data.conceptos.length > 0 ? data.conceptos : [{ desc: 'Servicios de diseño / desarrollo', amount: totalConceptos }];
+    const isSingleConcept = conceptos.length === 1;
+
     conceptos.forEach(c => {
-      const lineText = `•   ${c.desc || 'Servicio'} por un valor de ${formatMoney(c.amount || 0)}`;
-      const splitLines = doc.splitTextToSize(lineText, contentWidth - 8);
-      doc.text(splitLines, margin + 4, yPos);
-      yPos += (splitLines.length * 4.8);
+      const rawDesc = c.desc || 'Servicio';
+      const lines = rawDesc.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+      const firstLine = lines.length > 0 ? lines[0].replace(/^[•\-\*]\s*/, '') : 'Servicio';
+      const subLines = lines.slice(1);
+
+      // Título principal con monto
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      const headPrefix = isSingleConcept ? '' : '•   ';
+      const headLine = `${headPrefix}${firstLine} por un valor de ${formatMoney(c.amount || 0)}`;
+      const splitHead = doc.splitTextToSize(headLine, contentWidth - 8);
+      doc.text(splitHead, margin + (isSingleConcept ? 2 : 4), yPos);
+      yPos += (splitHead.length * 4.8);
+
+      // Sub-viñetas indented
+      if (subLines.length > 0) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8.5);
+        subLines.forEach(sub => {
+          const cleanSub = sub.replace(/^[•\-\*]\s*/, '');
+          const bulletLine = `•  ${cleanSub}`;
+          const splitSub = doc.splitTextToSize(bulletLine, contentWidth - 14);
+          doc.text(splitSub, margin + (isSingleConcept ? 6 : 10), yPos);
+          yPos += (splitSub.length * 4.4);
+        });
+        doc.setFontSize(9);
+      }
+      yPos += 2.5;
     });
 
     // 9. Resumen de anticipos / saldo si los hay
