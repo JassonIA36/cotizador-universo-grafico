@@ -7,6 +7,16 @@
 (function (window) {
   'use strict';
 
+  function getAppConfig() {
+    if (typeof window !== 'undefined' && typeof window.getConfig === 'function') {
+      return window.getConfig();
+    }
+    if (typeof window !== 'undefined' && window.state && window.state.settings) {
+      return window.state.settings;
+    }
+    return {};
+  }
+
   function formatMoney(amount) {
     return '$' + Math.round(Number(amount) || 0).toLocaleString('es-CO');
   }
@@ -143,12 +153,14 @@
     // Barra superior con degradado morado idéntico al logotipo
     drawLogoGradientBar(doc, pageWidth, 4.5);
 
-    // 1. Logo de Universo Gráfico
+    const cfg = getAppConfig();
+
+    // 1. Logo
     let yPos = 13;
     const logoW = 48;
     const logoH = 13; // Proporción 3.72:1
 
-    const logoToUse = (window.state && window.state.settings && window.state.settings.logoData) || window.UNIVERSO_GRAFICO_LOGO;
+    const logoToUse = (cfg.logoData !== undefined ? cfg.logoData : '') || window.UNIVERSO_GRAFICO_LOGO;
     if (data.includeLogo !== false && logoToUse) {
       try {
         doc.addImage(logoToUse, logoToUse.startsWith('data:image/jpeg') ? 'JPEG' : 'PNG', margin, yPos, logoW, logoH);
@@ -159,10 +171,10 @@
       }
     }
 
-    // 2. Información del Emisor / Universo Gráfico (Izquierda)
-    const businessName = data.businessName || (window.state && window.state.settings && window.state.settings.businessName) || 'Universo Gráfico';
-    const businessPhone = data.businessPhone || (window.state && window.state.settings && window.state.settings.phone) || '3239421252';
-    const businessAddress = data.businessAddress || (window.state && window.state.settings && window.state.settings.address) || 'Bogotá, Colombia';
+    // 2. Información del Emisor (Izquierda)
+    const businessName = cfg.businessName || 'Universo Gráfico';
+    const businessPhone = cfg.phone || '3239421252';
+    const businessAddress = cfg.address || 'Bogotá, Colombia';
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
@@ -430,8 +442,10 @@
     // Barra superior con degradado idéntico al logotipo
     drawLogoGradientBar(doc, pageWidth, 4.5);
 
+    const cfg = getAppConfig();
+
     // Encabezado con Logo si está activado
-    const ccLogoToUse = (window.state && window.state.settings && window.state.settings.logoData) || window.UNIVERSO_GRAFICO_LOGO;
+    const ccLogoToUse = (cfg.logoData !== undefined ? cfg.logoData : '') || window.UNIVERSO_GRAFICO_LOGO;
     if (data.includeLogo !== false && ccLogoToUse) {
       try {
         const logoW = 46;
@@ -441,8 +455,8 @@
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(8.5);
         doc.setTextColor(100, 116, 139);
-        const bName = (data.emisor && data.emisor.businessName) || 'Universo Gráfico';
-        const bPhone = (data.emisor && data.emisor.phone) || '3239421252';
+        const bName = cfg.businessName || 'Universo Gráfico';
+        const bPhone = cfg.phone || '3239421252';
         doc.text(bName, pageWidth - margin, yPos + 4, { align: 'right' });
         doc.text('WhatsApp: ' + bPhone, pageWidth - margin, yPos + 8.5, { align: 'right' });
 
@@ -463,7 +477,7 @@
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10.5);
     doc.setTextColor(0, 0, 0);
-    const dateText = `${data.city || 'Bogotá D.C.'}, ${formatDateSpanish(data.date)}`;
+    const dateText = `${data.city || cfg.emisorCity || 'Bogotá D.C.'}, ${formatDateSpanish(data.date)}`;
     doc.text(dateText, margin, yPos);
     yPos += 9;
 
@@ -493,16 +507,19 @@
     doc.text('DEBE A:', pageWidth / 2, yPos, { align: 'center' });
     yPos += 6;
 
-    // 5. Nombre del emisor y Cédula
-    const emisor = data.emisor || (window.state && window.state.settings) || {};
+    // 5. Nombre del emisor y Cédula (Lectura en vivo de getConfig())
+    const emisorName = cfg.emisorName || 'Jason';
+    const emisorCC = cfg.emisorCC || '';
+    const emisorCity = cfg.emisorCity || 'Bogotá D.C.';
+
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.text((emisor.name || 'Jason').toUpperCase(), pageWidth / 2, yPos, { align: 'center' });
+    doc.text(emisorName.toUpperCase(), pageWidth / 2, yPos, { align: 'center' });
     yPos += 5;
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9.5);
-    doc.text(`C.C. ${emisor.cc || ''} de ${emisor.city || 'Bogotá D.C.'}`, pageWidth / 2, yPos, { align: 'center' });
+    doc.text(`C.C. ${emisorCC} de ${emisorCity}`, pageWidth / 2, yPos, { align: 'center' });
     yPos += 9;
 
     // Totales calculados
@@ -630,7 +647,7 @@
 
     // 11. Texto legal de exención tributaria colombiana
     if (data.includeLegal === true) {
-      const legalText = data.legalText || (window.state && window.state.settings && window.state.settings.legalText) || '';
+      const legalText = cfg.legalText || '';
       if (legalText) {
         doc.setDrawColor(226, 232, 240);
         doc.line(margin, yPos, pageWidth - margin, yPos);
@@ -647,9 +664,10 @@
 
     // 12. Firma del Emisor
     const signatureBottomY = pageHeight - 25;
-    if (emisor.signature) {
+    const emisorSig = cfg.signatureData || (data.emisor && data.emisor.signature) || '';
+    if (emisorSig) {
       try {
-        doc.addImage(emisor.signature, 'PNG', margin + 4, signatureBottomY - 18, 40, 15);
+        doc.addImage(emisorSig, 'PNG', margin + 4, signatureBottomY - 18, 40, 15);
       } catch (e) {
         console.warn('Error al estampar firma en PDF:', e);
       }
@@ -662,12 +680,12 @@
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
     doc.setTextColor(0, 0, 0);
-    doc.text((emisor.name || 'Jason').toUpperCase(), margin + 4, signatureBottomY + 2);
+    doc.text(emisorName.toUpperCase(), margin + 4, signatureBottomY + 2);
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(75, 85, 99);
-    doc.text(`C.C. ${emisor.cc || ''}`, margin + 4, signatureBottomY + 6);
+    doc.text(`C.C. ${emisorCC}`, margin + 4, signatureBottomY + 6);
 
     return doc;
   }
@@ -678,6 +696,7 @@
   const pdfDocumentCache = new Map();
 
   function buildCacheKey(docType, data) {
+    const cfg = getAppConfig();
     return JSON.stringify({
       docType,
       id: data.id,
@@ -704,7 +723,14 @@
       includeNotes: data.includeNotes,
       includeLogo: data.includeLogo,
       includeLegal: data.includeLegal,
-      emisor: data.emisor
+      // INCLUSIÓN OBLIGATORIA DE LA VERSIÓN Y DATOS DE LA EMPRESA (Invalida la caché al cambiar datos)
+      configVersion: cfg.version || 1,
+      cfgBusinessName: cfg.businessName || '',
+      cfgPhone: cfg.phone || '',
+      cfgEmisorName: cfg.emisorName || '',
+      cfgEmisorCC: cfg.emisorCC || '',
+      hasCustomLogo: !!cfg.logoData,
+      hasCustomSig: !!cfg.signatureData
     });
   }
 
@@ -873,6 +899,7 @@
     shareDocViaWhatsApp,
     getCachedPdfFile,
     clearPdfCache,
+    buildCacheKey,
     previewPdfBlob,
     formatMoney,
     formatMoneyCop,
