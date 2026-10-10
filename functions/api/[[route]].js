@@ -85,21 +85,27 @@ function mergeConfigObjects(baseObj, incomingObj, baseTime = 0, incomingTime = 0
     const baseField = merged[key];
 
     let tBase = 0;
-    if (baseField && typeof baseField === 'object' && 't' in baseField) {
-      tBase = new Date(baseField.t || 0).getTime();
+    if (baseField && typeof baseField === 'object' && ('v' in baseField || 't' in baseField)) {
+      tBase = baseField.t ? new Date(baseField.t).getTime() : 0;
     } else {
-      tBase = new Date(baseTime || 0).getTime();
+      tBase = baseTime ? new Date(baseTime).getTime() : 0;
     }
 
     let tInc = 0;
-    if (incField && typeof incField === 'object' && 't' in incField) {
-      tInc = new Date(incField.t || 0).getTime();
+    if (incField && typeof incField === 'object' && ('v' in incField || 't' in incField)) {
+      tInc = incField.t ? new Date(incField.t).getTime() : 0;
     } else {
-      tInc = new Date(incomingTime || 0).getTime();
+      tInc = incomingTime ? new Date(incomingTime).getTime() : 0;
     }
 
-    // Gana la versión con la marca de tiempo más reciente como fecha
-    if (tInc >= tBase) {
+    const baseHasExplicit = baseField && typeof baseField === 'object' && !!baseField.t;
+    const incHasExplicit = incField && typeof incField === 'object' && !!incField.t;
+
+    // Si incoming tiene marca de tiempo explícita y base es un valor plano legado sin marca explícita,
+    // o si la marca temporal de incoming es más reciente o igual: incoming gana
+    if (incHasExplicit && !baseHasExplicit) {
+      merged[key] = incField;
+    } else if (tInc >= tBase) {
       merged[key] = incField;
     }
   }
@@ -319,17 +325,23 @@ export async function onRequest(context) {
             ).bind(authUser.id).all();
 
             const rows = existingConfigs.results || [];
-            let mergedPayload = typeof item.datos === 'string' ? JSON.parse(item.datos || '{}') : (item.datos || {});
+            const clientData = typeof item.datos === 'string' ? JSON.parse(item.datos || '{}') : (item.datos || {});
+            let mergedPayload = { ...clientData };
 
             if (rows.length > 0) {
-              // Ordenar por updated_at ascendente para consolidar en orden cronológico
-              rows.sort((a, b) => new Date(a.updated_at || 0).getTime() - new Date(b.updated_at || 0).getTime());
+              // Requerimiento 3: Ordenar por updated_at descendente para tomar la más reciente como base
+              rows.sort((a, b) => new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime());
+              const newestRow = rows[0];
+              let consolidatedBase = typeof newestRow.datos === 'string' ? JSON.parse(newestRow.datos || '{}') : (newestRow.datos || {});
 
-              // Fusionar campo por campo cada fila previa
-              rows.forEach(r => {
-                const rData = typeof r.datos === 'string' ? JSON.parse(r.datos || '{}') : (r.datos || {});
-                mergedPayload = mergeConfigObjects(rData, mergedPayload, r.updated_at, updatedAt);
-              });
+              // Fusionar las otras filas más antiguas si existen
+              for (let i = 1; i < rows.length; i++) {
+                const olderData = typeof rows[i].datos === 'string' ? JSON.parse(rows[i].datos || '{}') : (rows[i].datos || {});
+                consolidatedBase = mergeConfigObjects(consolidatedBase, olderData, newestRow.updated_at, rows[i].updated_at);
+              }
+
+              // Fusionar la consolidada con clientData que envía el dispositivo (gana el campo más nuevo o igual)
+              mergedPayload = mergeConfigObjects(consolidatedBase, clientData, newestRow.updated_at, updatedAt);
 
               // Marcar cualquier otra fila config que no sea authUser.id como deleted = 1
               await db.prepare(

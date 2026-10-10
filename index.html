@@ -3013,42 +3013,42 @@
             <div class="form-grid">
               <div class="form-group">
                 <label for="cfg-business-name">Nombre Comercial del Negocio</label>
-                <input type="text" id="cfg-business-name" class="form-control" value="Universo Gráfico" oninput="onSettingFieldInput('businessName', this.value)">
+                <input type="text" id="cfg-business-name" class="form-control" value="Universo Gráfico" oninput="onSettingFieldInput('businessName', this.value)" onchange="onSettingFieldInput('businessName', this.value)" onblur="onSettingFieldInput('businessName', this.value)">
               </div>
 
               <div class="form-group">
                 <label for="cfg-business-phone">WhatsApp / Teléfono de Contacto</label>
-                <input type="text" id="cfg-business-phone" class="form-control" value="3239421252" oninput="onSettingFieldInput('phone', this.value)">
+                <input type="text" id="cfg-business-phone" class="form-control" value="3239421252" oninput="onSettingFieldInput('phone', this.value)" onchange="onSettingFieldInput('phone', this.value)" onblur="onSettingFieldInput('phone', this.value)">
               </div>
 
               <div class="form-group">
                 <label for="cfg-business-email">Correo Electrónico</label>
-                <input type="email" id="cfg-business-email" class="form-control" placeholder="contacto@universografico.com" oninput="onSettingFieldInput('email', this.value)">
+                <input type="email" id="cfg-business-email" class="form-control" placeholder="contacto@universografico.com" oninput="onSettingFieldInput('email', this.value)" onchange="onSettingFieldInput('email', this.value)" onblur="onSettingFieldInput('email', this.value)">
               </div>
 
               <div class="form-group">
                 <label for="cfg-business-address">Dirección Física / Ciudad</label>
-                <input type="text" id="cfg-business-address" class="form-control" placeholder="Bogotá, Colombia" oninput="onSettingFieldInput('address', this.value)">
+                <input type="text" id="cfg-business-address" class="form-control" placeholder="Bogotá, Colombia" oninput="onSettingFieldInput('address', this.value)" onchange="onSettingFieldInput('address', this.value)" onblur="onSettingFieldInput('address', this.value)">
               </div>
 
               <div class="form-group">
                 <label for="cfg-emisor-name">Nombre de Quien Cobra (Persona Natural / Titular)</label>
-                <input type="text" id="cfg-emisor-name" class="form-control" placeholder="Tu Nombre Completo" oninput="onSettingFieldInput('emisorName', this.value)">
+                <input type="text" id="cfg-emisor-name" class="form-control" placeholder="Tu Nombre Completo" oninput="onSettingFieldInput('emisorName', this.value)" onchange="onSettingFieldInput('emisorName', this.value)" onblur="onSettingFieldInput('emisorName', this.value)">
               </div>
 
               <div class="form-group">
                 <label for="cfg-emisor-cc">C.C. de Quien Cobra</label>
-                <input type="text" id="cfg-emisor-cc" class="form-control" placeholder="Ej: 1.015.409.172" oninput="onSettingFieldInput('emisorCC', this.value)">
+                <input type="text" id="cfg-emisor-cc" class="form-control" placeholder="Ej: 1.015.409.172" oninput="onSettingFieldInput('emisorCC', this.value)" onchange="onSettingFieldInput('emisorCC', this.value)" onblur="onSettingFieldInput('emisorCC', this.value)">
               </div>
 
               <div class="form-group">
                 <label for="cfg-emisor-city">Ciudad de Expedición de la Cédula</label>
-                <input type="text" id="cfg-emisor-city" class="form-control" value="Bogotá D.C." oninput="onSettingFieldInput('emisorCity', this.value)">
+                <input type="text" id="cfg-emisor-city" class="form-control" value="Bogotá D.C." oninput="onSettingFieldInput('emisorCity', this.value)" onchange="onSettingFieldInput('emisorCity', this.value)" onblur="onSettingFieldInput('emisorCity', this.value)">
               </div>
 
               <div class="form-group">
                 <label for="cfg-numbering-mode">Modalidad de Consecutivo en Cuentas de Cobro</label>
-                <select id="cfg-numbering-mode" class="form-control" onchange="onSettingFieldInput('numberingMode', this.value)">
+                <select id="cfg-numbering-mode" class="form-control" onchange="onSettingFieldInput('numberingMode', this.value)" onblur="onSettingFieldInput('numberingMode', this.value)">
                   <option value="per-client">Consecutivo Independiente por Cliente (001 por cliente)</option>
                   <option value="global">Consecutivo Global Único</option>
                 </select>
@@ -3089,17 +3089,17 @@
               <!-- Textos Predeterminados -->
               <div class="form-group full-width">
                 <label for="cfg-default-cot-notes">Notas y Garantías Predeterminadas (Cotizaciones)</label>
-                <textarea id="cfg-default-cot-notes" class="form-control" rows="3" oninput="onSettingFieldInput('defaultCotNotes', this.value)">Para iniciar el trabajo se requiere un anticipo del 50%. El saldo se paga contra entrega. Incluye hasta 2 rondas de ajustes.</textarea>
+                <textarea id="cfg-default-cot-notes" class="form-control" rows="3" oninput="onSettingFieldInput('defaultCotNotes', this.value)" onchange="onSettingFieldInput('defaultCotNotes', this.value)" onblur="onSettingFieldInput('defaultCotNotes', this.value)">Para iniciar el trabajo se requiere un anticipo del 50%. El saldo se paga contra entrega. Incluye hasta 2 rondas de ajustes.</textarea>
               </div>
 
               <div class="form-group full-width">
                 <label for="cfg-default-cc-notes">Notas Predeterminadas (Cuentas de Cobro)</label>
-                <textarea id="cfg-default-cc-notes" class="form-control" rows="2" oninput="onSettingFieldInput('defaultCcNotes', this.value)">Servicio prestado a entera satisfacción. Favor consignar a la cuenta bancaria acordada.</textarea>
+                <textarea id="cfg-default-cc-notes" class="form-control" rows="2" oninput="onSettingFieldInput('defaultCcNotes', this.value)" onchange="onSettingFieldInput('defaultCcNotes', this.value)" onblur="onSettingFieldInput('defaultCcNotes', this.value)">Servicio prestado a entera satisfacción. Favor consignar a la cuenta bancaria acordada.</textarea>
               </div>
 
               <div class="form-group full-width">
                 <label for="cfg-default-legal-text">Texto Legal Tributario (3 párrafos según norma colombiana)</label>
-                <textarea id="cfg-default-legal-text" class="form-control" rows="4" oninput="onSettingFieldInput('legalText', this.value)">Que los ingresos brutos totales obtenidos en el presente periodo gravable corresponden a honorarios, comisiones o servicios y no superan las 120 UVT mensuales.
+                <textarea id="cfg-default-legal-text" class="form-control" rows="4" oninput="onSettingFieldInput('legalText', this.value)" onchange="onSettingFieldInput('legalText', this.value)" onblur="onSettingFieldInput('legalText', this.value)">Que los ingresos brutos totales obtenidos en el presente periodo gravable corresponden a honorarios, comisiones o servicios y no superan las 120 UVT mensuales.
 Que me acojo al artículo 135 del acuerdo 1753 de 2015.
 Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios estoy clasificado en cada cedula mencionada para la exención de la aplicación de la retención en la fuente según Art 383 E.T.</textarea>
               </div>
@@ -3356,6 +3356,26 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
                 <div style="background: rgba(255,255,255,0.03); padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
                   <div style="font-size: 0.74rem; color: var(--text-dim); text-transform: uppercase;">Filas "config" (Local / Nube)</div>
                   <strong id="diag-cfg-row-counts" style="color: var(--text-main); font-size: 0.95rem;">Local: 1 | Nube: 1</strong>
+                </div>
+              </div>
+
+              <!-- Detalle de Configuración Local y Marcas de Tiempo por Campo (Requerimiento 5) -->
+              <div style="margin-top: 1.25rem; border-top: 1px dashed var(--border-color); padding-top: 0.75rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <strong style="font-size: 0.84rem; color: var(--text-main);">📋 Configuración Local y Fecha de Cada Campo</strong>
+                  <span style="font-size: 0.74rem; color: var(--text-dim);">(Imágenes omitidas por brevedad)</span>
+                </div>
+                <div style="max-height: 220px; overflow-y: auto; background: rgba(0,0,0,0.15); border-radius: var(--radius-sm); border: 1px solid var(--border-color); padding: 4px;">
+                  <table style="width: 100%; border-collapse: collapse; font-size: 0.78rem;">
+                    <thead>
+                      <tr style="color: var(--text-dim); text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                        <th style="padding: 5px 8px;">Campo</th>
+                        <th style="padding: 5px 8px;">Valor Local</th>
+                        <th style="padding: 5px 8px; text-align: right;">Último Cambio</th>
+                      </tr>
+                    </thead>
+                    <tbody id="diag-cfg-fields-tbody"></tbody>
+                  </table>
                 </div>
               </div>
             </div>
@@ -3751,16 +3771,8 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         const storedClients = localStorage.getItem(STORAGE_KEY_CLIENTES);
         state.clientes = storedClients ? JSON.parse(storedClients) : [];
 
-        const storedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
-        if (storedSettings) {
-          try {
-            state.settings = { ...DEFAULT_SETTINGS, ...JSON.parse(storedSettings) };
-          } catch (e) {
-            state.settings = { ...DEFAULT_SETTINGS };
-          }
-        } else {
-          state.settings = { ...DEFAULT_SETTINGS };
-        }
+        // Respaldo de seguridad previo antes de migración o fusión (Requerimiento 3)
+        backupLocalSettingsBeforeMerge();
 
         const storedMeta = localStorage.getItem(STORAGE_KEY_SETTINGS_META);
         if (storedMeta) {
@@ -3768,10 +3780,92 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
             settingsMeta = { ...settingsMeta, ...JSON.parse(storedMeta) };
           } catch (e) {}
         }
+        if (!settingsMeta.fieldTimestamps) settingsMeta.fieldTimestamps = {};
+
+        // Lectura segura y normalización con soporte para estructura antigua y nueva (Requerimiento 1 y 2)
+        const storedSettingsRaw = localStorage.getItem(STORAGE_KEY_SETTINGS);
+        if (storedSettingsRaw) {
+          try {
+            const parsed = JSON.parse(storedSettingsRaw);
+            const normalized = normalizeSettingsFromStorage(parsed, settingsMeta.fieldTimestamps);
+            state.settings = normalized.settings;
+            settingsMeta.fieldTimestamps = normalized.timestamps;
+            // Guardar de inmediato la configuración limpia y normalizada en la MISMA clave
+            localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(state.settings));
+            saveSettingsMeta();
+          } catch (e) {
+            console.error('Error parseando configuración:', e);
+            state.settings = { ...DEFAULT_SETTINGS };
+          }
+        } else {
+          state.settings = { ...DEFAULT_SETTINGS };
+          localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(state.settings));
+          saveSettingsMeta();
+        }
       } catch (err) {
         console.error('Error cargando datos de localStorage:', err);
         showToast('Error cargando datos locales', 'error');
       }
+    }
+
+    // Copia de seguridad automática de configuración antes de cualquier migración o fusión (Requerimiento 3)
+    function backupLocalSettingsBeforeMerge() {
+      try {
+        const current = localStorage.getItem(STORAGE_KEY_SETTINGS);
+        if (!current) return;
+        const nowKey = 'respaldo_config_' + new Date().toISOString().replace(/[:.]/g, '-');
+        localStorage.setItem(nowKey, current);
+
+        // Conservar solo las últimas 5 copias
+        const backupKeys = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith('respaldo_config_')) {
+            backupKeys.push(k);
+          }
+        }
+        backupKeys.sort();
+        while (backupKeys.length > 5) {
+          const oldest = backupKeys.shift();
+          localStorage.removeItem(oldest);
+        }
+      } catch (e) {
+        console.warn('No se pudo guardar respaldo_config:', e);
+      }
+    }
+
+    // Normalizador de configuración local: soporta formato plano antiguo y nuevo con { v, t }
+    // Asigna marca actual si el valor difiere del por defecto para protegerlo en migración (Requerimiento 1 y 2)
+    function normalizeSettingsFromStorage(rawObj, existingTimestamps = {}) {
+      const settings = {};
+      const timestamps = { ...existingTimestamps };
+      const nowIso = new Date().toISOString();
+
+      if (!rawObj || typeof rawObj !== 'object') {
+        return { settings: { ...DEFAULT_SETTINGS }, timestamps };
+      }
+
+      const allKeys = new Set([...Object.keys(DEFAULT_SETTINGS), ...Object.keys(rawObj)]);
+      allKeys.forEach(k => {
+        const val = rawObj[k];
+        if (val && typeof val === 'object' && ('v' in val || 't' in val)) {
+          settings[k] = val.v !== undefined ? val.v : (DEFAULT_SETTINGS[k] !== undefined ? DEFAULT_SETTINGS[k] : '');
+          if (val.t && !timestamps[k]) {
+            timestamps[k] = val.t;
+          }
+        } else if (val !== undefined) {
+          settings[k] = val;
+        } else {
+          settings[k] = DEFAULT_SETTINGS[k] !== undefined ? DEFAULT_SETTINGS[k] : '';
+        }
+
+        // Si el valor local es distinto del valor por defecto y no tiene marca, asignarle la fecha actual
+        if (!timestamps[k] && DEFAULT_SETTINGS[k] !== undefined && settings[k] !== DEFAULT_SETTINGS[k]) {
+          timestamps[k] = nowIso;
+        }
+      });
+
+      return { settings, timestamps };
     }
 
     function saveSettingsMeta() {
@@ -3791,6 +3885,9 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         if (!key || key === 'settings') {
           localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(state.settings));
           saveSettingsMeta();
+          // Verificación síncrona
+          const verified = localStorage.getItem(STORAGE_KEY_SETTINGS);
+          if (!verified) throw new Error('Verificación fallida: no se pudo leer STORAGE_KEY_SETTINGS');
         }
       } catch (err) {
         console.error('Error guardando en localStorage:', err);
@@ -4090,6 +4187,30 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       }
       if (diagCounts) {
         diagCounts.textContent = `Local: ${settingsMeta.localCount || 1} | Nube: ${settingsMeta.cloudCount !== undefined ? settingsMeta.cloudCount : 1}`;
+      }
+
+      // Detalle de configuración local y marcas de tiempo (Requerimiento 5)
+      const tbody = document.getElementById('diag-cfg-fields-tbody');
+      if (tbody) {
+        tbody.innerHTML = Object.keys(state.settings).map(k => {
+          let val = state.settings[k];
+          if (k === 'logoData' || k === 'signatureData') {
+            val = val ? `<span style="color:var(--color-success)">[Imagen cargada: ${Math.round(val.length / 1024)} KB]</span>` : '<span style="color:var(--text-dim)">(Sin imagen)</span>';
+          } else if (typeof val === 'string' && val.length > 35) {
+            val = escapeHtml(val.substring(0, 32)) + '...';
+          } else {
+            val = escapeHtml(String(val !== undefined ? val : ''));
+          }
+
+          const tStr = settingsMeta.fieldTimestamps && settingsMeta.fieldTimestamps[k];
+          const tDisplay = tStr ? new Date(tStr).toLocaleTimeString('es-CO') + ' ' + new Date(tStr).toLocaleDateString('es-CO') : '<span style="color:var(--text-dim)">Sin marca previa</span>';
+
+          return `<tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+            <td style="padding: 4px 8px; font-weight: 500; color: var(--text-main); font-family: monospace;">${escapeHtml(k)}</td>
+            <td style="padding: 4px 8px; color: var(--text-muted);">${val}</td>
+            <td style="padding: 4px 8px; text-align: right; color: var(--text-dim); font-size: 0.74rem;">${tDisplay}</td>
+          </tr>`;
+        }).join('');
       }
 
       const timeEl = document.getElementById('diag-last-calc-time');
@@ -6103,6 +6224,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
        (Requerimientos 1, 2, 3, 4, 5 y 6)
        ========================================================================== */
     let settingsDebounceTimer = null;
+    let isPopulatingSettingsForm = false; // Bandera para evitar bucles o falsos cambios al rellenar (Requerimiento 2)
 
     // Compresión y optimización de imágenes (Requerimiento 5: máx 400px ancho, <150 KB)
     function compressImageFile(file, maxWidth = 400, maxBytes = 150 * 1024) {
@@ -6185,52 +6307,65 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       });
     }
 
-    // Actualizar estado visual de sincronización en "Mis datos" (Requerimiento 3 y 6)
+    // Actualizar estado visual de sincronización en "Mis datos" (Requerimiento 1, 3 y 6)
     function updateSettingsSyncUI(status, errorMsg) {
       const badge = document.getElementById('cfg-sync-status-badge');
       if (!badge) return;
 
-      if (status === 'synced') {
+      if (status === 'saved') {
+        badge.style.background = 'rgba(16, 185, 129, 0.2)';
+        badge.style.color = 'var(--color-success)';
+        badge.textContent = 'Guardado ✓';
+      } else if (status === 'synced') {
         badge.style.background = 'rgba(16, 185, 129, 0.15)';
         badge.style.color = 'var(--color-success)';
         badge.textContent = '● Guardado y sincronizado';
       } else if (status === 'pending') {
         badge.style.background = 'rgba(245, 158, 11, 0.15)';
         badge.style.color = 'var(--color-warning)';
-        badge.textContent = '⏳ Pendiente de sincronizar';
+        badge.textContent = 'Guardado ✓ · Pendiente de sincronizar';
       } else if (status === 'error') {
         badge.style.background = 'rgba(239, 68, 68, 0.15)';
         badge.style.color = 'var(--color-danger)';
-        badge.textContent = '✕ ' + (errorMsg || 'Error de sincronización');
+        if (errorMsg && errorMsg.includes('Error al guardar')) {
+          badge.textContent = '✕ ' + errorMsg;
+        } else {
+          badge.textContent = 'Guardado localmente ✓ · ' + (errorMsg || 'Pendiente de sincronizar');
+        }
       }
     }
 
-    // Cargar valores a los campos de formulario sin sobrescribir el foco activo (Requerimiento 4)
+    // Cargar valores a los campos de formulario sin sobrescribir el foco activo (Requerimiento 2 y 4)
     function loadSettingsToForm() {
-      const s = state.settings;
-      const activeEl = document.activeElement;
+      isPopulatingSettingsForm = true;
+      try {
+        const s = state.settings;
+        const activeEl = document.activeElement;
 
-      const setIfInactive = (id, val) => {
-        const el = document.getElementById(id);
-        if (el && el !== activeEl) {
-          el.value = (val !== undefined && val !== null) ? val : '';
-        }
-      };
+        const setIfInactive = (id, val) => {
+          const el = document.getElementById(id);
+          if (el && el !== activeEl) {
+            el.value = (val !== undefined && val !== null) ? val : '';
+          }
+        };
 
-      setIfInactive('cfg-business-name', s.businessName || 'Universo Gráfico');
-      setIfInactive('cfg-business-phone', s.phone || '3239421252');
-      setIfInactive('cfg-business-email', s.email || '');
-      setIfInactive('cfg-business-address', s.address || '');
-      setIfInactive('cfg-emisor-name', s.emisorName || 'Jason');
-      setIfInactive('cfg-emisor-cc', s.emisorCC || '');
-      setIfInactive('cfg-emisor-city', s.emisorCity || 'Bogotá D.C.');
-      setIfInactive('cfg-numbering-mode', s.numberingMode || 'per-client');
-      setIfInactive('cfg-default-cot-notes', s.defaultCotNotes || '');
-      setIfInactive('cfg-default-cc-notes', s.defaultCcNotes || '');
-      setIfInactive('cfg-default-legal-text', s.legalText || '');
+        setIfInactive('cfg-business-name', s.businessName || 'Universo Gráfico');
+        setIfInactive('cfg-business-phone', s.phone || '3239421252');
+        setIfInactive('cfg-business-email', s.email || '');
+        setIfInactive('cfg-business-address', s.address || '');
+        setIfInactive('cfg-emisor-name', s.emisorName || 'Jason');
+        setIfInactive('cfg-emisor-cc', s.emisorCC || '');
+        setIfInactive('cfg-emisor-city', s.emisorCity || 'Bogotá D.C.');
+        setIfInactive('cfg-numbering-mode', s.numberingMode || 'per-client');
+        setIfInactive('cfg-default-cot-notes', s.defaultCotNotes || '');
+        setIfInactive('cfg-default-cc-notes', s.defaultCcNotes || '');
+        setIfInactive('cfg-default-legal-text', s.legalText || '');
 
-      updateLogoPreview();
-      updateSignaturePreview();
+        updateLogoPreview();
+        updateSignaturePreview();
+      } finally {
+        isPopulatingSettingsForm = false;
+      }
     }
 
     // Actualizar previsualización del logo
@@ -6289,8 +6424,10 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       }
     }
 
-    // Captura reactiva de cada cambio en Mis Datos con debounce de 1.5s (Requerimiento 2 y 3)
+    // Captura reactiva de cada cambio en Mis Datos: local primero, síncrono, con verificación (Requerimiento 1, 2 y 3)
     function onSettingFieldInput(fieldKey, value) {
+      if (isPopulatingSettingsForm) return;
+
       state.settings[fieldKey] = value;
       const nowIso = new Date().toISOString();
 
@@ -6299,20 +6436,73 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       settingsMeta.pendingUpload = true;
       settingsMeta.lastError = null;
 
-      saveState('settings');
-      updateSettingsSyncUI('pending');
-      updateSyncDiagnosticsUI();
+      try {
+        // 1. Guardar de inmediato y de forma síncrona en localStorage (MISMA clave que se lee al cargar)
+        localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(state.settings));
+        saveSettingsMeta();
+
+        // 2. Volver a leer lo guardado para confirmar persistencia real
+        const readBackRaw = localStorage.getItem(STORAGE_KEY_SETTINGS);
+        if (!readBackRaw) throw new Error('localStorage no devolvió datos');
+        const readBack = JSON.parse(readBackRaw);
+        if (readBack[fieldKey] !== value) {
+          throw new Error('El valor guardado en localStorage no coincide');
+        }
+
+        // 3. Mostrar "Guardado ✓" de inmediato
+        updateSettingsSyncUI('saved');
+        updateSyncDiagnosticsUI();
+      } catch (saveErr) {
+        console.error('Error al guardar configuración localmente:', saveErr);
+        updateSettingsSyncUI('error', 'Error al guardar: ' + saveErr.message);
+        showToast('Error al guardar localmente: ' + saveErr.message, 'error');
+        return;
+      }
 
       if (fieldKey === 'businessName') {
         updateAppBrandingUI();
       }
 
+      // 4. Sincronización secundaria debounced 1,5s
       clearTimeout(settingsDebounceTimer);
       settingsDebounceTimer = setTimeout(() => {
         if (typeof getAuthToken === 'function' && getAuthToken() && navigator.onLine) {
           syncDataWithCloud(false);
+        } else if (settingsMeta.pendingUpload) {
+          updateSettingsSyncUI('pending');
         }
       }, 1500);
+    }
+
+    // Inicializar listeners adicionales en el formulario (input, change, blur) (Requerimiento 1)
+    function initSettingsEventListeners() {
+      const settingsSection = document.getElementById('view-settings');
+      if (!settingsSection) return;
+
+      const fieldMapping = {
+        'cfg-business-name': 'businessName',
+        'cfg-business-phone': 'phone',
+        'cfg-business-email': 'email',
+        'cfg-business-address': 'address',
+        'cfg-emisor-name': 'emisorName',
+        'cfg-emisor-cc': 'emisorCC',
+        'cfg-emisor-city': 'emisorCity',
+        'cfg-numbering-mode': 'numberingMode',
+        'cfg-default-cot-notes': 'defaultCotNotes',
+        'cfg-default-cc-notes': 'defaultCcNotes',
+        'cfg-default-legal-text': 'legalText'
+      };
+
+      const handleEvt = (e) => {
+        const key = fieldMapping[e.target.id];
+        if (key && !isPopulatingSettingsForm) {
+          onSettingFieldInput(key, e.target.value);
+        }
+      };
+
+      settingsSection.addEventListener('input', handleEvt);
+      settingsSection.addEventListener('change', handleEvt);
+      settingsSection.addEventListener('blur', handleEvt, true);
     }
 
     // Botón manual "Guardar Ahora" en Mis Datos
@@ -6343,8 +6533,8 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       settingsMeta.pendingUpload = true;
       saveState('settings');
       refreshAppWithSettings();
-      showToast('Configuración guardada');
-      updateSettingsSyncUI('pending');
+      updateSettingsSyncUI('saved');
+      showToast('Configuración guardada ✓');
       updateSyncDiagnosticsUI();
 
       if (typeof getAuthToken === 'function' && getAuthToken() && navigator.onLine) {
@@ -6352,7 +6542,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       }
     }
 
-    // Carga y compresión del logo (Requerimiento 5)
+    // Carga y compresión del logo (Requerimiento 1 y 5)
     async function handleLogoFileUpload(event) {
       const file = event.target.files && event.target.files[0];
       if (!file) return;
@@ -6363,7 +6553,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         onSettingFieldInput('logoData', compressed);
         updateLogoPreview();
         updateAppBrandingUI();
-        showToast('Logotipo optimizado y guardado');
+        showToast('Logotipo optimizado y guardado ✓');
       } catch (err) {
         console.error('Error al subir logotipo:', err);
         showToast(err.message, 'error', 6000);
@@ -6378,10 +6568,10 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       onSettingFieldInput('logoData', '');
       updateLogoPreview();
       updateAppBrandingUI();
-      showToast('Logotipo predeterminado restaurado');
+      showToast('Logotipo predeterminado restaurado ✓');
     }
 
-    // Carga y compresión de la firma digital (Requerimiento 5)
+    // Carga y compresión de la firma digital (Requerimiento 1 y 5)
     async function handleSignatureFileUpload(event) {
       const file = event.target.files && event.target.files[0];
       if (!file) return;
@@ -6391,7 +6581,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         state.settings.signatureData = compressed;
         onSettingFieldInput('signatureData', compressed);
         updateSignaturePreview();
-        showToast('Firma digital optimizada y guardada');
+        showToast('Firma digital optimizada y guardada ✓');
       } catch (err) {
         console.error('Error al subir firma:', err);
         showToast(err.message, 'error', 6000);
@@ -6405,40 +6595,78 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       state.settings.signatureData = '';
       onSettingFieldInput('signatureData', '');
       updateSignaturePreview();
-      showToast('Firma digital removida');
+      showToast('Firma digital removida ✓');
     }
 
-    // Fusión por campo de configuración remota vs local (Requerimiento 2 y 4)
+    // Fusión por campo de configuración remota vs local (Requerimiento 2, 3 y 4)
     function mergeRemoteConfigFields(remoteConfigRaw, remoteUpdatedAt) {
       if (!remoteConfigRaw || typeof remoteConfigRaw !== 'object') return false;
+
+      // Respaldo de seguridad local antes de fusionar (Requerimiento 3)
+      backupLocalSettingsBeforeMerge();
+
       let changed = false;
-      const fallbackRemoteTime = new Date(remoteUpdatedAt || 0).getTime();
+      const fallbackRemoteTime = remoteUpdatedAt ? new Date(remoteUpdatedAt).getTime() : 0;
 
       if (!settingsMeta.fieldTimestamps) settingsMeta.fieldTimestamps = {};
 
       Object.keys(remoteConfigRaw).forEach(key => {
         const remoteEntry = remoteConfigRaw[key];
         let remoteVal = remoteEntry;
-        let remoteTime = fallbackRemoteTime;
+        let remoteTime = 0;
 
         if (remoteEntry && typeof remoteEntry === 'object' && ('v' in remoteEntry || 't' in remoteEntry)) {
-          remoteVal = remoteEntry.v !== undefined ? remoteEntry.v : null;
+          remoteVal = remoteEntry.v !== undefined ? remoteEntry.v : '';
           remoteTime = remoteEntry.t ? new Date(remoteEntry.t).getTime() : fallbackRemoteTime;
+        } else {
+          remoteVal = remoteEntry;
+          remoteTime = fallbackRemoteTime;
         }
 
         const localVal = state.settings[key];
         const localTStr = settingsMeta.fieldTimestamps[key];
-        const localTime = localTStr ? new Date(localTStr).getTime() : 0;
+        let localTime = localTStr ? new Date(localTStr).getTime() : 0;
 
-        // Comparación como fecha: el valor más reciente gana. Campos nuevos se conservan.
+        // Si el usuario está enfocado y escribiendo en este campo, no pisar lo que escribe (Requerimiento 2)
+        const fieldDomIdMap = {
+          businessName: 'cfg-business-name',
+          phone: 'cfg-business-phone',
+          email: 'cfg-business-email',
+          address: 'cfg-business-address',
+          emisorName: 'cfg-emisor-name',
+          emisorCC: 'cfg-emisor-cc',
+          emisorCity: 'cfg-emisor-city',
+          numberingMode: 'cfg-numbering-mode',
+          defaultCotNotes: 'cfg-default-cot-notes',
+          defaultCcNotes: 'cfg-default-cc-notes',
+          legalText: 'cfg-default-legal-text'
+        };
+        const activeEl = typeof document !== 'undefined' ? document.activeElement : null;
+        if (activeEl && fieldDomIdMap[key] && activeEl.id === fieldDomIdMap[key]) {
+          return;
+        }
+
+        // Si el valor local no tiene marca pero difiere del default, asignar marca actual para protegerlo
+        if (!localTime && localVal !== undefined && DEFAULT_SETTINGS[key] !== undefined && localVal !== DEFAULT_SETTINGS[key]) {
+          localTime = Date.now();
+          settingsMeta.fieldTimestamps[key] = new Date(localTime).toISOString();
+        }
+
+        // Un campo de la nube SOLO reemplaza al local si su marca es estrictamente más reciente como fecha
         if (localVal === undefined || remoteTime > localTime) {
           if (state.settings[key] !== remoteVal) {
             state.settings[key] = remoteVal;
             changed = true;
           }
-          settingsMeta.fieldTimestamps[key] = new Date(remoteTime).toISOString();
+          if (remoteTime > 0) {
+            settingsMeta.fieldTimestamps[key] = new Date(remoteTime).toISOString();
+          }
         }
       });
+
+      if (changed) {
+        saveState('settings');
+      }
 
       return changed;
     }
@@ -7343,15 +7571,33 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
                 if (!remoteDeleted) {
                   cloudConfigCount++;
                 }
-                if (mergeRemoteConfigFields(rawData, row.updated_at)) {
-                  hasRemoteChanges = true;
-                  hasConfigChanges = true;
-                }
               }
             } catch (rowErr) {
               console.warn('[Sync Error] Error procesando fila remota:', rowErr);
             }
           });
+
+          // Consolidar filas 'config' de la nube tomando como base la de updated_at más reciente (Requerimiento 3)
+          const configRows = resData.items.filter(r => r && r.tipo === 'config');
+          if (configRows.length > 0) {
+            configRows.sort((a, b) => new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime());
+            const newestRow = configRows[0];
+            let consolidatedData = typeof newestRow.datos === 'string' ? JSON.parse(newestRow.datos || '{}') : (newestRow.datos || {});
+
+            for (let i = 1; i < configRows.length; i++) {
+              const olderData = typeof configRows[i].datos === 'string' ? JSON.parse(configRows[i].datos || '{}') : (configRows[i].datos || {});
+              Object.keys(olderData).forEach(k => {
+                if (!(k in consolidatedData)) {
+                  consolidatedData[k] = olderData[k];
+                }
+              });
+            }
+
+            if (mergeRemoteConfigFields(consolidatedData, newestRow.updated_at)) {
+              hasRemoteChanges = true;
+              hasConfigChanges = true;
+            }
+          }
 
           // Actualizar metadatos y diagnóstico de configuración
           settingsMeta.lastPush = syncTimestamp;
@@ -7417,6 +7663,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       initTheme();
       loadAllLocalData();
       loadSettingsToForm();
+      initSettingsEventListeners();
       updateAppBrandingUI();
       updateLogoPreview();
       updateSignaturePreview();
