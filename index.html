@@ -1523,6 +1523,26 @@
       to { transform: translateX(0); opacity: 1; }
     }
 
+    .toast-undo-btn {
+      background: var(--brand-gradient);
+      color: #ffffff;
+      border: none;
+      padding: 4px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-left: 8px;
+      transition: opacity 0.2s, transform 0.15s;
+      white-space: nowrap;
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .toast-undo-btn:hover {
+      opacity: 0.92;
+      transform: scale(1.02);
+    }
+
     /* ==========================================================================
        MEDIA QUERIES (RESPONSIVE)
        ========================================================================== */
@@ -2904,6 +2924,67 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
               </div>
             </div>
 
+            <!-- Panel de Diagnóstico de Datos y Sincronización (Requerimiento 6) -->
+            <div class="card" style="background: var(--bg-surface); margin-top: 1.5rem; margin-bottom: 0;" id="cloud-diagnostics-panel">
+              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 0.75rem;">
+                <h3 style="font-size: 1rem; color: var(--text-main); margin: 0; display: flex; align-items: center; gap: 8px;">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                  <span>Diagnóstico de Datos y Sincronización</span>
+                </h3>
+                <span style="font-size: 0.78rem; color: var(--text-dim);" id="diag-last-calc-time">Actualizado en tiempo real</span>
+              </div>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
+                Monitoreo en tiempo real de registros activos, borrados lógicos y cambios pendientes por subir a la nube.
+              </p>
+
+              <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left;">
+                  <thead>
+                    <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-dim); font-size: 0.78rem; text-transform: uppercase;">
+                      <th style="padding: 8px 10px;">Tipo de Registro</th>
+                      <th style="padding: 8px 10px; text-align: center;">Activos</th>
+                      <th style="padding: 8px 10px; text-align: center;">Borrados</th>
+                      <th style="padding: 8px 10px; text-align: center;">Pendientes de Subir</th>
+                    </tr>
+                  </thead>
+                  <tbody style="color: var(--text-main);">
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                      <td style="padding: 8px 10px; font-weight: 500;">Cotizaciones</td>
+                      <td style="padding: 8px 10px; text-align: center; color: var(--color-success); font-weight: 600;" id="diag-cot-active">0</td>
+                      <td style="padding: 8px 10px; text-align: center; color: var(--color-danger); font-weight: 600;" id="diag-cot-deleted">0</td>
+                      <td style="padding: 8px 10px; text-align: center; color: var(--color-warning); font-weight: 600;" id="diag-cot-pending">0</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                      <td style="padding: 8px 10px; font-weight: 500;">Cuentas de Cobro</td>
+                      <td style="padding: 8px 10px; text-align: center; color: var(--color-success); font-weight: 600;" id="diag-cc-active">0</td>
+                      <td style="padding: 8px 10px; text-align: center; color: var(--color-danger); font-weight: 600;" id="diag-cc-deleted">0</td>
+                      <td style="padding: 8px 10px; text-align: center; color: var(--color-warning); font-weight: 600;" id="diag-cc-pending">0</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                      <td style="padding: 8px 10px; font-weight: 500;">Catálogo de Servicios</td>
+                      <td style="padding: 8px 10px; text-align: center; color: var(--color-success); font-weight: 600;" id="diag-cat-active">0</td>
+                      <td style="padding: 8px 10px; text-align: center; color: var(--color-danger); font-weight: 600;" id="diag-cat-deleted">0</td>
+                      <td style="padding: 8px 10px; text-align: center; color: var(--color-warning); font-weight: 600;" id="diag-cat-pending">0</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                      <td style="padding: 8px 10px; font-weight: 500;">Clientes Guardados</td>
+                      <td style="padding: 8px 10px; text-align: center; color: var(--color-success); font-weight: 600;" id="diag-cli-active">0</td>
+                      <td style="padding: 8px 10px; text-align: center; color: var(--color-danger); font-weight: 600;" id="diag-cli-deleted">0</td>
+                      <td style="padding: 8px 10px; text-align: center; color: var(--color-warning); font-weight: 600;" id="diag-cli-pending">0</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr style="border-top: 1px solid var(--border-color); font-weight: 700;">
+                      <td style="padding: 10px; color: var(--text-dim); text-transform: uppercase; font-size: 0.78rem;">Total Registros</td>
+                      <td style="padding: 10px; text-align: center; color: var(--color-success);" id="diag-tot-active">0</td>
+                      <td style="padding: 10px; text-align: center; color: var(--color-danger);" id="diag-tot-deleted">0</td>
+                      <td style="padding: 10px; text-align: center; color: var(--color-warning);" id="diag-tot-pending">0</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+
             <!-- Guía Rápida de Despliegue -->
             <div style="margin-top: 1.5rem; padding: 1rem 1.25rem; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
               <h4 style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 4px;">📌 ¿Cómo activar la base de datos en Cloudflare?</h4>
@@ -3195,8 +3276,10 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
     const STORAGE_KEY_COTIZACIONES = 'ug_cotizaciones_v1';
     const STORAGE_KEY_COBROS = 'ug_cobros_v1';
     const STORAGE_KEY_CATALOG = 'ug_catalogo_v1';
+    const STORAGE_KEY_CLIENTES = 'ug_clientes_v1';
     const STORAGE_KEY_SETTINGS = 'ug_settings_v1';
     const STORAGE_KEY_THEME = 'ug_theme_v1';
+    const STORAGE_KEY_INITIALIZED = 'ug_initialized_v1';
 
     // Catálogo inicial predeterminado para Universo Gráfico
     const DEFAULT_CATALOG = [
@@ -3232,6 +3315,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       cotizaciones: [],
       cobros: [],
       catalog: [],
+      clientes: [],
       settings: { ...DEFAULT_SETTINGS },
       currentCotId: null,      // null = documento nuevo
       currentCobroId: null,    // null = documento nuevo
@@ -3242,7 +3326,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
     };
 
     /* ==========================================================================
-       2. PERSISTENCIA SEGURA EN LOCALSTORAGE
+       2. PERSISTENCIA SEGURA EN LOCALSTORAGE (BORRADO LÓGICO Y CONTROL DE RESTAURACIÓN)
        ========================================================================== */
     function loadAllLocalData() {
       try {
@@ -3253,7 +3337,31 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         state.cobros = storedCobros ? JSON.parse(storedCobros) : [];
 
         const storedCatalog = localStorage.getItem(STORAGE_KEY_CATALOG);
-        state.catalog = storedCatalog ? JSON.parse(storedCatalog) : [ ...DEFAULT_CATALOG ];
+        const isInitialized = localStorage.getItem(STORAGE_KEY_INITIALIZED);
+
+        // Si ya existe registro de catálogo en localStorage, se respeta estrictamente
+        // sin volver a restaurar los datos iniciales predeterminados (Requerimiento 3)
+        if (storedCatalog !== null) {
+          try {
+            state.catalog = JSON.parse(storedCatalog) || [];
+          } catch (e) {
+            state.catalog = [];
+          }
+        } else if (!isInitialized) {
+          // Primera apertura absoluta en este navegador: sembrar catálogo inicial
+          state.catalog = JSON.parse(JSON.stringify(DEFAULT_CATALOG)).map(it => ({
+            ...it,
+            deleted: false,
+            updated_at: new Date().toISOString()
+          }));
+          localStorage.setItem(STORAGE_KEY_INITIALIZED, 'true');
+          localStorage.setItem(STORAGE_KEY_CATALOG, JSON.stringify(state.catalog));
+        } else {
+          state.catalog = [];
+        }
+
+        const storedClients = localStorage.getItem(STORAGE_KEY_CLIENTES);
+        state.clientes = storedClients ? JSON.parse(storedClients) : [];
 
         const storedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
         if (storedSettings) {
@@ -3270,12 +3378,288 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
     function saveState(key) {
       try {
         if (!key || key === 'cotizaciones') localStorage.setItem(STORAGE_KEY_COTIZACIONES, JSON.stringify(state.cotizaciones));
-        if (!key || key === 'cobros') localStorage.setItem(STORAGE_KEY_COBROS, JSON.stringify(state.cobros));
-        if (!key || key === 'catalog') localStorage.setItem(STORAGE_KEY_CATALOG, JSON.stringify(state.catalog));
+        if (!key || key === 'cobros' || key === 'cuenta_cobro') localStorage.setItem(STORAGE_KEY_COBROS, JSON.stringify(state.cobros));
+        if (!key || key === 'catalog' || key === 'catalogo') localStorage.setItem(STORAGE_KEY_CATALOG, JSON.stringify(state.catalog));
+        if (!key || key === 'clientes' || key === 'cliente') localStorage.setItem(STORAGE_KEY_CLIENTES, JSON.stringify(state.clientes));
         if (!key || key === 'settings') localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(state.settings));
       } catch (err) {
         console.error('Error guardando en localStorage:', err);
         showToast('Atención: Almacenamiento local lleno o restringido', 'error');
+      }
+    }
+
+    /* ==========================================================================
+       MOTOR UNIFICADO DE BORRADO LÓGICO, VERIFICACIÓN Y DESHACER
+       (Requerimientos 1, 2, 4 y 5)
+       ========================================================================== */
+    function getEntityConfig(tipo) {
+      const t = String(tipo || '').toLowerCase();
+      if (t === 'cotizacion' || t === 'cotizaciones') {
+        return {
+          tipo: 'cotizacion',
+          list: state.cotizaciones,
+          storageKey: STORAGE_KEY_COTIZACIONES,
+          label: 'la cotización',
+          nameFn: item => item.number ? `${item.number} de ${item.clientName || 'Cliente'}` : 'Cotización'
+        };
+      }
+      if (t === 'cuenta_cobro' || t === 'cobros' || t === 'cobro') {
+        return {
+          tipo: 'cuenta_cobro',
+          list: state.cobros,
+          storageKey: STORAGE_KEY_COBROS,
+          label: 'la cuenta de cobro',
+          nameFn: item => item.number ? `N° ${item.number} de ${item.clientName || 'Cliente'}` : 'Cuenta de cobro'
+        };
+      }
+      if (t === 'catalogo' || t === 'catalog') {
+        return {
+          tipo: 'catalogo',
+          list: state.catalog,
+          storageKey: STORAGE_KEY_CATALOG,
+          label: 'el servicio del catálogo',
+          nameFn: item => item.name || 'Servicio'
+        };
+      }
+      if (t === 'cliente' || t === 'clientes') {
+        return {
+          tipo: 'cliente',
+          list: state.clientes,
+          storageKey: STORAGE_KEY_CLIENTES,
+          label: 'el cliente guardado',
+          nameFn: item => item.name || 'Cliente'
+        };
+      }
+      return null;
+    }
+
+    function deleteRecord(tipo, id, options = {}) {
+      const config = getEntityConfig(tipo);
+      if (!config) {
+        console.error('Tipo de registro no válido para borrado:', tipo);
+        return false;
+      }
+
+      const item = config.list.find(x => x.id === id);
+      if (!item) {
+        console.warn('Registro no encontrado para eliminar:', id);
+        return false;
+      }
+
+      if (item.deleted) return true;
+
+      if (!options.skipConfirm) {
+        const itemDesc = config.nameFn(item);
+        if (!confirm(`¿Seguro que deseas eliminar ${config.label} ${itemDesc}?`)) {
+          return false;
+        }
+      }
+
+      // 1. Borrado lógico: marcar deleted=true y updated_at, conservando todo el objeto
+      const nowIso = new Date().toISOString();
+      item.deleted = true;
+      item.updated_at = nowIso;
+      item.updatedAt = nowIso;
+
+      // 2. Guardar síncronamente en localStorage en la MISMA clave
+      try {
+        localStorage.setItem(config.storageKey, JSON.stringify(config.list));
+
+        // 3. Verificación síncrona inmediata: leer de localStorage para asegurar persistencia
+        const storedRaw = localStorage.getItem(config.storageKey);
+        if (!storedRaw) throw new Error('No se encontraron datos en localStorage');
+        const storedArr = JSON.parse(storedRaw);
+        const verified = storedArr.find(x => x.id === id);
+        if (!verified || !verified.deleted) {
+          throw new Error('Verificación fallida: el registro no quedó marcado como borrado');
+        }
+      } catch (saveErr) {
+        console.error('Error al persistir borrado en localStorage:', saveErr);
+        item.deleted = false; // Revertir en memoria ante fallo
+        showToast('Error: No se pudo guardar la eliminación en el almacenamiento local', 'error');
+        return false;
+      }
+
+      // 4. Si el documento activo está abierto en el formulario, reiniciar
+      if (config.tipo === 'cotizacion' && state.currentCotId === id) {
+        newCotizacionAction();
+      } else if (config.tipo === 'cuenta_cobro' && state.currentCobroId === id) {
+        newCobroAction();
+      }
+
+      // 5. Actualizar interfaz (todas las vistas ignoran registros con deleted=true)
+      updateBadges();
+      updateCotDashboard();
+      updateCobroDashboard();
+      renderCotHistory();
+      renderCobroHistory();
+      renderCatalogView();
+      updateSyncDiagnosticsUI();
+
+      // 6. Notificación durante 8 segundos con opción interactiva "Deshacer" (Requerimiento 5)
+      showToastWithUndo('Eliminada · Deshacer', () => {
+        undoDeleteRecord(config.tipo, id);
+      }, 8000);
+
+      // 7. Intentar subir de inmediato a la nube si hay sesión activa (Requerimiento 4)
+      if (typeof getAuthToken === 'function' && getAuthToken() && navigator.onLine) {
+        syncDataWithCloud(false).catch(err => {
+          console.warn('[Sync Delete Deferred]', err);
+          updateSyncDiagnosticsUI();
+        });
+      }
+
+      return true;
+    }
+
+    function undoDeleteRecord(tipo, id) {
+      const config = getEntityConfig(tipo);
+      if (!config) return false;
+
+      const item = config.list.find(x => x.id === id);
+      if (!item) return false;
+
+      // Quitar marca deleted y actualizar updated_at
+      const nowIso = new Date().toISOString();
+      item.deleted = false;
+      item.updated_at = nowIso;
+      item.updatedAt = nowIso;
+
+      try {
+        localStorage.setItem(config.storageKey, JSON.stringify(config.list));
+      } catch (err) {
+        console.error('Error al guardar restauración:', err);
+        showToast('Error al guardar restauración', 'error');
+        return false;
+      }
+
+      updateBadges();
+      updateCotDashboard();
+      updateCobroDashboard();
+      renderCotHistory();
+      renderCobroHistory();
+      renderCatalogView();
+      updateSyncDiagnosticsUI();
+
+      if (typeof getAuthToken === 'function' && getAuthToken() && navigator.onLine) {
+        syncDataWithCloud(false).catch(err => console.warn('[Sync Undo Deferred]', err));
+      }
+
+      showToast('Restaurada');
+      return true;
+    }
+
+    // Registro o actualización de cliente guardado
+    function registerOrUpdateClient(name, nit, phone) {
+      if (!name || !name.trim()) return;
+      const key = normalizeClientKey(name, nit);
+      const existing = state.clientes.find(c => normalizeClientKey(c.name, c.nit) === key);
+      const nowIso = new Date().toISOString();
+      if (existing) {
+        if (nit && !existing.nit) existing.nit = nit;
+        if (phone && !existing.phone) existing.phone = phone;
+        existing.updated_at = nowIso;
+        existing.updatedAt = nowIso;
+      } else {
+        state.clientes.push({
+          id: 'cli-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+          name: name.trim(),
+          nit: (nit || '').trim(),
+          phone: (phone || '').trim(),
+          deleted: false,
+          updated_at: nowIso,
+          updatedAt: nowIso
+        });
+      }
+      saveState('clientes');
+      updateSyncDiagnosticsUI();
+    }
+
+    // Marcar registro local como sincronizado
+    function markItemSynced(tipo, id, timestamp) {
+      const cfg = getEntityConfig(tipo);
+      if (!cfg) return;
+      const it = cfg.list.find(x => x.id === id);
+      if (it) {
+        it.synced_at = timestamp;
+      }
+    }
+
+    // Purgado físico de marcas de borrado solo tras 30 días y si ya se subieron a la nube (Requerimiento 4)
+    function purgeOldDeletedRecords() {
+      const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+      const now = Date.now();
+
+      function shouldKeep(item) {
+        if (!item.deleted) return true;
+        const updatedAtTime = new Date(item.updated_at || item.updatedAt || 0).getTime();
+        const isSynced = item.synced_at && new Date(item.synced_at).getTime() >= updatedAtTime;
+        const deleteAge = now - updatedAtTime;
+        if (isSynced && deleteAge >= THIRTY_DAYS_MS) {
+          return false; // Se purga físicamente
+        }
+        return true; // Se conserva el tombstone
+      }
+
+      state.cotizaciones = state.cotizaciones.filter(shouldKeep);
+      state.cobros = state.cobros.filter(shouldKeep);
+      state.catalog = state.catalog.filter(shouldKeep);
+      state.clientes = state.clientes.filter(shouldKeep);
+      saveState();
+    }
+
+    // Diagnóstico en tiempo real para el panel de Sincronización (Requerimiento 6)
+    function updateSyncDiagnosticsUI() {
+      function getCounts(list) {
+        let active = 0, deleted = 0, pending = 0;
+        list.forEach(item => {
+          if (item.deleted) {
+            deleted++;
+          } else {
+            active++;
+          }
+          const upTime = new Date(item.updated_at || item.updatedAt || 0).getTime();
+          const syncTime = item.synced_at ? new Date(item.synced_at).getTime() : 0;
+          if (!item.synced_at || upTime > syncTime) {
+            pending++;
+          }
+        });
+        return { active, deleted, pending };
+      }
+
+      const cotC = getCounts(state.cotizaciones);
+      const ccC = getCounts(state.cobros);
+      const catC = getCounts(state.catalog);
+      const cliC = getCounts(state.clientes);
+
+      const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      };
+
+      setVal('diag-cot-active', cotC.active);
+      setVal('diag-cot-deleted', cotC.deleted);
+      setVal('diag-cot-pending', cotC.pending);
+
+      setVal('diag-cc-active', ccC.active);
+      setVal('diag-cc-deleted', ccC.deleted);
+      setVal('diag-cc-pending', ccC.pending);
+
+      setVal('diag-cat-active', catC.active);
+      setVal('diag-cat-deleted', catC.deleted);
+      setVal('diag-cat-pending', catC.pending);
+
+      setVal('diag-cli-active', cliC.active);
+      setVal('diag-cli-deleted', cliC.deleted);
+      setVal('diag-cli-pending', cliC.pending);
+
+      setVal('diag-tot-active', cotC.active + ccC.active + catC.active + cliC.active);
+      setVal('diag-tot-deleted', cotC.deleted + ccC.deleted + catC.deleted + cliC.deleted);
+      setVal('diag-tot-pending', cotC.pending + ccC.pending + catC.pending + cliC.pending);
+
+      const timeEl = document.getElementById('diag-last-calc-time');
+      if (timeEl) {
+        timeEl.textContent = 'Actualizado: ' + new Date().toLocaleTimeString('es-CO');
       }
     }
 
@@ -3379,7 +3763,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
        ========================================================================== */
     function getNextCotizacionNumber() {
       let maxNum = 0;
-      state.cotizaciones.forEach(c => {
+      state.cotizaciones.filter(c => !c.deleted).forEach(c => {
         const match = String(c.number || '').match(/\d+/);
         if (match) {
           const val = parseInt(match[0], 10);
@@ -3398,9 +3782,10 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
     }
 
     function getNextCobroNumberForClient(clientName, clientNit) {
+      const activeCobros = state.cobros.filter(cb => !cb.deleted);
       if (state.settings.numberingMode === 'global') {
         let maxGlobal = 0;
-        state.cobros.forEach(cb => {
+        activeCobros.forEach(cb => {
           const m = String(cb.number || '').match(/\d+/);
           if (m) {
             const v = parseInt(m[0], 10);
@@ -3410,12 +3795,12 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         return String(maxGlobal + 1).padStart(3, '0');
       }
 
-      // Consecutivo por cliente
+      // Consecutivo por cliente (ignora cuentas de cobro borradas)
       const clientKey = normalizeClientKey(clientName, clientNit);
       if (!clientKey) return '001';
 
       let maxForClient = 0;
-      state.cobros.forEach(cb => {
+      activeCobros.forEach(cb => {
         const k = normalizeClientKey(cb.clientName, cb.clientNit);
         if (k === clientKey) {
           const m = String(cb.number || '').match(/\d+/);
@@ -3564,7 +3949,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
 
     function addCatalogItemToCot(catalogId) {
       if (!catalogId) return;
-      const item = state.catalog.find(c => c.id === catalogId);
+      const item = state.catalog.find(c => c.id === catalogId && !c.deleted);
       if (item) {
         // Si hay una fila vacía única, reemplazarla
         const rows = document.querySelectorAll('#cot-items-tbody tr');
@@ -3651,13 +4036,18 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         return;
       }
 
+      data.deleted = false;
+      const nowIso = new Date().toISOString();
+      data.updated_at = nowIso;
+      data.updatedAt = nowIso;
+
       const existingIndex = state.cotizaciones.findIndex(c => c.id === data.id);
       if (existingIndex >= 0) {
         state.cotizaciones[existingIndex] = data;
         showToast(`Cotización ${data.number} actualizada`);
       } else {
-        // Verificar si el número ya existe en otra cotización
-        const numConflict = state.cotizaciones.find(c => c.number === data.number);
+        // Verificar si el número ya existe en otra cotización activa
+        const numConflict = state.cotizaciones.find(c => !c.deleted && c.number === data.number && c.id !== data.id);
         if (numConflict) {
           if (!confirm(`El número ${data.number} ya existe. ¿Deseas reemplazarlo?`)) {
             data.number = getNextCotizacionNumber();
@@ -3669,17 +4059,22 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         showToast(`Guardada como ${data.number}`);
       }
 
+      if (data.clientName) {
+        registerOrUpdateClient(data.clientName, '', data.clientPhone || '');
+      }
+
       document.getElementById('cot-form-badge').textContent = `Editando ${data.number} – ${data.clientName}`;
       document.getElementById('cot-form-badge').style.background = 'rgba(16, 185, 129, 0.15)';
 
       saveState('cotizaciones');
       updateBadges();
       updateCotDashboard();
-      if (typeof getAuthToken === 'function' && getAuthToken()) syncDataWithCloud(false);
+      updateSyncDiagnosticsUI();
+      if (typeof getAuthToken === 'function' && getAuthToken() && navigator.onLine) syncDataWithCloud(false);
     }
 
     function openCotizacionForEdit(id) {
-      const item = state.cotizaciones.find(c => c.id === id);
+      const item = state.cotizaciones.find(c => c.id === id && !c.deleted);
       if (!item) return;
 
       state.currentCotId = item.id;
@@ -3712,36 +4107,30 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
     }
 
     function duplicateCotizacion(id) {
-      const item = state.cotizaciones.find(c => c.id === id);
+      const item = state.cotizaciones.find(c => c.id === id && !c.deleted);
       if (!item) return;
 
       const dup = JSON.parse(JSON.stringify(item));
       dup.id = 'cot-' + Date.now();
       dup.number = getNextCotizacionNumber();
       dup.date = new Date().toISOString().split('T')[0];
-      dup.updatedAt = new Date().toISOString();
+      dup.deleted = false;
+      const nowIso = new Date().toISOString();
+      dup.updated_at = nowIso;
+      dup.updatedAt = nowIso;
+      dup.synced_at = null;
 
       state.cotizaciones.unshift(dup);
       saveState('cotizaciones');
       updateBadges();
       renderCotHistory();
       updateCotDashboard();
+      updateSyncDiagnosticsUI();
       showToast(`Cotización duplicada como ${dup.number}`);
     }
 
     function deleteCotizacion(id) {
-      const item = state.cotizaciones.find(c => c.id === id);
-      if (!item) return;
-
-      if (confirm(`¿Seguro que deseas eliminar la cotización ${item.number} de ${item.clientName}?`)) {
-        state.cotizaciones = state.cotizaciones.filter(c => c.id !== id);
-        if (state.currentCotId === id) newCotizacionAction();
-        saveState('cotizaciones');
-        updateBadges();
-        renderCotHistory();
-        updateCotDashboard();
-        showToast('Cotización eliminada');
-      }
+      return deleteRecord('cotizacion', id);
     }
 
     /* ==========================================================================
@@ -3811,17 +4200,66 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
     function onCobroClientNameChange() {
       const name = document.getElementById('cc-client-name').value.trim();
       const nitInput = document.getElementById('cc-client-nit');
+      const suggestionsEl = document.getElementById('cc-client-suggestions');
 
-      // Buscar cliente previo para autocompletar NIT y consecutivo
+      if (!name) {
+        if (suggestionsEl) suggestionsEl.innerHTML = '';
+        return;
+      }
+
+      // Buscar cliente previo (SOLO registros activos, ignorando deleted=true)
+      const activeCobros = state.cobros.filter(c => !c.deleted);
+      const activeClientes = state.clientes.filter(c => !c.deleted);
+      const activeCot = state.cotizaciones.filter(c => !c.deleted);
+
       if (!state.currentCobroId) {
-        const found = state.cobros.find(c => c.clientName && c.clientName.toLowerCase() === name.toLowerCase());
+        const found = activeCobros.find(c => c.clientName && c.clientName.toLowerCase() === name.toLowerCase())
+          || activeClientes.find(c => c.name && c.name.toLowerCase() === name.toLowerCase())
+          || activeCot.find(c => c.clientName && c.clientName.toLowerCase() === name.toLowerCase());
+
         if (found) {
-          if (!nitInput.value.trim() && found.clientNit) nitInput.value = found.clientNit;
-          document.getElementById('cc-number').value = getNextCobroNumberForClient(name, found.clientNit);
+          const foundNit = found.clientNit || found.nit || '';
+          if (!nitInput.value.trim() && foundNit) nitInput.value = foundNit;
+          document.getElementById('cc-number').value = getNextCobroNumberForClient(name, foundNit);
         } else {
           document.getElementById('cc-number').value = getNextCobroNumberForClient(name, nitInput.value);
         }
       }
+
+      // Sugerencias visuales activas
+      if (suggestionsEl) {
+        const matches = [];
+        const seen = new Set();
+        const pool = [
+          ...activeCobros.map(c => ({ name: c.clientName, nit: c.clientNit })),
+          ...activeClientes.map(c => ({ name: c.name, nit: c.nit })),
+          ...activeCot.map(c => ({ name: c.clientName, nit: '' }))
+        ];
+        pool.forEach(p => {
+          if (!p.name) return;
+          const lower = p.name.toLowerCase();
+          if (lower.includes(name.toLowerCase()) && lower !== name.toLowerCase() && !seen.has(lower)) {
+            seen.add(lower);
+            matches.push(p);
+          }
+        });
+
+        if (matches.length > 0 && matches.length <= 4) {
+          suggestionsEl.innerHTML = '<span style="font-size:0.75rem; color:var(--text-dim); margin-right:4px;">Sugerencias:</span>' + matches.map(m =>
+            `<span style="color:var(--brand-purple); cursor:pointer; text-decoration:underline; margin-right:8px;" onclick="applyClientSuggestion('${escapeHtml(m.name)}', '${escapeHtml(m.nit || '')}')">${escapeHtml(m.name)}</span>`
+          ).join('');
+        } else {
+          suggestionsEl.innerHTML = '';
+        }
+      }
+    }
+
+    function applyClientSuggestion(name, nit) {
+      document.getElementById('cc-client-name').value = name;
+      if (nit) document.getElementById('cc-client-nit').value = nit;
+      document.getElementById('cc-number').value = getNextCobroNumberForClient(name, nit);
+      const suggestionsEl = document.getElementById('cc-client-suggestions');
+      if (suggestionsEl) suggestionsEl.innerHTML = '';
     }
 
     function calculateCobroTotals() {
@@ -3901,14 +4339,20 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         return;
       }
 
+      data.deleted = false;
+      const nowIso = new Date().toISOString();
+      data.updated_at = nowIso;
+      data.updatedAt = nowIso;
+
       const existingIndex = state.cobros.findIndex(c => c.id === data.id);
       if (existingIndex >= 0) {
         state.cobros[existingIndex] = data;
         showToast(`Cuenta de cobro N° ${data.number} actualizada`);
       } else {
-        // Verificar si existe conflicto para este cliente
+        // Verificar si existe conflicto para este cliente entre cuentas activas
         const clientKey = normalizeClientKey(data.clientName, data.clientNit);
         const conflict = state.cobros.find(c => {
+          if (c.deleted || c.id === data.id) return false;
           const k = normalizeClientKey(c.clientName, c.clientNit);
           return k === clientKey && String(c.number) === String(data.number);
         });
@@ -3927,17 +4371,22 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         showToast(`Guardada como Cuenta N° ${data.number}`);
       }
 
+      if (data.clientName) {
+        registerOrUpdateClient(data.clientName, data.clientNit || '', '');
+      }
+
       document.getElementById('cc-form-badge').textContent = `Editando Cuenta N° ${data.number} – ${data.clientName}`;
       document.getElementById('cc-form-badge').style.background = 'rgba(16, 185, 129, 0.15)';
 
       saveState('cobros');
       updateBadges();
       updateCobroDashboard();
-      if (typeof getAuthToken === 'function' && getAuthToken()) syncDataWithCloud(false);
+      updateSyncDiagnosticsUI();
+      if (typeof getAuthToken === 'function' && getAuthToken() && navigator.onLine) syncDataWithCloud(false);
     }
 
     function openCobroForEdit(id) {
-      const item = state.cobros.find(c => c.id === id);
+      const item = state.cobros.find(c => c.id === id && !c.deleted);
       if (!item) return;
 
       state.currentCobroId = item.id;
@@ -3974,19 +4423,22 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
     }
 
     function toggleCobroStatus(id) {
-      const item = state.cobros.find(c => c.id === id);
+      const item = state.cobros.find(c => c.id === id && !c.deleted);
       if (!item) return;
 
       item.status = item.status === 'paid' ? 'pending' : 'paid';
-      item.updatedAt = new Date().toISOString();
+      const nowIso = new Date().toISOString();
+      item.updated_at = nowIso;
+      item.updatedAt = nowIso;
       saveState('cobros');
       renderCobroHistory();
       updateCobroDashboard();
+      updateSyncDiagnosticsUI();
       showToast(`Cuenta N° ${item.number} marcada como ${item.status === 'paid' ? 'Pagada' : 'Pendiente'}`);
     }
 
     function duplicateCobro(id) {
-      const item = state.cobros.find(c => c.id === id);
+      const item = state.cobros.find(c => c.id === id && !c.deleted);
       if (!item) return;
 
       const dup = JSON.parse(JSON.stringify(item));
@@ -3994,29 +4446,23 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       dup.number = getNextCobroNumberForClient(dup.clientName, dup.clientNit);
       dup.date = new Date().toISOString().split('T')[0];
       dup.status = 'pending';
-      dup.updatedAt = new Date().toISOString();
+      dup.deleted = false;
+      const nowIso = new Date().toISOString();
+      dup.updated_at = nowIso;
+      dup.updatedAt = nowIso;
+      dup.synced_at = null;
 
       state.cobros.unshift(dup);
       saveState('cobros');
       updateBadges();
       renderCobroHistory();
       updateCobroDashboard();
+      updateSyncDiagnosticsUI();
       showToast(`Cuenta duplicada como N° ${dup.number}`);
     }
 
     function deleteCobro(id) {
-      const item = state.cobros.find(c => c.id === id);
-      if (!item) return;
-
-      if (confirm(`¿Seguro que deseas eliminar la cuenta de cobro N° ${item.number} de ${item.clientName}?`)) {
-        state.cobros = state.cobros.filter(c => c.id !== id);
-        if (state.currentCobroId === id) newCobroAction();
-        saveState('cobros');
-        updateBadges();
-        renderCobroHistory();
-        updateCobroDashboard();
-        showToast('Cuenta de cobro eliminada');
-      }
+      return deleteRecord('cuenta_cobro', id);
     }
 
     /* ==========================================================================
@@ -4499,17 +4945,21 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
        11. RENDERIZADO DE HISTORIALES Y DASHBOARDS
        ========================================================================== */
     function updateBadges() {
-      document.getElementById('badge-count-cot').textContent = state.cotizaciones.length;
-      document.getElementById('badge-count-cc').textContent = state.cobros.length;
+      const activeCot = state.cotizaciones.filter(c => !c.deleted);
+      const activeCc = state.cobros.filter(cb => !cb.deleted);
+      document.getElementById('badge-count-cot').textContent = activeCot.length;
+      document.getElementById('badge-count-cc').textContent = activeCc.length;
+      updateSyncDiagnosticsUI();
     }
 
     function updateCotDashboard() {
-      document.getElementById('dash-cot-count').textContent = state.cotizaciones.length;
-      const total = state.cotizaciones.reduce((acc, c) => acc + (c.grandTotal || 0), 0);
+      const activeCot = state.cotizaciones.filter(c => !c.deleted);
+      document.getElementById('dash-cot-count').textContent = activeCot.length;
+      const total = activeCot.reduce((acc, c) => acc + (c.grandTotal || 0), 0);
       document.getElementById('dash-cot-total').textContent = formatMoney(total);
 
       const recentList = document.getElementById('dash-cot-recent-list');
-      const recent = state.cotizaciones.slice(0, 5);
+      const recent = activeCot.slice(0, 5);
 
       if (recent.length === 0) {
         recentList.innerHTML = `
@@ -4548,8 +4998,9 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       let paidCount = 0;
 
       const pendingItems = [];
+      const activeCobros = state.cobros.filter(cb => !cb.deleted);
 
-      state.cobros.forEach(cb => {
+      activeCobros.forEach(cb => {
         const saldo = cb.saldo || (cb.totalConceptos - (cb.totalAdelantos || 0));
         if (cb.status === 'paid') {
           paidTotal += cb.totalConceptos || 0;
@@ -4599,7 +5050,9 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       const monthFilter = document.getElementById('cot-filter-month').value;
       const listEl = document.getElementById('cot-history-list');
 
-      let filtered = state.cotizaciones.filter(c => {
+      const activeCot = state.cotizaciones.filter(c => !c.deleted);
+
+      let filtered = activeCot.filter(c => {
         const matchSearch = !q ||
           (c.clientName && c.clientName.toLowerCase().includes(q)) ||
           (c.number && c.number.toLowerCase().includes(q)) ||
@@ -4609,8 +5062,8 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         return matchSearch && matchMonth;
       });
 
-      // Llenar selector de meses si no tiene opciones
-      populateMonthSelector('cot-filter-month', state.cotizaciones.map(c => c.date));
+      // Llenar selector de meses solo con cotizaciones activas
+      populateMonthSelector('cot-filter-month', activeCot.map(c => c.date));
 
       if (filtered.length === 0) {
         listEl.innerHTML = `
@@ -4633,7 +5086,6 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
             <span style="font-size:0.8rem; color:var(--text-dim);">Total</span>
             <span class="history-amount">${formatMoney(c.grandTotal)}</span>
           </div>
-          <!-- Botones siempre visibles según requerimiento de calidad -->
           <div class="history-actions-bar">
             <button class="btn btn-secondary btn-sm" onclick="openCotizacionForEdit('${c.id}')">Abrir</button>
             <button class="btn btn-outline btn-sm" onclick='previewDocModal("cotizacion", ${JSON.stringify(c).replace(/'/g, "&#39;")})'>Ver PDF</button>
@@ -4651,7 +5103,9 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       const monthFilter = document.getElementById('cc-filter-month').value;
       const listEl = document.getElementById('cc-history-list');
 
-      let filtered = state.cobros.filter(cb => {
+      const activeCobros = state.cobros.filter(cb => !cb.deleted);
+
+      let filtered = activeCobros.filter(cb => {
         const matchSearch = !q ||
           (cb.clientName && cb.clientName.toLowerCase().includes(q)) ||
           (cb.number && String(cb.number).toLowerCase().includes(q)) ||
@@ -4662,7 +5116,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         return matchSearch && matchStatus && matchMonth;
       });
 
-      populateMonthSelector('cc-filter-month', state.cobros.map(c => c.date));
+      populateMonthSelector('cc-filter-month', activeCobros.map(c => c.date));
 
       if (filtered.length === 0) {
         listEl.innerHTML = `
@@ -4688,7 +5142,6 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
               <span class="history-date">${formatDateSpanish(cb.date)}</span>
               <span class="history-amount" style="color: ${isPaid ? 'var(--color-success)' : 'var(--color-warning)'}">${formatMoney(saldo)}</span>
             </div>
-            <!-- Botones siempre visibles -->
             <div class="history-actions-bar">
               <button class="btn btn-secondary btn-sm" onclick="openCobroForEdit('${cb.id}')">Abrir</button>
               <button class="btn btn-outline btn-sm" onclick='previewDocModal("cuenta_cobro", ${JSON.stringify(cb).replace(/'/g, "&#39;")})'>Ver PDF</button>
@@ -4733,9 +5186,11 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       const container = document.getElementById('catalog-categories-container');
       const selectInCot = document.getElementById('cot-catalog-select');
 
-      // Agrupar por categoría
+      const activeCatalog = state.catalog.filter(it => !it.deleted);
+
+      // Agrupar por categoría solo servicios activos
       const grouped = {};
-      state.catalog.forEach(item => {
+      activeCatalog.forEach(item => {
         const cat = item.category || 'Varios';
         if (!grouped[cat]) grouped[cat] = [];
         grouped[cat].push(item);
@@ -4761,7 +5216,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       if (Object.keys(grouped).length === 0) {
         container.innerHTML = `
           <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
-            Catálogo vacío. Puedes restaurar el catálogo inicial de Universo Gráfico.
+            Catálogo vacío o sin servicios activos. Puedes restaurar el catálogo inicial de Universo Gráfico.
           </div>
         `;
         return;
@@ -4802,7 +5257,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
     }
 
     function openEditCatalogModal(id) {
-      const it = state.catalog.find(c => c.id === id);
+      const it = state.catalog.find(c => c.id === id && !c.deleted);
       if (!it) return;
 
       document.getElementById('catalog-modal-title').textContent = 'Editar Servicio';
@@ -4822,6 +5277,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       const category = document.getElementById('cat-modal-category').value.trim() || 'Servicios';
       const name = document.getElementById('cat-modal-name').value.trim();
       const price = parseFloat(document.getElementById('cat-modal-price').value) || 0;
+      const nowIso = new Date().toISOString();
 
       if (!name) {
         showToast('El nombre del servicio es obligatorio', 'warning');
@@ -4834,6 +5290,9 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
           item.category = category;
           item.name = name;
           item.price = price;
+          item.deleted = false;
+          item.updated_at = nowIso;
+          item.updatedAt = nowIso;
         }
         showToast('Servicio actualizado');
       } else {
@@ -4841,7 +5300,10 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
           id: 'cat-' + Date.now(),
           category,
           name,
-          price
+          price,
+          deleted: false,
+          updated_at: nowIso,
+          updatedAt: nowIso
         });
         showToast('Servicio añadido al catálogo');
       }
@@ -4849,22 +5311,27 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       saveState('catalog');
       renderCatalogView();
       closeCatalogModal();
+      updateSyncDiagnosticsUI();
+      if (typeof getAuthToken === 'function' && getAuthToken() && navigator.onLine) syncDataWithCloud(false);
     }
 
     function deleteCatalogItem(id) {
-      if (confirm('¿Eliminar este servicio del catálogo?')) {
-        state.catalog = state.catalog.filter(c => c.id !== id);
-        saveState('catalog');
-        renderCatalogView();
-        showToast('Servicio eliminado');
-      }
+      return deleteRecord('catalogo', id);
     }
 
     function resetDefaultCatalog() {
       if (confirm('¿Restaurar los servicios y precios iniciales de Universo Gráfico?')) {
-        state.catalog = JSON.parse(JSON.stringify(DEFAULT_CATALOG));
+        const nowIso = new Date().toISOString();
+        state.catalog = JSON.parse(JSON.stringify(DEFAULT_CATALOG)).map(it => ({
+          ...it,
+          deleted: false,
+          updated_at: nowIso,
+          updatedAt: nowIso
+        }));
         saveState('catalog');
         renderCatalogView();
+        updateSyncDiagnosticsUI();
+        if (typeof getAuthToken === 'function' && getAuthToken() && navigator.onLine) syncDataWithCloud(false);
         showToast('Catálogo inicial restaurado');
       }
     }
@@ -4946,12 +5413,13 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
        ========================================================================== */
     function exportDataBackup() {
       const backupData = {
-        version: '1.1.0',
+        version: '1.2.0',
         exportedAt: new Date().toISOString(),
         business: 'Universo Gráfico',
         cotizaciones: state.cotizaciones,
         cobros: state.cobros,
         catalog: state.catalog,
+        clientes: state.clientes,
         settings: state.settings
       };
 
@@ -4979,7 +5447,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       reader.onload = function(e) {
         try {
           const imported = JSON.parse(e.target.result);
-          if (!imported.cotizaciones && !imported.cobros && !imported.catalog) {
+          if (!imported.cotizaciones && !imported.cobros && !imported.catalog && !imported.clientes) {
             throw new Error('Formato de archivo inválido');
           }
 
@@ -4987,6 +5455,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
             if (Array.isArray(imported.cotizaciones)) state.cotizaciones = imported.cotizaciones;
             if (Array.isArray(imported.cobros)) state.cobros = imported.cobros;
             if (Array.isArray(imported.catalog)) state.catalog = imported.catalog;
+            if (Array.isArray(imported.clientes)) state.clientes = imported.clientes;
             if (imported.settings) state.settings = { ...DEFAULT_SETTINGS, ...imported.settings };
 
             saveState();
@@ -4995,6 +5464,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
             updateCotDashboard();
             updateCobroDashboard();
             renderCatalogView();
+            updateSyncDiagnosticsUI();
             showToast('Datos restaurados exitosamente');
           }
         } catch (err) {
@@ -5007,9 +5477,9 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
     }
 
     /* ==========================================================================
-       15. NOTIFICACIONES TOAST Y UTILIDADES
+       15. NOTIFICACIONES TOAST Y DESHACER (Requerimiento 5)
        ========================================================================== */
-    function showToast(msg, type = 'info') {
+    function showToast(msg, type = 'info', duration = 3500) {
       let container = document.getElementById('toast-container');
       if (!container) {
         container = document.createElement('div');
@@ -5031,7 +5501,50 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         toast.style.opacity = '0';
         toast.style.transition = 'opacity 0.3s ease';
         setTimeout(() => toast.remove(), 300);
-      }, 3500);
+      }, duration);
+      return toast;
+    }
+
+    function showToastWithUndo(msg, undoCallback, duration = 8000) {
+      let container = document.getElementById('toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+      }
+      const toast = document.createElement('div');
+      toast.className = 'toast-msg';
+
+      const iconSpan = document.createElement('span');
+      iconSpan.textContent = '✓';
+
+      const textSpan = document.createElement('span');
+      textSpan.textContent = 'Eliminada · ';
+
+      const undoBtn = document.createElement('button');
+      undoBtn.type = 'button';
+      undoBtn.className = 'toast-undo-btn';
+      undoBtn.textContent = 'Deshacer';
+
+      let timer = null;
+      undoBtn.onclick = (e) => {
+        e.stopPropagation();
+        if (timer) clearTimeout(timer);
+        toast.remove();
+        if (typeof undoCallback === 'function') undoCallback();
+      };
+
+      toast.appendChild(iconSpan);
+      toast.appendChild(textSpan);
+      toast.appendChild(undoBtn);
+      container.appendChild(toast);
+
+      timer = setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, duration);
     }
 
     /* ==========================================================================
@@ -5553,7 +6066,76 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       showToast('Sesión de Cloudflare cerrada. Modo local activo.');
     }
 
-    // Sincronización bidireccional (Push de datos locales + Pull de cambios remotos)
+    // Función auxiliar de fusión por fila con prioridad para borrados lógicos (Requerimiento 4)
+    function mergeRowIntoList(list, id, rawData, remoteDeleted, remoteTime, remoteUpdatedAtStr) {
+      let changed = false;
+      const idx = list.findIndex(item => item.id === id);
+
+      if (idx >= 0) {
+        const localItem = list[idx];
+        const localTime = new Date(localItem.updated_at || localItem.updatedAt || 0).getTime();
+        const localDeleted = !!localItem.deleted;
+
+        if (localDeleted) {
+          // Localmente está borrado:
+          // REGLA: Nunca volver a agregar al local un registro que localmente esté marcado como borrado
+          if (remoteDeleted) {
+            localItem.synced_at = remoteUpdatedAtStr;
+          } else {
+            // La nube tiene registro activo pero en local está borrado.
+            // Si localTime >= remoteTime, local gana (sigue borrado y pendiente de subir)
+            // Solo si remoteTime > localTime (modificado remotamente estrictamente tras el borrado) se reactiva
+            if (remoteTime > localTime) {
+              localItem.deleted = false;
+              Object.assign(localItem, rawData);
+              localItem.updated_at = remoteUpdatedAtStr;
+              localItem.updatedAt = remoteUpdatedAtStr;
+              localItem.synced_at = remoteUpdatedAtStr;
+              changed = true;
+            }
+          }
+        } else {
+          // Localmente está activo:
+          if (remoteDeleted) {
+            // Remoto está borrado.
+            // REGLA: deleted=true con updated_at igual o más reciente SIEMPRE gana sobre uno activo
+            if (remoteTime >= localTime) {
+              localItem.deleted = true;
+              localItem.updated_at = remoteUpdatedAtStr;
+              localItem.updatedAt = remoteUpdatedAtStr;
+              localItem.synced_at = remoteUpdatedAtStr;
+              changed = true;
+            }
+          } else {
+            // Ambos activos: gana el más reciente
+            if (remoteTime > localTime) {
+              Object.assign(localItem, rawData);
+              localItem.deleted = false;
+              localItem.updated_at = remoteUpdatedAtStr;
+              localItem.updatedAt = remoteUpdatedAtStr;
+              localItem.synced_at = remoteUpdatedAtStr;
+              changed = true;
+            } else if (localTime === remoteTime) {
+              localItem.synced_at = remoteUpdatedAtStr;
+            }
+          }
+        }
+      } else {
+        // No existe en local
+        if (!remoteDeleted) {
+          const newItem = { ...rawData, id };
+          newItem.deleted = false;
+          newItem.updated_at = remoteUpdatedAtStr;
+          newItem.updatedAt = remoteUpdatedAtStr;
+          newItem.synced_at = remoteUpdatedAtStr;
+          list.push(newItem);
+          changed = true;
+        }
+      }
+      return changed;
+    }
+
+    // Sincronización bidireccional (Push de cambios pendientes + Pull y fusión)
     async function syncDataWithCloud(isManual = false) {
       const token = getAuthToken();
       if (!token || isSyncing) return;
@@ -5564,16 +6146,20 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       if (statusText && isManual) statusText.textContent = 'Sincronizando registros con Cloudflare D1...';
 
       try {
-        // Empaquetar registros locales
+        // 1. Purgar registros borrados con más de 30 días y ya subidos a la nube
+        purgeOldDeletedRecords();
+
+        // 2. Empaquetar registros locales (primero SUBE cambios pendientes, incluidos borrados)
         const itemsToPush = [];
+        const nowIso = new Date().toISOString();
 
         state.cotizaciones.forEach(c => {
           itemsToPush.push({
             id: c.id,
             tipo: 'cotizacion',
             datos: c,
-            deleted: 0,
-            updated_at: c.updatedAt || new Date().toISOString()
+            deleted: c.deleted ? 1 : 0,
+            updated_at: c.updated_at || c.updatedAt || nowIso
           });
         });
 
@@ -5582,17 +6168,29 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
             id: cb.id,
             tipo: 'cuenta_cobro',
             datos: cb,
-            deleted: 0,
-            updated_at: cb.updatedAt || new Date().toISOString()
+            deleted: cb.deleted ? 1 : 0,
+            updated_at: cb.updated_at || cb.updatedAt || nowIso
           });
         });
 
-        itemsToPush.push({
-          id: 'ug-catalog-main',
-          tipo: 'catalogo',
-          datos: state.catalog,
-          deleted: 0,
-          updated_at: new Date().toISOString()
+        state.catalog.forEach(it => {
+          itemsToPush.push({
+            id: it.id,
+            tipo: 'catalogo',
+            datos: it,
+            deleted: it.deleted ? 1 : 0,
+            updated_at: it.updated_at || it.updatedAt || nowIso
+          });
+        });
+
+        state.clientes.forEach(cli => {
+          itemsToPush.push({
+            id: cli.id,
+            tipo: 'cliente',
+            datos: cli,
+            deleted: cli.deleted ? 1 : 0,
+            updated_at: cli.updated_at || cli.updatedAt || nowIso
+          });
         });
 
         itemsToPush.push({
@@ -5600,9 +6198,10 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
           tipo: 'config',
           datos: state.settings,
           deleted: 0,
-          updated_at: new Date().toISOString()
+          updated_at: nowIso
         });
 
+        // 3. Enviar a Cloudflare API (POST efectúa upsert remoto y retorna el estado de la nube)
         const resp = await fetch('./api/sync', {
           method: 'POST',
           headers: {
@@ -5620,63 +6219,72 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         const resData = await resp.json();
         if (!resp.ok) throw new Error(resData.error || 'Error al sincronizar con D1');
 
-        // Procesar registros remotos recibidos
+        // 4. Marcar registros locales subidos como sincronizados
+        const syncTimestamp = resData.serverTime || nowIso;
+        itemsToPush.forEach(pushed => {
+          markItemSynced(pushed.tipo, pushed.id, syncTimestamp);
+        });
+
+        // 5. Fusionar datos remotos recibidos (PULL). Cada fila en su propio try/catch
         if (Array.isArray(resData.items)) {
           let hasRemoteChanges = false;
           resData.items.forEach(row => {
             try {
-              const rawData = typeof row.datos === 'string' ? JSON.parse(row.datos) : row.datos;
+              if (!row || !row.id || !row.tipo) return;
+              const rawData = typeof row.datos === 'string' ? JSON.parse(row.datos) : (row.datos || {});
+              const remoteDeleted = !!row.deleted;
+              const remoteTime = new Date(row.updated_at || 0).getTime();
+              const remoteUpdatedStr = row.updated_at || syncTimestamp;
+
               if (row.tipo === 'cotizacion') {
-                const idx = state.cotizaciones.findIndex(c => c.id === row.id);
-                if (idx >= 0) {
-                  const localTime = new Date(state.cotizaciones[idx].updatedAt || 0).getTime();
-                  const remoteTime = new Date(row.updated_at || 0).getTime();
-                  if (remoteTime > localTime) {
-                    state.cotizaciones[idx] = rawData;
-                    hasRemoteChanges = true;
-                  }
-                } else if (!row.deleted) {
-                  state.cotizaciones.push(rawData);
+                if (mergeRowIntoList(state.cotizaciones, row.id, rawData, remoteDeleted, remoteTime, remoteUpdatedStr)) {
                   hasRemoteChanges = true;
                 }
               } else if (row.tipo === 'cuenta_cobro') {
-                const idx = state.cobros.findIndex(cb => cb.id === row.id);
-                if (idx >= 0) {
-                  const localTime = new Date(state.cobros[idx].updatedAt || 0).getTime();
-                  const remoteTime = new Date(row.updated_at || 0).getTime();
-                  if (remoteTime > localTime) {
-                    state.cobros[idx] = rawData;
+                if (mergeRowIntoList(state.cobros, row.id, rawData, remoteDeleted, remoteTime, remoteUpdatedStr)) {
+                  hasRemoteChanges = true;
+                }
+              } else if (row.tipo === 'catalogo') {
+                if (row.id !== 'ug-catalog-main') {
+                  if (mergeRowIntoList(state.catalog, row.id, rawData, remoteDeleted, remoteTime, remoteUpdatedStr)) {
                     hasRemoteChanges = true;
                   }
-                } else if (!row.deleted) {
-                  state.cobros.push(rawData);
+                }
+              } else if (row.tipo === 'cliente') {
+                if (mergeRowIntoList(state.clientes, row.id, rawData, remoteDeleted, remoteTime, remoteUpdatedStr)) {
+                  hasRemoteChanges = true;
+                }
+              } else if (row.tipo === 'config') {
+                if (rawData && typeof rawData === 'object') {
+                  state.settings = { ...DEFAULT_SETTINGS, ...rawData };
                   hasRemoteChanges = true;
                 }
               }
             } catch (rowErr) {
-              console.warn('Error procesando fila remota:', rowErr);
+              console.warn('[Sync Error] Error procesando fila remota:', rowErr);
             }
           });
 
-          if (hasRemoteChanges) {
-            saveState('cotizaciones');
-            saveState('cobros');
-            updateBadges();
-            updateCotDashboard();
-            updateCobroDashboard();
-          }
+          saveState();
+          updateBadges();
+          updateCotDashboard();
+          updateCobroDashboard();
+          renderCatalogView();
+          renderCotHistory();
+          renderCobroHistory();
         }
 
         const nowStr = new Date().toLocaleTimeString('es-CO');
         if (timeDisplay) timeDisplay.textContent = nowStr;
-        if (statusText) statusText.innerHTML = `<span style="color:var(--color-success)">✓ Sincronizado a las ${nowStr} (${resData.processed || 0} subidos).</span>`;
+        if (statusText) statusText.innerHTML = `<span style="color:var(--color-success)">✓ Sincronizado a las ${nowStr} (${resData.processed || 0} cambios).</span>`;
         if (isManual) showToast('Sincronización completada con éxito');
       } catch (err) {
         console.warn('[Sync Error]', err);
-        if (statusText) statusText.innerHTML = `<span style="color:var(--color-danger)">✕ ${err.message}</span>`;
+        if (statusText) statusText.innerHTML = `<span style="color:var(--color-danger)">✕ ${escapeHtml(err.message)}</span>`;
         if (isManual) showToast(err.message, 'error');
       } finally {
         isSyncing = false;
+        updateSyncDiagnosticsUI();
       }
     }
 
@@ -5708,6 +6316,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       renderCatalogView();
       updateCotDashboard();
       updateCobroDashboard();
+      updateSyncDiagnosticsUI();
 
       // Iniciar formulario de cotización por defecto
       newCotizacionAction();

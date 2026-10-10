@@ -264,36 +264,53 @@ export async function onRequest(context) {
       let upsertCount = 0;
 
       for (const item of items) {
-        if (!item || !item.id || !item.tipo) continue;
+        try {
+          if (!item || !item.id || !item.tipo) continue;
 
-        const id = String(item.id);
-        const tipo = String(item.tipo);
-        const datos = typeof item.datos === 'string' ? item.datos : JSON.stringify(item.datos || {});
-        const deleted = item.deleted ? 1 : 0;
-        const updatedAt = item.updated_at || new Date().toISOString();
+          const id = String(item.id);
+          const tipo = String(item.tipo);
+          const datos = typeof item.datos === 'string' ? item.datos : JSON.stringify(item.datos || {});
+          const deleted = item.deleted ? 1 : 0;
+          const updatedAt = item.updated_at || new Date().toISOString();
 
-        // Consultar registro existente en D1
-        const existing = await db.prepare(
-          'SELECT updated_at FROM registros WHERE id = ? AND user_id = ?'
-        ).bind(id, authUser.id).first();
+          // Consultar registro existente en D1
+          const existing = await db.prepare(
+            'SELECT updated_at, deleted FROM registros WHERE id = ? AND user_id = ?'
+          ).bind(id, authUser.id).first();
 
-        if (!existing) {
-          // Insertar nuevo
-          await db.prepare(
-            'INSERT INTO registros (id, user_id, tipo, datos, deleted, updated_at) VALUES (?, ?, ?, ?, ?, ?)'
-          ).bind(id, authUser.id, tipo, datos, deleted, updatedAt).run();
-          upsertCount++;
-        } else {
-          // Fusión: gana el más reciente
-          const clientTime = new Date(updatedAt).getTime();
-          const serverTime = new Date(existing.updated_at).getTime();
-
-          if (clientTime >= serverTime) {
+          if (!existing) {
+            // Insertar nuevo
             await db.prepare(
-              'UPDATE registros SET tipo = ?, datos = ?, deleted = ?, updated_at = ? WHERE id = ? AND user_id = ?'
-            ).bind(tipo, datos, deleted, updatedAt, id, authUser.id).run();
+              'INSERT INTO registros (id, user_id, tipo, datos, deleted, updated_at) VALUES (?, ?, ?, ?, ?, ?)'
+            ).bind(id, authUser.id, tipo, datos, deleted, updatedAt).run();
             upsertCount++;
+          } else {
+            // Fusión: deleted=true gana en empate
+            const clientTime = new Date(updatedAt).getTime();
+            const serverTime = new Date(existing.updated_at).getTime();
+
+            let shouldUpdate = false;
+            if (deleted === 1) {
+              // Si el cliente lo borró, gana si su timestamp es igual o más reciente
+              if (clientTime >= serverTime) shouldUpdate = true;
+            } else {
+              // Cliente activo: si el servidor ya lo tenía borrado, solo gana si es estrictamente posterior
+              if (existing.deleted === 1) {
+                if (clientTime > serverTime) shouldUpdate = true;
+              } else {
+                if (clientTime >= serverTime) shouldUpdate = true;
+              }
+            }
+
+            if (shouldUpdate) {
+              await db.prepare(
+                'UPDATE registros SET tipo = ?, datos = ?, deleted = ?, updated_at = ? WHERE id = ? AND user_id = ?'
+              ).bind(tipo, datos, deleted, updatedAt, id, authUser.id).run();
+              upsertCount++;
+            }
           }
+        } catch (itemErr) {
+          console.error(`[D1 Sync Error] Error en item ${item?.id}:`, itemErr);
         }
       }
 
