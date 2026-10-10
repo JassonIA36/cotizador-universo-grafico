@@ -3004,54 +3004,73 @@
                 <h2 class="card-title">Mis Datos & Emisor de Documentos</h2>
                 <p class="card-desc">Información predeterminada para el encabezado y firma de cotizaciones y cuentas de cobro.</p>
               </div>
-              <button class="btn btn-primary btn-sm" onclick="saveSettingsAction()">Guardar Cambios</button>
+              <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                <span id="cfg-sync-status-badge" class="doc-badge" style="font-size: 0.78rem; background: rgba(16, 185, 129, 0.15); color: var(--color-success); font-weight: 600; padding: 4px 10px;">● Guardado y sincronizado</span>
+                <button class="btn btn-primary btn-sm" onclick="saveSettingsAction()">Guardar Ahora</button>
+              </div>
             </div>
 
             <div class="form-grid">
               <div class="form-group">
                 <label for="cfg-business-name">Nombre Comercial del Negocio</label>
-                <input type="text" id="cfg-business-name" class="form-control" value="Universo Gráfico">
+                <input type="text" id="cfg-business-name" class="form-control" value="Universo Gráfico" oninput="onSettingFieldInput('businessName', this.value)">
               </div>
 
               <div class="form-group">
                 <label for="cfg-business-phone">WhatsApp / Teléfono de Contacto</label>
-                <input type="text" id="cfg-business-phone" class="form-control" value="3239421252">
+                <input type="text" id="cfg-business-phone" class="form-control" value="3239421252" oninput="onSettingFieldInput('phone', this.value)">
               </div>
 
               <div class="form-group">
                 <label for="cfg-business-email">Correo Electrónico</label>
-                <input type="email" id="cfg-business-email" class="form-control" placeholder="contacto@universografico.com">
+                <input type="email" id="cfg-business-email" class="form-control" placeholder="contacto@universografico.com" oninput="onSettingFieldInput('email', this.value)">
               </div>
 
               <div class="form-group">
                 <label for="cfg-business-address">Dirección Física / Ciudad</label>
-                <input type="text" id="cfg-business-address" class="form-control" placeholder="Bogotá, Colombia">
+                <input type="text" id="cfg-business-address" class="form-control" placeholder="Bogotá, Colombia" oninput="onSettingFieldInput('address', this.value)">
               </div>
 
               <div class="form-group">
                 <label for="cfg-emisor-name">Nombre de Quien Cobra (Persona Natural / Titular)</label>
-                <input type="text" id="cfg-emisor-name" class="form-control" placeholder="Tu Nombre Completo">
+                <input type="text" id="cfg-emisor-name" class="form-control" placeholder="Tu Nombre Completo" oninput="onSettingFieldInput('emisorName', this.value)">
               </div>
 
               <div class="form-group">
                 <label for="cfg-emisor-cc">C.C. de Quien Cobra</label>
-                <input type="text" id="cfg-emisor-cc" class="form-control" placeholder="Ej: 1.015.409.172">
+                <input type="text" id="cfg-emisor-cc" class="form-control" placeholder="Ej: 1.015.409.172" oninput="onSettingFieldInput('emisorCC', this.value)">
               </div>
 
               <div class="form-group">
                 <label for="cfg-emisor-city">Ciudad de Expedición de la Cédula</label>
-                <input type="text" id="cfg-emisor-city" class="form-control" value="Bogotá D.C.">
+                <input type="text" id="cfg-emisor-city" class="form-control" value="Bogotá D.C." oninput="onSettingFieldInput('emisorCity', this.value)">
               </div>
 
               <div class="form-group">
                 <label for="cfg-numbering-mode">Modalidad de Consecutivo en Cuentas de Cobro</label>
-                <select id="cfg-numbering-mode" class="form-control">
+                <select id="cfg-numbering-mode" class="form-control" onchange="onSettingFieldInput('numberingMode', this.value)">
                   <option value="per-client">Consecutivo Independiente por Cliente (001 por cliente)</option>
                   <option value="global">Consecutivo Global Único</option>
                 </select>
               </div>
 
-              <!-- Firma Digital -->
+              <!-- Logotipo del Negocio (Personalizado y Optimizado) -->
+              <div class="form-group full-width">
+                <label>Logotipo del Negocio (para documentos y barra lateral)</label>
+                <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                  <div id="cfg-logo-preview-wrap" style="width: 180px; height: 75px; border: 1px dashed var(--border-color); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; background: var(--bg-surface); padding: 5px;">
+                    <img id="cfg-logo-preview-img" src="./assets/logo.png" alt="Logotipo" style="max-height: 65px; max-width: 170px; object-fit: contain;">
+                    <span id="cfg-logo-empty-text" style="font-size: 0.78rem; color: var(--text-dim); display: none;">Logotipo predeterminado</span>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <input type="file" id="cfg-logo-file" accept="image/*" style="display: none;" onchange="handleLogoFileUpload(event)">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('cfg-logo-file').click()">Subir imagen de logo</button>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="clearCustomLogo()">Restaurar logo original</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Firma Digital (Optimizada) -->
               <div class="form-group full-width">
                 <label>Firma Digital para Cuentas de Cobro</label>
                 <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
@@ -3061,8 +3080,8 @@
                   </div>
                   <div style="display: flex; flex-direction: column; gap: 6px;">
                     <input type="file" id="cfg-signature-file" accept="image/*" style="display: none;" onchange="handleSignatureFileUpload(event)">
-                    <button class="btn btn-secondary btn-sm" onclick="document.getElementById('cfg-signature-file').click()">Subir imagen de firma</button>
-                    <button class="btn btn-outline btn-sm" onclick="clearSignature()">Quitar firma</button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('cfg-signature-file').click()">Subir imagen de firma</button>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="clearSignature()">Quitar firma</button>
                   </div>
                 </div>
               </div>
@@ -3070,17 +3089,17 @@
               <!-- Textos Predeterminados -->
               <div class="form-group full-width">
                 <label for="cfg-default-cot-notes">Notas y Garantías Predeterminadas (Cotizaciones)</label>
-                <textarea id="cfg-default-cot-notes" class="form-control" rows="3">Para iniciar el trabajo se requiere un anticipo del 50%. El saldo se paga contra entrega. Incluye hasta 2 rondas de ajustes.</textarea>
+                <textarea id="cfg-default-cot-notes" class="form-control" rows="3" oninput="onSettingFieldInput('defaultCotNotes', this.value)">Para iniciar el trabajo se requiere un anticipo del 50%. El saldo se paga contra entrega. Incluye hasta 2 rondas de ajustes.</textarea>
               </div>
 
               <div class="form-group full-width">
                 <label for="cfg-default-cc-notes">Notas Predeterminadas (Cuentas de Cobro)</label>
-                <textarea id="cfg-default-cc-notes" class="form-control" rows="2">Servicio prestado a entera satisfacción. Favor consignar a la cuenta bancaria acordada.</textarea>
+                <textarea id="cfg-default-cc-notes" class="form-control" rows="2" oninput="onSettingFieldInput('defaultCcNotes', this.value)">Servicio prestado a entera satisfacción. Favor consignar a la cuenta bancaria acordada.</textarea>
               </div>
 
               <div class="form-group full-width">
                 <label for="cfg-default-legal-text">Texto Legal Tributario (3 párrafos según norma colombiana)</label>
-                <textarea id="cfg-default-legal-text" class="form-control" rows="4">Que los ingresos brutos totales obtenidos en el presente periodo gravable corresponden a honorarios, comisiones o servicios y no superan las 120 UVT mensuales.
+                <textarea id="cfg-default-legal-text" class="form-control" rows="4" oninput="onSettingFieldInput('legalText', this.value)">Que los ingresos brutos totales obtenidos en el presente periodo gravable corresponden a honorarios, comisiones o servicios y no superan las 120 UVT mensuales.
 Que me acojo al artículo 135 del acuerdo 1753 de 2015.
 Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios estoy clasificado en cada cedula mencionada para la exención de la aplicación de la retención en la fuente según Art 383 E.T.</textarea>
               </div>
@@ -3306,6 +3325,38 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
                     </tr>
                   </tfoot>
                 </table>
+              </div>
+            </div>
+
+            <!-- Panel de Diagnóstico de Mis Datos / Configuración (Requerimiento 6) -->
+            <div class="card" style="background: var(--bg-surface); margin-top: 1.5rem; margin-bottom: 0;" id="cloud-cfg-diagnostics-panel">
+              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 0.75rem;">
+                <h3 style="font-size: 1rem; color: var(--text-main); margin: 0; display: flex; align-items: center; gap: 8px;">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <span>Diagnóstico de "Mis Datos" (Configuración)</span>
+                </h3>
+                <button class="btn btn-secondary btn-sm" onclick="forcePushSettings()" id="btn-force-push-settings">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                  <span>Forzar subida de Mis datos</span>
+                </button>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 0.85rem; margin-top: 10px;">
+                <div style="background: rgba(255,255,255,0.03); padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                  <div style="font-size: 0.74rem; color: var(--text-dim); text-transform: uppercase;">Última subida a la nube</div>
+                  <strong id="diag-cfg-last-push" style="color: var(--text-main); font-size: 0.95rem;">Pendiente</strong>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                  <div style="font-size: 0.74rem; color: var(--text-dim); text-transform: uppercase;">Última bajada de la nube</div>
+                  <strong id="diag-cfg-last-pull" style="color: var(--text-main); font-size: 0.95rem;">Pendiente</strong>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                  <div style="font-size: 0.74rem; color: var(--text-dim); text-transform: uppercase;">Cambios locales pendientes</div>
+                  <strong id="diag-cfg-pending-status" style="color: var(--color-success); font-size: 0.95rem;">Al día (0)</strong>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                  <div style="font-size: 0.74rem; color: var(--text-dim); text-transform: uppercase;">Filas "config" (Local / Nube)</div>
+                  <strong id="diag-cfg-row-counts" style="color: var(--text-main); font-size: 0.95rem;">Local: 1 | Nube: 1</strong>
+                </div>
               </div>
             </div>
 
@@ -3602,8 +3653,20 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
     const STORAGE_KEY_CATALOG = 'ug_catalogo_v1';
     const STORAGE_KEY_CLIENTES = 'ug_clientes_v1';
     const STORAGE_KEY_SETTINGS = 'ug_settings_v1';
+    const STORAGE_KEY_SETTINGS_META = 'ug_settings_meta_v1';
     const STORAGE_KEY_THEME = 'ug_theme_v1';
     const STORAGE_KEY_INITIALIZED = 'ug_initialized_v1';
+
+    // Metadatos y marcas de tiempo por campo para sincronización y diagnóstico de Mis Datos
+    let settingsMeta = {
+      fieldTimestamps: {},
+      pendingUpload: false,
+      lastPush: null,
+      lastPull: null,
+      localCount: 1,
+      cloudCount: 1,
+      lastError: null
+    };
 
     // Catálogo inicial predeterminado para Universo Gráfico
     const DEFAULT_CATALOG = [
@@ -3628,6 +3691,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       emisorCC: '',
       emisorCity: 'Bogotá D.C.',
       numberingMode: 'per-client', // 'per-client' o 'global'
+      logoData: '',
       signatureData: '',
       defaultCotNotes: 'Para iniciar el trabajo se requiere un anticipo del 50%. El saldo se paga contra entrega. Incluye hasta 2 rondas de ajustes.',
       defaultCcNotes: 'Servicio prestado a entera satisfacción. Favor consignar a la cuenta bancaria acordada.',
@@ -3689,13 +3753,32 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
 
         const storedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
         if (storedSettings) {
-          state.settings = { ...DEFAULT_SETTINGS, ...JSON.parse(storedSettings) };
+          try {
+            state.settings = { ...DEFAULT_SETTINGS, ...JSON.parse(storedSettings) };
+          } catch (e) {
+            state.settings = { ...DEFAULT_SETTINGS };
+          }
         } else {
           state.settings = { ...DEFAULT_SETTINGS };
+        }
+
+        const storedMeta = localStorage.getItem(STORAGE_KEY_SETTINGS_META);
+        if (storedMeta) {
+          try {
+            settingsMeta = { ...settingsMeta, ...JSON.parse(storedMeta) };
+          } catch (e) {}
         }
       } catch (err) {
         console.error('Error cargando datos de localStorage:', err);
         showToast('Error cargando datos locales', 'error');
+      }
+    }
+
+    function saveSettingsMeta() {
+      try {
+        localStorage.setItem(STORAGE_KEY_SETTINGS_META, JSON.stringify(settingsMeta));
+      } catch (e) {
+        console.error('Error guardando metadatos de configuración:', e);
       }
     }
 
@@ -3705,7 +3788,10 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         if (!key || key === 'cobros' || key === 'cuenta_cobro') localStorage.setItem(STORAGE_KEY_COBROS, JSON.stringify(state.cobros));
         if (!key || key === 'catalog' || key === 'catalogo') localStorage.setItem(STORAGE_KEY_CATALOG, JSON.stringify(state.catalog));
         if (!key || key === 'clientes' || key === 'cliente') localStorage.setItem(STORAGE_KEY_CLIENTES, JSON.stringify(state.clientes));
-        if (!key || key === 'settings') localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(state.settings));
+        if (!key || key === 'settings') {
+          localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(state.settings));
+          saveSettingsMeta();
+        }
       } catch (err) {
         console.error('Error guardando en localStorage:', err);
         showToast('Atención: Almacenamiento local lleno o restringido', 'error');
@@ -3980,6 +4066,31 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       setVal('diag-tot-active', cotC.active + ccC.active + catC.active + cliC.active);
       setVal('diag-tot-deleted', cotC.deleted + ccC.deleted + catC.deleted + cliC.deleted);
       setVal('diag-tot-pending', cotC.pending + ccC.pending + catC.pending + cliC.pending);
+
+      // Diagnóstico de Mis Datos / Configuración (Requerimiento 6)
+      const diagPush = document.getElementById('diag-cfg-last-push');
+      const diagPull = document.getElementById('diag-cfg-last-pull');
+      const diagPending = document.getElementById('diag-cfg-pending-status');
+      const diagCounts = document.getElementById('diag-cfg-row-counts');
+
+      if (diagPush) {
+        diagPush.textContent = settingsMeta.lastPush ? new Date(settingsMeta.lastPush).toLocaleTimeString('es-CO') : 'Pendiente';
+      }
+      if (diagPull) {
+        diagPull.textContent = settingsMeta.lastPull ? new Date(settingsMeta.lastPull).toLocaleTimeString('es-CO') : 'Pendiente';
+      }
+      if (diagPending) {
+        if (settingsMeta.pendingUpload) {
+          diagPending.textContent = '⏳ Cambios pendientes de subir';
+          diagPending.style.color = 'var(--color-warning)';
+        } else {
+          diagPending.textContent = '✓ Al día (0 pendientes)';
+          diagPending.style.color = 'var(--color-success)';
+        }
+      }
+      if (diagCounts) {
+        diagCounts.textContent = `Local: ${settingsMeta.localCount || 1} | Nube: ${settingsMeta.cloudCount !== undefined ? settingsMeta.cloudCount : 1}`;
+      }
 
       const timeEl = document.getElementById('diag-last-calc-time');
       if (timeEl) {
@@ -5120,7 +5231,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
             <!-- Encabezado con Flexbox -->
             <div class="doc-header-block">
               <div class="doc-logo-box">
-                ${hasLogo ? `<img src="./assets/logo.png" alt="Universo Gráfico" class="doc-logo-img">` : ''}
+                ${hasLogo ? `<img src="${state.settings.logoData || './assets/logo.png'}" alt="Universo Gráfico" class="doc-logo-img">` : ''}
                 <div class="doc-brand-name">${escapeHtml(state.settings.businessName || 'Universo Gráfico')}</div>
                 <div class="doc-brand-info">
                   Diseño Gráfico & Desarrollo Web<br>
@@ -5242,7 +5353,7 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
           <div class="doc-sheet-container">
             ${hasLogo ? `
               <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0F172A; padding-bottom: 12px; margin-bottom: 1.5rem;">
-                <img src="./assets/logo.png" alt="Universo Gráfico" class="doc-logo-img" style="margin-bottom:0;">
+                <img src="${state.settings.logoData || './assets/logo.png'}" alt="Universo Gráfico" class="doc-logo-img" style="margin-bottom:0;">
                 <div style="font-size: 11px; color: #64748B; text-align: right;">
                   ${escapeHtml(state.settings.businessName || 'Universo Gráfico')}<br>
                   Tel: ${escapeHtml(state.settings.phone || '3239421252')}
@@ -5988,74 +6099,383 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
     }
 
     /* ==========================================================================
-       13. MIS DATOS & PREFERENCIAS
+       13. MIS DATOS & PREFERENCIAS (MOTOR REACTIVO DE CONFIGURACIÓN Y SINCRONIZACIÓN)
+       (Requerimientos 1, 2, 3, 4, 5 y 6)
        ========================================================================== */
+    let settingsDebounceTimer = null;
+
+    // Compresión y optimización de imágenes (Requerimiento 5: máx 400px ancho, <150 KB)
+    function compressImageFile(file, maxWidth = 400, maxBytes = 150 * 1024) {
+      return new Promise((resolve, reject) => {
+        if (!file || !file.type || !file.type.startsWith('image/')) {
+          reject(new Error('El archivo seleccionado no es una imagen válida.'));
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error('No se pudo leer el archivo de imagen.'));
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onerror = () => reject(new Error('No se pudo procesar la imagen seleccionada.'));
+          img.onload = () => {
+            let width = img.naturalWidth || img.width;
+            let height = img.naturalHeight || img.height;
+
+            if (width > maxWidth) {
+              const ratio = maxWidth / width;
+              width = maxWidth;
+              height = Math.round(height * ratio);
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+              reject(new Error('No se pudo inicializar el lienzo de compresión.'));
+              return;
+            }
+
+            const isPng = file.type === 'image/png';
+            ctx.clearRect(0, 0, width, height);
+            ctx.drawImage(img, 0, 0, width, height);
+
+            let dataUrl = isPng ? canvas.toDataURL('image/png') : canvas.toDataURL('image/jpeg', 0.85);
+            let byteSize = Math.round((dataUrl.length - dataUrl.indexOf(',') - 1) * 3 / 4);
+
+            // Si excede el tamaño máximo en PNG, probar compresión JPEG
+            if (byteSize > maxBytes && isPng) {
+              const jpgCanvas = document.createElement('canvas');
+              jpgCanvas.width = width;
+              jpgCanvas.height = height;
+              const jpgCtx = jpgCanvas.getContext('2d');
+              jpgCtx.fillStyle = '#FFFFFF';
+              jpgCtx.fillRect(0, 0, width, height);
+              jpgCtx.drawImage(img, 0, 0, width, height);
+
+              let quality = 0.82;
+              dataUrl = jpgCanvas.toDataURL('image/jpeg', quality);
+              byteSize = Math.round((dataUrl.length - dataUrl.indexOf(',') - 1) * 3 / 4);
+
+              while (byteSize > maxBytes && quality > 0.35) {
+                quality -= 0.12;
+                dataUrl = jpgCanvas.toDataURL('image/jpeg', quality);
+                byteSize = Math.round((dataUrl.length - dataUrl.indexOf(',') - 1) * 3 / 4);
+              }
+            } else if (byteSize > maxBytes) {
+              let quality = 0.75;
+              while (byteSize > maxBytes && quality > 0.3) {
+                dataUrl = canvas.toDataURL('image/jpeg', quality);
+                byteSize = Math.round((dataUrl.length - dataUrl.indexOf(',') - 1) * 3 / 4);
+                quality -= 0.15;
+              }
+            }
+
+            if (byteSize > maxBytes) {
+              const kb = Math.round(byteSize / 1024);
+              reject(new Error(`La imagen optimizada (${kb} KB) supera el límite de 150 KB. Selecciona una imagen más liviana.`));
+              return;
+            }
+
+            resolve(dataUrl);
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Actualizar estado visual de sincronización en "Mis datos" (Requerimiento 3 y 6)
+    function updateSettingsSyncUI(status, errorMsg) {
+      const badge = document.getElementById('cfg-sync-status-badge');
+      if (!badge) return;
+
+      if (status === 'synced') {
+        badge.style.background = 'rgba(16, 185, 129, 0.15)';
+        badge.style.color = 'var(--color-success)';
+        badge.textContent = '● Guardado y sincronizado';
+      } else if (status === 'pending') {
+        badge.style.background = 'rgba(245, 158, 11, 0.15)';
+        badge.style.color = 'var(--color-warning)';
+        badge.textContent = '⏳ Pendiente de sincronizar';
+      } else if (status === 'error') {
+        badge.style.background = 'rgba(239, 68, 68, 0.15)';
+        badge.style.color = 'var(--color-danger)';
+        badge.textContent = '✕ ' + (errorMsg || 'Error de sincronización');
+      }
+    }
+
+    // Cargar valores a los campos de formulario sin sobrescribir el foco activo (Requerimiento 4)
     function loadSettingsToForm() {
       const s = state.settings;
-      document.getElementById('cfg-business-name').value = s.businessName || 'Universo Gráfico';
-      document.getElementById('cfg-business-phone').value = s.phone || '3239421252';
-      document.getElementById('cfg-business-email').value = s.email || '';
-      document.getElementById('cfg-business-address').value = s.address || '';
-      document.getElementById('cfg-emisor-name').value = s.emisorName || '';
-      document.getElementById('cfg-emisor-cc').value = s.emisorCC || '';
-      document.getElementById('cfg-emisor-city').value = s.emisorCity || 'Bogotá D.C.';
-      document.getElementById('cfg-numbering-mode').value = s.numberingMode || 'per-client';
-      document.getElementById('cfg-default-cot-notes').value = s.defaultCotNotes || '';
-      document.getElementById('cfg-default-cc-notes').value = s.defaultCcNotes || '';
-      document.getElementById('cfg-default-legal-text').value = s.legalText || '';
+      const activeEl = document.activeElement;
 
+      const setIfInactive = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && el !== activeEl) {
+          el.value = (val !== undefined && val !== null) ? val : '';
+        }
+      };
+
+      setIfInactive('cfg-business-name', s.businessName || 'Universo Gráfico');
+      setIfInactive('cfg-business-phone', s.phone || '3239421252');
+      setIfInactive('cfg-business-email', s.email || '');
+      setIfInactive('cfg-business-address', s.address || '');
+      setIfInactive('cfg-emisor-name', s.emisorName || 'Jason');
+      setIfInactive('cfg-emisor-cc', s.emisorCC || '');
+      setIfInactive('cfg-emisor-city', s.emisorCity || 'Bogotá D.C.');
+      setIfInactive('cfg-numbering-mode', s.numberingMode || 'per-client');
+      setIfInactive('cfg-default-cot-notes', s.defaultCotNotes || '');
+      setIfInactive('cfg-default-cc-notes', s.defaultCcNotes || '');
+      setIfInactive('cfg-default-legal-text', s.legalText || '');
+
+      updateLogoPreview();
       updateSignaturePreview();
     }
 
-    function saveSettingsAction() {
-      state.settings.businessName = document.getElementById('cfg-business-name').value.trim() || 'Universo Gráfico';
-      state.settings.phone = document.getElementById('cfg-business-phone').value.trim() || '3239421252';
-      state.settings.email = document.getElementById('cfg-business-email').value.trim();
-      state.settings.address = document.getElementById('cfg-business-address').value.trim();
-      state.settings.emisorName = document.getElementById('cfg-emisor-name').value.trim() || 'Jason';
-      state.settings.emisorCC = document.getElementById('cfg-emisor-cc').value.trim();
-      state.settings.emisorCity = document.getElementById('cfg-emisor-city').value.trim() || 'Bogotá D.C.';
-      state.settings.numberingMode = document.getElementById('cfg-numbering-mode').value;
-      state.settings.defaultCotNotes = document.getElementById('cfg-default-cot-notes').value.trim();
-      state.settings.defaultCcNotes = document.getElementById('cfg-default-cc-notes').value.trim();
-      state.settings.legalText = document.getElementById('cfg-default-legal-text').value.trim();
-
-      saveState('settings');
-      showToast('Configuración guardada correctamente');
+    // Actualizar previsualización del logo
+    function updateLogoPreview() {
+      const img = document.getElementById('cfg-logo-preview-img');
+      const empty = document.getElementById('cfg-logo-empty-text');
+      if (img) {
+        img.src = state.settings.logoData || './assets/logo.png';
+      }
     }
 
-    function handleSignatureFileUpload(event) {
-      const file = event.target.files[0];
+    // Actualizar previsualización de firma
+    function updateSignaturePreview() {
+      const img = document.getElementById('cfg-signature-preview-img');
+      const empty = document.getElementById('cfg-signature-empty-text');
+      if (img && empty) {
+        if (state.settings.signatureData) {
+          img.src = state.settings.signatureData;
+          img.style.display = 'block';
+          empty.style.display = 'none';
+        } else {
+          img.src = '';
+          img.style.display = 'none';
+          empty.style.display = 'block';
+        }
+      }
+    }
+
+    // Actualizar la identidad visual de la app (sidebar y encabezados) (Requerimiento 4)
+    function updateAppBrandingUI() {
+      const bName = state.settings.businessName || 'Universo Gráfico';
+      const customLogo = state.settings.logoData;
+
+      const logoDay = document.querySelector('.sidebar-brand .logo-day');
+      if (logoDay) {
+        logoDay.src = customLogo || './assets/logo.png';
+      }
+
+      const brandSub = document.querySelector('.sidebar-brand-sub');
+      if (brandSub) {
+        brandSub.textContent = bName;
+      }
+    }
+
+    // Refrescar toda la aplicación con la configuración más reciente (Requerimiento 4)
+    function refreshAppWithSettings() {
+      loadSettingsToForm();
+      updateAppBrandingUI();
+
+      // Si hay un documento en visualización previa dentro del modal, regenerarlo con los nuevos datos
+      if (state.modalActiveDocType && state.modalActiveDocData) {
+        const stage = document.getElementById('doc-modal-content-stage');
+        if (stage && typeof renderDocumentHtml === 'function') {
+          stage.innerHTML = renderDocumentHtml(state.modalActiveDocType, state.modalActiveDocData);
+        }
+      }
+    }
+
+    // Captura reactiva de cada cambio en Mis Datos con debounce de 1.5s (Requerimiento 2 y 3)
+    function onSettingFieldInput(fieldKey, value) {
+      state.settings[fieldKey] = value;
+      const nowIso = new Date().toISOString();
+
+      if (!settingsMeta.fieldTimestamps) settingsMeta.fieldTimestamps = {};
+      settingsMeta.fieldTimestamps[fieldKey] = nowIso;
+      settingsMeta.pendingUpload = true;
+      settingsMeta.lastError = null;
+
+      saveState('settings');
+      updateSettingsSyncUI('pending');
+      updateSyncDiagnosticsUI();
+
+      if (fieldKey === 'businessName') {
+        updateAppBrandingUI();
+      }
+
+      clearTimeout(settingsDebounceTimer);
+      settingsDebounceTimer = setTimeout(() => {
+        if (typeof getAuthToken === 'function' && getAuthToken() && navigator.onLine) {
+          syncDataWithCloud(false);
+        }
+      }, 1500);
+    }
+
+    // Botón manual "Guardar Ahora" en Mis Datos
+    function saveSettingsAction() {
+      const fields = [
+        ['businessName', document.getElementById('cfg-business-name')?.value.trim() || 'Universo Gráfico'],
+        ['phone', document.getElementById('cfg-business-phone')?.value.trim() || '3239421252'],
+        ['email', document.getElementById('cfg-business-email')?.value.trim() || ''],
+        ['address', document.getElementById('cfg-business-address')?.value.trim() || ''],
+        ['emisorName', document.getElementById('cfg-emisor-name')?.value.trim() || 'Jason'],
+        ['emisorCC', document.getElementById('cfg-emisor-cc')?.value.trim() || ''],
+        ['emisorCity', document.getElementById('cfg-emisor-city')?.value.trim() || 'Bogotá D.C.'],
+        ['numberingMode', document.getElementById('cfg-numbering-mode')?.value || 'per-client'],
+        ['defaultCotNotes', document.getElementById('cfg-default-cot-notes')?.value.trim() || ''],
+        ['defaultCcNotes', document.getElementById('cfg-default-cc-notes')?.value.trim() || ''],
+        ['legalText', document.getElementById('cfg-default-legal-text')?.value.trim() || '']
+      ];
+
+      const nowIso = new Date().toISOString();
+      if (!settingsMeta.fieldTimestamps) settingsMeta.fieldTimestamps = {};
+      fields.forEach(([k, v]) => {
+        if (state.settings[k] !== v) {
+          state.settings[k] = v;
+          settingsMeta.fieldTimestamps[k] = nowIso;
+        }
+      });
+
+      settingsMeta.pendingUpload = true;
+      saveState('settings');
+      refreshAppWithSettings();
+      showToast('Configuración guardada');
+      updateSettingsSyncUI('pending');
+      updateSyncDiagnosticsUI();
+
+      if (typeof getAuthToken === 'function' && getAuthToken() && navigator.onLine) {
+        syncDataWithCloud(true);
+      }
+    }
+
+    // Carga y compresión del logo (Requerimiento 5)
+    async function handleLogoFileUpload(event) {
+      const file = event.target.files && event.target.files[0];
       if (!file) return;
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        state.settings.signatureData = e.target.result;
+      try {
+        const compressed = await compressImageFile(file, 400, 150 * 1024);
+        state.settings.logoData = compressed;
+        onSettingFieldInput('logoData', compressed);
+        updateLogoPreview();
+        updateAppBrandingUI();
+        showToast('Logotipo optimizado y guardado');
+      } catch (err) {
+        console.error('Error al subir logotipo:', err);
+        showToast(err.message, 'error', 6000);
+        alert('Atención: ' + err.message);
+      } finally {
+        event.target.value = '';
+      }
+    }
+
+    function clearCustomLogo() {
+      state.settings.logoData = '';
+      onSettingFieldInput('logoData', '');
+      updateLogoPreview();
+      updateAppBrandingUI();
+      showToast('Logotipo predeterminado restaurado');
+    }
+
+    // Carga y compresión de la firma digital (Requerimiento 5)
+    async function handleSignatureFileUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      try {
+        const compressed = await compressImageFile(file, 400, 150 * 1024);
+        state.settings.signatureData = compressed;
+        onSettingFieldInput('signatureData', compressed);
         updateSignaturePreview();
-        saveState('settings');
-        showToast('Firma cargada');
-      };
-      reader.readAsDataURL(file);
+        showToast('Firma digital optimizada y guardada');
+      } catch (err) {
+        console.error('Error al subir firma:', err);
+        showToast(err.message, 'error', 6000);
+        alert('Atención: ' + err.message);
+      } finally {
+        event.target.value = '';
+      }
     }
 
     function clearSignature() {
       state.settings.signatureData = '';
+      onSettingFieldInput('signatureData', '');
       updateSignaturePreview();
-      saveState('settings');
-      showToast('Firma removida');
+      showToast('Firma digital removida');
     }
 
-    function updateSignaturePreview() {
-      const img = document.getElementById('cfg-signature-preview-img');
-      const empty = document.getElementById('cfg-signature-empty-text');
-      if (state.settings.signatureData) {
-        img.src = state.settings.signatureData;
-        img.style.display = 'block';
-        empty.style.display = 'none';
-      } else {
-        img.src = '';
-        img.style.display = 'none';
-        empty.style.display = 'block';
+    // Fusión por campo de configuración remota vs local (Requerimiento 2 y 4)
+    function mergeRemoteConfigFields(remoteConfigRaw, remoteUpdatedAt) {
+      if (!remoteConfigRaw || typeof remoteConfigRaw !== 'object') return false;
+      let changed = false;
+      const fallbackRemoteTime = new Date(remoteUpdatedAt || 0).getTime();
+
+      if (!settingsMeta.fieldTimestamps) settingsMeta.fieldTimestamps = {};
+
+      Object.keys(remoteConfigRaw).forEach(key => {
+        const remoteEntry = remoteConfigRaw[key];
+        let remoteVal = remoteEntry;
+        let remoteTime = fallbackRemoteTime;
+
+        if (remoteEntry && typeof remoteEntry === 'object' && ('v' in remoteEntry || 't' in remoteEntry)) {
+          remoteVal = remoteEntry.v !== undefined ? remoteEntry.v : null;
+          remoteTime = remoteEntry.t ? new Date(remoteEntry.t).getTime() : fallbackRemoteTime;
+        }
+
+        const localVal = state.settings[key];
+        const localTStr = settingsMeta.fieldTimestamps[key];
+        const localTime = localTStr ? new Date(localTStr).getTime() : 0;
+
+        // Comparación como fecha: el valor más reciente gana. Campos nuevos se conservan.
+        if (localVal === undefined || remoteTime > localTime) {
+          if (state.settings[key] !== remoteVal) {
+            state.settings[key] = remoteVal;
+            changed = true;
+          }
+          settingsMeta.fieldTimestamps[key] = new Date(remoteTime).toISOString();
+        }
+      });
+
+      return changed;
+    }
+
+    // Forzar subida de Mis Datos a la nube (Requerimiento 6)
+    async function forcePushSettings() {
+      const token = getAuthToken();
+      if (!token) {
+        showToast('Inicia sesión para sincronizar con la nube', 'warning');
+        openLoginModal();
+        return;
+      }
+
+      const btn = document.getElementById('btn-force-push-settings');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Subiendo...';
+      }
+
+      try {
+        const nowIso = new Date().toISOString();
+        if (!settingsMeta.fieldTimestamps) settingsMeta.fieldTimestamps = {};
+        Object.keys(state.settings).forEach(k => {
+          settingsMeta.fieldTimestamps[k] = nowIso;
+        });
+        settingsMeta.pendingUpload = true;
+        saveState('settings');
+
+        await syncDataWithCloud(true);
+        showToast('✓ "Mis datos" forzados y sincronizados con éxito');
+      } catch (err) {
+        showToast('Error forzando subida: ' + err.message, 'error');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg><span>Forzar subida de Mis datos</span>`;
+        }
       }
     }
 
@@ -6844,10 +7264,21 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
           });
         });
 
+        const authUser = getAuthUser();
+        const configId = (authUser && authUser.id) ? authUser.id : 'ug-config-main';
+
+        const configWithTimestamps = {};
+        Object.keys(state.settings).forEach(key => {
+          configWithTimestamps[key] = {
+            v: state.settings[key],
+            t: (settingsMeta.fieldTimestamps && settingsMeta.fieldTimestamps[key]) || nowIso
+          };
+        });
+
         itemsToPush.push({
-          id: 'ug-config-main',
+          id: configId,
           tipo: 'config',
-          datos: state.settings,
+          datos: configWithTimestamps,
           deleted: 0,
           updated_at: nowIso
         });
@@ -6879,6 +7310,9 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         // 5. Fusionar datos remotos recibidos (PULL). Cada fila en su propio try/catch
         if (Array.isArray(resData.items)) {
           let hasRemoteChanges = false;
+          let hasConfigChanges = false;
+          let cloudConfigCount = 0;
+
           resData.items.forEach(row => {
             try {
               if (!row || !row.id || !row.tipo) return;
@@ -6906,15 +7340,28 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
                   hasRemoteChanges = true;
                 }
               } else if (row.tipo === 'config') {
-                if (rawData && typeof rawData === 'object') {
-                  state.settings = { ...DEFAULT_SETTINGS, ...rawData };
+                if (!remoteDeleted) {
+                  cloudConfigCount++;
+                }
+                if (mergeRemoteConfigFields(rawData, row.updated_at)) {
                   hasRemoteChanges = true;
+                  hasConfigChanges = true;
                 }
               }
             } catch (rowErr) {
               console.warn('[Sync Error] Error procesando fila remota:', rowErr);
             }
           });
+
+          // Actualizar metadatos y diagnóstico de configuración
+          settingsMeta.lastPush = syncTimestamp;
+          settingsMeta.lastPull = syncTimestamp;
+          settingsMeta.pendingUpload = false;
+          settingsMeta.localCount = 1;
+          settingsMeta.cloudCount = cloudConfigCount > 0 ? cloudConfigCount : 1;
+          settingsMeta.lastError = null;
+          saveSettingsMeta();
+          updateSettingsSyncUI('synced');
 
           saveState();
           updateBadges();
@@ -6923,6 +7370,10 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
           renderCatalogView();
           renderCotHistory();
           renderCobroHistory();
+
+          if (hasConfigChanges) {
+            refreshAppWithSettings();
+          }
         }
 
         const nowStr = new Date().toLocaleTimeString('es-CO');
@@ -6931,6 +7382,9 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
         if (isManual) showToast('Sincronización completada con éxito');
       } catch (err) {
         console.warn('[Sync Error]', err);
+        settingsMeta.lastError = err.message;
+        saveSettingsMeta();
+        updateSettingsSyncUI('error', err.message);
         if (statusText) statusText.innerHTML = `<span style="color:var(--color-danger)">✕ ${escapeHtml(err.message)}</span>`;
         if (isManual) showToast(err.message, 'error');
       } finally {
@@ -6963,6 +7417,10 @@ Que me acojo a la ley 1819 de 2016, mediante el cual para efectos tributarios es
       initTheme();
       loadAllLocalData();
       loadSettingsToForm();
+      updateAppBrandingUI();
+      updateLogoPreview();
+      updateSignaturePreview();
+      updateSettingsSyncUI(settingsMeta.pendingUpload ? 'pending' : (settingsMeta.lastError ? 'error' : 'synced'), settingsMeta.lastError);
       updateBadges();
       renderCatalogView();
       updateCotDashboard();

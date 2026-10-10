@@ -148,9 +148,10 @@
     const logoW = 48;
     const logoH = 13; // Proporción 3.72:1
 
-    if (data.includeLogo !== false && window.UNIVERSO_GRAFICO_LOGO) {
+    const logoToUse = (window.state && window.state.settings && window.state.settings.logoData) || window.UNIVERSO_GRAFICO_LOGO;
+    if (data.includeLogo !== false && logoToUse) {
       try {
-        doc.addImage(window.UNIVERSO_GRAFICO_LOGO, 'PNG', margin, yPos, logoW, logoH);
+        doc.addImage(logoToUse, logoToUse.startsWith('data:image/jpeg') ? 'JPEG' : 'PNG', margin, yPos, logoW, logoH);
         yPos += logoH + 4;
       } catch (e) {
         console.warn('No se pudo insertar la imagen del logo en PDF:', e);
@@ -430,11 +431,12 @@
     drawLogoGradientBar(doc, pageWidth, 4.5);
 
     // Encabezado con Logo si está activado
-    if (data.includeLogo !== false && window.UNIVERSO_GRAFICO_LOGO) {
+    const ccLogoToUse = (window.state && window.state.settings && window.state.settings.logoData) || window.UNIVERSO_GRAFICO_LOGO;
+    if (data.includeLogo !== false && ccLogoToUse) {
       try {
         const logoW = 46;
         const logoH = 12.4;
-        doc.addImage(window.UNIVERSO_GRAFICO_LOGO, 'PNG', margin, yPos, logoW, logoH);
+        doc.addImage(ccLogoToUse, ccLogoToUse.startsWith('data:image/jpeg') ? 'JPEG' : 'PNG', margin, yPos, logoW, logoH);
 
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(8.5);

@@ -72,6 +72,41 @@ async function verifyToken(token, secret = 'ug_secret_jwt_key_2026') {
   }
 }
 
+// Fusión campo por campo de configuración basada en marcas de tiempo reales
+function mergeConfigObjects(baseObj, incomingObj, baseTime = 0, incomingTime = 0) {
+  const merged = { ...(baseObj || {}) };
+
+  for (const [key, incField] of Object.entries(incomingObj || {})) {
+    if (!merged[key]) {
+      merged[key] = incField;
+      continue;
+    }
+
+    const baseField = merged[key];
+
+    let tBase = 0;
+    if (baseField && typeof baseField === 'object' && 't' in baseField) {
+      tBase = new Date(baseField.t || 0).getTime();
+    } else {
+      tBase = new Date(baseTime || 0).getTime();
+    }
+
+    let tInc = 0;
+    if (incField && typeof incField === 'object' && 't' in incField) {
+      tInc = new Date(incField.t || 0).getTime();
+    } else {
+      tInc = new Date(incomingTime || 0).getTime();
+    }
+
+    // Gana la versión con la marca de tiempo más reciente como fecha
+    if (tInc >= tBase) {
+      merged[key] = incField;
+    }
+  }
+
+  return merged;
+}
+
 // Extraer usuario del header Authorization
 async function authenticateRequest(request, env) {
   const authHeader = request.headers.get('Authorization') || '';
@@ -267,11 +302,43 @@ export async function onRequest(context) {
         try {
           if (!item || !item.id || !item.tipo) continue;
 
-          const id = String(item.id);
+          let id = String(item.id);
           const tipo = String(item.tipo);
-          const datos = typeof item.datos === 'string' ? item.datos : JSON.stringify(item.datos || {});
-          const deleted = item.deleted ? 1 : 0;
-          const updatedAt = item.updated_at || new Date().toISOString();
+          let datos = typeof item.datos === 'string' ? item.datos : JSON.stringify(item.datos || {});
+          let deleted = item.deleted ? 1 : 0;
+          let updatedAt = item.updated_at || new Date().toISOString();
+
+          // REQUERIMIENTO 1: La configuración vive en UNA sola fila por usuario con id = authUser.id
+          if (tipo === 'config') {
+            id = authUser.id; // Forzar el ID fijo del usuario autenticado
+            deleted = 0;      // La fila canónica de configuración siempre se mantiene activa
+
+            // Migración: Buscar todas las filas 'config' existentes de este usuario en D1
+            const existingConfigs = await db.prepare(
+              'SELECT id, datos, updated_at FROM registros WHERE user_id = ? AND tipo = "config"'
+            ).bind(authUser.id).all();
+
+            const rows = existingConfigs.results || [];
+            let mergedPayload = typeof item.datos === 'string' ? JSON.parse(item.datos || '{}') : (item.datos || {});
+
+            if (rows.length > 0) {
+              // Ordenar por updated_at ascendente para consolidar en orden cronológico
+              rows.sort((a, b) => new Date(a.updated_at || 0).getTime() - new Date(b.updated_at || 0).getTime());
+
+              // Fusionar campo por campo cada fila previa
+              rows.forEach(r => {
+                const rData = typeof r.datos === 'string' ? JSON.parse(r.datos || '{}') : (r.datos || {});
+                mergedPayload = mergeConfigObjects(rData, mergedPayload, r.updated_at, updatedAt);
+              });
+
+              // Marcar cualquier otra fila config que no sea authUser.id como deleted = 1
+              await db.prepare(
+                'UPDATE registros SET deleted = 1, updated_at = datetime("now") WHERE user_id = ? AND tipo = "config" AND id != ?'
+              ).bind(authUser.id, authUser.id).run();
+            }
+
+            datos = JSON.stringify(mergedPayload);
+          }
 
           // Consultar registro existente en D1
           const existing = await db.prepare(
@@ -290,7 +357,10 @@ export async function onRequest(context) {
             const serverTime = new Date(existing.updated_at).getTime();
 
             let shouldUpdate = false;
-            if (deleted === 1) {
+            if (tipo === 'config') {
+              // Para config ya fue fusionado campo por campo, siempre actualizamos la fila canónica
+              shouldUpdate = true;
+            } else if (deleted === 1) {
               // Si el cliente lo borró, gana si su timestamp es igual o más reciente
               if (clientTime >= serverTime) shouldUpdate = true;
             } else {
